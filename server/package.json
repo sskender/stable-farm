@@ -1,0 +1,23 @@
+{
+    "name": "npo-dao-server",
+    "version": "1.0.0",
+    "description": "Node.JS server application for npo-dao",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@gitlab.com:sskender/npo-dao.git"
+    },
+    "author": "sskender",
+    "license": "MIT",
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "eslint": "^7.10.0",
+        "eslint-config-airbnb-base": "^14.2.0",
+        "eslint-plugin-import": "^2.22.1",
+        "mocha": "^8.1.3"
+    },
+    "dependencies": {}
+}
