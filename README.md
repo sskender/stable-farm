@@ -3,7 +3,18 @@
 Proof of concept for running a nonprofit organization on Ethereum blockchain
 
 
+### Development:
+ - Run ganache (`localhost:7545` -> this is defined in [truffle configuration](ethereum/truffle-config.js))
+ - Run truffle console (`truffle console`)
+ - In truffle console `compile`, `test` and `migrate`
+ - Interact with contract
+
+
 ### Sources:
+
+#### Development:
+ - [Truffle](https://www.trufflesuite.com/docs/truffle/quickstart)
+ - [Ganache](https://www.trufflesuite.com/ganache)
 
 #### Token:
  - [ERC777](https://www.erc777.org/)
