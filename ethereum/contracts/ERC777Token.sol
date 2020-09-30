@@ -10,19 +10,24 @@ contract ERC777Token is IERC777Token {
     // Token symbol
     string internal tokenSymbol;
 
-    // Token granularity
-    uint256 internal tokenGranularity;
-
     // Token total supply
     uint256 internal tokenTotalSupply;
 
+    // Token granularity
+    uint256 internal tokenGranularity;
+
     // Balances of each token holder
-    mapping(address => uint256) internal holdersBalances;
+    mapping(address => uint256) internal tokenHoldersBalances;
+
+    // Default token operators
+    address[] internal defaultTokenOperators;
 
     /**
-     *
+     * @dev Initialize token on contract deployment.
      */
-    constructor() {}
+    constructor() {
+        initializeToken(msg.sender);
+    }
 
     /**
      * @dev Gets the token name.
@@ -58,7 +63,9 @@ contract ERC777Token is IERC777Token {
         override
         view
         returns (uint256)
-    {}
+    {
+        return tokenHoldersBalances[holder];
+    }
 
     /**
      * @dev Gets the smallest part of the token that is not divisible.
@@ -77,7 +84,9 @@ contract ERC777Token is IERC777Token {
         override
         view
         returns (address[] memory)
-    {}
+    {
+        return defaultTokenOperators;
+    }
 
     /**
      * @dev Check whether the operator is allowed to manage tokens held by the holder address.
@@ -90,7 +99,9 @@ contract ERC777Token is IERC777Token {
         override
         view
         returns (bool)
-    {}
+    {
+        return false;
+    }
 
     /**
      * @dev Authorize an operator to manage tokens of the sender (caller's address).
@@ -152,4 +163,19 @@ contract ERC777Token is IERC777Token {
         bytes calldata data,
         bytes calldata operatorData
     ) external override {}
+
+    /**
+     * @dev Initialize token attributes on contract deployment.
+     * @param sender contract deployer
+     */
+    function initializeToken(address sender) private {
+        // set basic token attributes
+        tokenName = "EESTEC LC Zagreb";
+        tokenSymbol = "EZG";
+        tokenGranularity = 1;
+
+        // set token holder and initial supply
+        tokenTotalSupply = 1;
+        tokenHoldersBalances[sender] = 1;
+    }
 }
