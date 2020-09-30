@@ -3,6 +3,9 @@ pragma solidity ^0.7.0;
 
 import "./IERC777Token.sol";
 
+/**
+ * @dev Implementation of the IERC777 Token Interface.
+ */
 contract ERC777Token is IERC777Token {
     // Token name
     string internal tokenName;
