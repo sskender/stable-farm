@@ -2,11 +2,12 @@
 pragma solidity ^0.7.0;
 
 import "./IERC777Token.sol";
+import "./IMintableToken.sol";
 
 /**
  * @dev Implementation of the IERC777 Token Interface.
  */
-contract ERC777Token is IERC777Token {
+contract ERC777Token is IERC777Token, IMintableToken {
     // Chairman address (owner)
     address internal chairman;
 
@@ -27,6 +28,9 @@ contract ERC777Token is IERC777Token {
 
     // Default token operators
     address[] internal defaultTokenOperators;
+
+    // Flag token as mintable or not at the moment
+    bool internal tokenMintable;
 
     /**
      * @dev Initialize token on contract deployment.
@@ -170,6 +174,45 @@ contract ERC777Token is IERC777Token {
         bytes calldata operatorData
     ) external override {}
 
+    modifier onlyOwner {
+        require(msg.sender == chairman);
+        _;
+    }
+
+    modifier mintEnabled {
+        require(tokenMintable);
+        _;
+    }
+
+    /**
+     * @dev Mint exactly one token for caller's address if one hasn't minted already.
+     */
+    function mint() external override mintEnabled {
+        tokenHoldersBalances[msg.sender] += 1;
+    }
+
+    /**
+     * @dev Check whether the token is mintable or not.
+     * @return true if token is mintable
+     */
+    function isMintable() external view override returns (bool) {
+        return tokenMintable;
+    }
+
+    /**
+     * @dev Enable token minting from public.
+     */
+    function enableMinting() external override onlyOwner {
+        tokenMintable = true;
+    }
+
+    /**
+     * @dev Disable token minting from public.
+     */
+    function disableMinting() external override onlyOwner {
+        tokenMintable = false;
+    }
+
     /**
      * @dev Initialize token attributes on contract deployment.
      * @param sender contract deployer
@@ -182,6 +225,7 @@ contract ERC777Token is IERC777Token {
 
         // set token holder and initial supply
         chairman = sender;
+        tokenMintable = false;
         tokenTotalSupply = 1;
         tokenHoldersBalances[sender] = 1;
     }
