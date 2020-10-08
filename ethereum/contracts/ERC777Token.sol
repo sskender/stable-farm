@@ -7,6 +7,9 @@ import "./IERC777Token.sol";
  * @dev Implementation of the IERC777 Token Interface.
  */
 contract ERC777Token is IERC777Token {
+    // Chairman address (owner)
+    address internal chairman;
+
     // Token name
     string internal tokenName;
 
@@ -178,6 +181,7 @@ contract ERC777Token is IERC777Token {
         tokenGranularity = 1;
 
         // set token holder and initial supply
+        chairman = sender;
         tokenTotalSupply = 1;
         tokenHoldersBalances[sender] = 1;
     }
