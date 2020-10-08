@@ -1,0 +1,27 @@
+{
+  "name": "npo-dao",
+  "version": "1.0.0",
+  "description": "npo-dao smart contracts",
+  "main": "",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "truffle": "^5.1.47"
+  },
+  "devDependencies": {
+    "eslint": "^7.10.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "solhint": "^3.2.1"
+  },
+  "scripts": {
+    "migrate": "truffle migrate --reset",
+    "test": "truffle test",
+    "console": "truffle console",
+    "solhint": "solhint \"contracts/**/*.sol\""
+  },
+  "author": "sskender",
+  "license": "MIT"
+}
+
