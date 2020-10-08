@@ -174,13 +174,19 @@ contract ERC777Token is IERC777Token, IMintableToken {
         bytes calldata operatorData
     ) external override {}
 
+    /**
+     * @dev Verify that sender is contract owner.
+     */
     modifier onlyOwner {
-        require(msg.sender == chairman);
+        require(msg.sender == chairman, 'You are not a chairman');
         _;
     }
 
+    /**
+     * @dev Verify that token is mintable before minting.
+     */
     modifier mintEnabled {
-        require(tokenMintable);
+        require(tokenMintable, 'Token is not mintable');
         _;
     }
 
@@ -188,7 +194,11 @@ contract ERC777Token is IERC777Token, IMintableToken {
      * @dev Mint exactly one token for caller's address if one hasn't minted already.
      */
     function mint() external override mintEnabled {
-        tokenHoldersBalances[msg.sender] += 1;
+        if (tokenHoldersBalances[msg.sender] == 0) {
+            tokenHoldersBalances[msg.sender] = 1;
+        } else {
+            revert('You already have a token');
+        }
     }
 
     /**
