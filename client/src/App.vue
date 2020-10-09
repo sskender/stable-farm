@@ -1,19 +1,26 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Enrollment enrollmentTitle="Mintable" />
+    <Members v-bind:members="members" />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Enrollment from "./components/Enrollment.vue";
+import Members from "./components/MembersList.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    Enrollment,
+    Members,
+  },
+  data() {
+    return {
+      members: [{ address: "0x1" }, { address: "0x2" }, { address: "0x3" }],
+    };
+  },
+};
 </script>
 
 <style>
@@ -21,8 +28,5 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
