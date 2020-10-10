@@ -23,6 +23,9 @@ contract ERC777Token is IERC777Token, IMintableToken {
     // Token granularity
     uint256 internal tokenGranularity;
 
+    // Token holders
+    address[] internal tokenHoldersList;
+
     // Balances of each token holder
     mapping(address => uint256) internal tokenHoldersBalances;
 
@@ -75,6 +78,14 @@ contract ERC777Token is IERC777Token, IMintableToken {
         returns (uint256)
     {
         return tokenHoldersBalances[holder];
+    }
+
+    /**
+     * @dev Return all token holders who hold token.
+     * @return addresses of holders 
+     */
+    function tokenHolders() external view returns (address[] memory) {
+        return tokenHoldersList;
     }
 
     /**
@@ -196,6 +207,7 @@ contract ERC777Token is IERC777Token, IMintableToken {
     function mint() external override mintEnabled {
         if (tokenHoldersBalances[msg.sender] == 0) {
             tokenHoldersBalances[msg.sender] = 1;
+            tokenHoldersList.push(msg.sender);
         } else {
             revert('You already have a token');
         }
@@ -238,5 +250,6 @@ contract ERC777Token is IERC777Token, IMintableToken {
         tokenMintable = false;
         tokenTotalSupply = 1;
         tokenHoldersBalances[sender] = 1;
+        tokenHoldersList.push(sender);
     }
 }
