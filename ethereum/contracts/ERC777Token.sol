@@ -3,13 +3,12 @@ pragma solidity ^0.7.0;
 
 import "./IERC777Token.sol";
 import "./IMintableToken.sol";
+import "./Ownable.sol";
 
 /**
  * @dev Implementation of the IERC777 Token Interface.
  */
-contract ERC777Token is IERC777Token, IMintableToken {
-    // Chairman address (owner)
-    address internal chairman;
+contract ERC777Token is IERC777Token, IMintableToken, Ownable {
 
     // Token name
     string internal tokenName;
@@ -38,8 +37,17 @@ contract ERC777Token is IERC777Token, IMintableToken {
     /**
      * @dev Initialize token on contract deployment.
      */
-    constructor() {
-        initializeToken(msg.sender);
+    constructor() Ownable() {
+        // set basic token attributes
+        tokenName = "EESTEC LC Zagreb";
+        tokenSymbol = "EZG";
+        tokenGranularity = 1;
+
+        // set token holder and initial supply
+        tokenMintable = false;
+        tokenTotalSupply = 1;
+        tokenHoldersBalances[msg.sender] = 1;
+        tokenHoldersList.push(msg.sender);
     }
 
     /**
@@ -186,14 +194,6 @@ contract ERC777Token is IERC777Token, IMintableToken {
     ) external override {}
 
     /**
-     * @dev Verify that sender is contract owner.
-     */
-    modifier onlyOwner {
-        require(msg.sender == chairman, 'You are not a chairman');
-        _;
-    }
-
-    /**
      * @dev Verify that token is mintable before minting.
      */
     modifier mintEnabled {
@@ -243,21 +243,4 @@ contract ERC777Token is IERC777Token, IMintableToken {
         }
     }
 
-    /**
-     * @dev Initialize token attributes on contract deployment.
-     * @param sender contract deployer
-     */
-    function initializeToken(address sender) private {
-        // set basic token attributes
-        tokenName = "EESTEC LC Zagreb";
-        tokenSymbol = "EZG";
-        tokenGranularity = 1;
-
-        // set token holder and initial supply
-        chairman = sender;
-        tokenMintable = false;
-        tokenTotalSupply = 1;
-        tokenHoldersBalances[sender] = 1;
-        tokenHoldersList.push(sender);
-    }
 }
