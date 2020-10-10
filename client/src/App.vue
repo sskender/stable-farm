@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import web3 from "./providers/web3";
 import Enrollment from "./components/Enrollment.vue";
 import Members from "./components/MembersList.vue";
 
@@ -17,8 +18,21 @@ export default {
   },
   data() {
     return {
-      members: [{ address: "0x1" }, { address: "0x2" }, { address: "0x3" }],
+      members: [],
     };
+  },
+  methods: {
+    async getMembers() {
+      this.members = [];
+      const accounts = await web3.eth.getAccounts();
+      accounts.forEach((a) => {
+        this.members.push({ address: a });
+      });
+    },
+  },
+  async created() {
+    // this runs on load
+    await this.getMembers();
   },
 };
 </script>
