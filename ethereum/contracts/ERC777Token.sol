@@ -197,7 +197,7 @@ contract ERC777Token is IERC777Token, IMintableToken {
      * @dev Verify that token is mintable before minting.
      */
     modifier mintEnabled {
-        require(tokenMintable, 'Token is not mintable');
+        require(tokenMintable, 'Token is not mintable at the moment');
         _;
     }
 
@@ -225,14 +225,22 @@ contract ERC777Token is IERC777Token, IMintableToken {
      * @dev Enable token minting from public.
      */
     function enableMinting() external override onlyOwner {
-        tokenMintable = true;
+        if (!tokenMintable) {
+            tokenMintable = true;
+        } else {
+            revert('Token minting is already enabled');
+        }
     }
 
     /**
      * @dev Disable token minting from public.
      */
     function disableMinting() external override onlyOwner {
-        tokenMintable = false;
+        if (tokenMintable) {
+            tokenMintable = false;
+        } else {
+            revert('Token minting is already disabled');
+        }
     }
 
     /**
