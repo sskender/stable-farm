@@ -26,7 +26,6 @@ export default {
       this.tokenSupply = 42;
     },
   },
-
   data() {
     // store data from token contract
     return {

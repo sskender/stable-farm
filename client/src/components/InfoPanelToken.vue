@@ -1,4 +1,4 @@
-5emplate>
+<template>
   <div class="token-info">
     <p>{{tokenName}} ({{tokenSymbol}})</p>
     <p>

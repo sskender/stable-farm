@@ -2,23 +2,23 @@
   <div id="app">
     <InfoPanel :myAddress="myAddress" :myBalance="myBalance" />
     <Membership :myBalance="myBalance" />
-    <Members v-bind:members="members" />
+    <MemberList :members="members" />
   </div>
 </template>
 
 <script>
 import web3 from "./providers/web3";
-import Members from "./components/MembersList.vue";
 
 import InfoPanel from "./components/InfoPanel.vue";
 import Membership from "./components/Membership.vue";
+import MemberList from "./components/MemberList.vue";
 
 export default {
   name: "App",
   components: {
-    Members,
     InfoPanel,
     Membership,
+    MemberList,
   },
   data() {
     return {
