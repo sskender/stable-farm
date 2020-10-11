@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <InfoPanel />
     <Enrollment enrollmentTitle="Mintable" />
     <Members v-bind:members="members" />
   </div>
@@ -9,12 +10,14 @@
 import web3 from "./providers/web3";
 import Enrollment from "./components/Enrollment.vue";
 import Members from "./components/MembersList.vue";
+import InfoPanel from "./components/InfoPanel.vue";
 
 export default {
   name: "App",
   components: {
     Enrollment,
     Members,
+    InfoPanel,
   },
   data() {
     return {
