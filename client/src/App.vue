@@ -1,27 +1,30 @@
 <template>
   <div id="app">
-    <InfoPanel />
-    <Enrollment enrollmentTitle="Mintable" />
+    <InfoPanel :myAddress="myAddress" :myBalance="myBalance" />
+    <Membership :myBalance="myBalance" />
     <Members v-bind:members="members" />
   </div>
 </template>
 
 <script>
 import web3 from "./providers/web3";
-import Enrollment from "./components/Enrollment.vue";
 import Members from "./components/MembersList.vue";
+
 import InfoPanel from "./components/InfoPanel.vue";
+import Membership from "./components/Membership.vue";
 
 export default {
   name: "App",
   components: {
-    Enrollment,
     Members,
     InfoPanel,
+    Membership,
   },
   data() {
     return {
       members: [],
+      myAddress: "0x",
+      myBalance: 2,
     };
   },
   methods: {
@@ -32,10 +35,14 @@ export default {
         this.members.push({ address: a });
       });
     },
+    getUserAddress() {
+      this.myAddress = "0x61d62800f58BE96883136b8d915a8E866d8a059b";
+    },
   },
   async created() {
     // this runs on load
     await this.getMembers();
+    this.getUserAddress();
   },
 };
 </script>

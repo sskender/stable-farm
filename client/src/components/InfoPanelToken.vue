@@ -1,4 +1,4 @@
-<template>
+5emplate>
   <div class="token-info">
     <p>{{tokenName}} ({{tokenSymbol}})</p>
     <p>
@@ -18,7 +18,7 @@ export default {
 <style scoped>
 .token-info {
   border-style: solid;
-  border-width: 10px;
+  border-width: 5px;
   border-color: green;
 }
 </style>

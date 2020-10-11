@@ -1,6 +1,7 @@
 <template>
   <div class="user-info">
-    <p>{{myAddress}} : {{myBalance}}</p>
+    <p>My address: {{myAddress}}</p>
+    <p>My balance: {{myBalance}}</p>
   </div>
 </template>
 
@@ -14,7 +15,7 @@ export default {
 <style scoped>
 .user-info {
   border-style: solid;
-  border-width: 10px;
+  border-width: 5px;
   border-color: red;
 }
 </style>

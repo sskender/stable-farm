@@ -11,6 +11,10 @@ import UserInfo from "./InfoPanelUser.vue";
 
 export default {
   components: { TokenInfo, UserInfo },
+  props: {
+    myAddress: String,
+    myBalance: Number,
+  },
   methods: {
     getTokenName() {
       this.tokenName = "My token test";
@@ -21,12 +25,6 @@ export default {
     getTokenSupply() {
       this.tokenSupply = 42;
     },
-    getUserAddress() {
-      this.myAddress = "0x61d62800f58BE96883136b8d915a8E866d8a059b";
-    },
-    getUserBalance() {
-      this.myBalance = 1;
-    },
   },
 
   data() {
@@ -35,8 +33,6 @@ export default {
       tokenName: null,
       tokenSymbol: null,
       tokenSupply: 0,
-      myAddress: "0x",
-      myBalance: 0,
     };
   },
   created() {
@@ -44,10 +40,6 @@ export default {
     this.getTokenName();
     this.getTokenSymbol();
     this.getTokenSupply();
-
-    // load data about user
-    this.getUserAddress();
-    this.getUserBalance();
   },
 };
 </script>
