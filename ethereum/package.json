@@ -16,6 +16,7 @@
     "solhint": "^3.2.1"
   },
   "scripts": {
+    "compile": "truffle compile",
     "migrate": "truffle migrate --reset",
     "test": "truffle test",
     "console": "truffle console",
@@ -24,4 +25,3 @@
   "author": "sskender",
   "license": "MIT"
 }
-
