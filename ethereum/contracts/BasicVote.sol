@@ -156,7 +156,16 @@ contract BasicVote is IVote {
         validPropositionId(propositionId)
         returns (PropositionStatus)
     {
-
+        if (propositionsList[propositionId].startBlock > block.number) {
+            return PropositionStatus.PENDING;
+        }
+        else if (propositionsList[propositionId].endBlock >= block.number) {
+            return PropositionStatus.ACTIVE;
+        }
+        else {
+            // TODO calculate treshold
+            return PropositionStatus.SUCCEEDED;
+        }
     }
 
     /**
