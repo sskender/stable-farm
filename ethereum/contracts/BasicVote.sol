@@ -25,7 +25,7 @@ contract BasicVote is IVote {
     /**
      * @dev
      */
-    function getName() external view returns (string memory) {
+    function getName() external pure returns (string memory) {
         return contractName;
     }
 
