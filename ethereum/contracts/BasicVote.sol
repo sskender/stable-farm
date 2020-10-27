@@ -103,6 +103,7 @@ contract BasicVote is IVote {
         external
         view
         override
+        validPropositionId(propositionId)
         returns (
             uint256 id,
             string memory title,
@@ -129,6 +130,7 @@ contract BasicVote is IVote {
         external
         view
         override
+        validPropositionId(propositionId)
         returns (
             uint256 totalVotes,
             uint256 totalVotesAccept,
@@ -151,6 +153,7 @@ contract BasicVote is IVote {
         external
         view
         override
+        validPropositionId(propositionId)
         returns (PropositionStatus)
     {
 
@@ -165,6 +168,7 @@ contract BasicVote is IVote {
         )
         external
         override
+        validPropositionId(propositionId)
         propositionIsActive(propositionId)
         haventVoted(propositionId)
     {
@@ -186,6 +190,18 @@ contract BasicVote is IVote {
         }
 
         p.totalVotes = SafeMath.add(p.totalVotes, 1);
+    }
+
+    /**
+     * @dev
+     */
+    modifier validPropositionId(uint256 propositionId) {
+        require(
+            propositionId >= 0 && propositionId < totalPropositions,
+            "Invalid proposition ID!"
+        );
+
+        _;
     }
 
     /**
