@@ -5,7 +5,7 @@ interface IVote {
     /**
      * @dev Possible states of one proposition.
      */
-    enum PropositionStatus {QUEUED, ACTIVE, SUCCEEDED, FAILED}
+    enum PropositionStatus {PENDING, ACTIVE, SUCCEEDED, FAILED}
 
     /**
      * @dev Options that represent valid vote.
@@ -27,14 +27,20 @@ interface IVote {
         mapping(address => bool) votersAccept;
         mapping(address => bool) votersDeny;
         mapping(address => bool) votersReserved;
-        PropositionStatus status;
+        uint256 startBlock;
+        uint256 endBlock;
     }
 
     function getNumberOfPropositions() external view returns (uint256);
 
     function getActivePropositions() external view returns (uint[10] memory);
 
-    function createProposition(string memory title, string memory description)
+    function createProposition(
+            string memory title, 
+            string memory description,
+            uint256 startBlock,
+            uint256 endBlock
+        )
         external
         returns (uint256);
 
@@ -46,7 +52,8 @@ interface IVote {
             string memory title,
             string memory description,
             address proposedBy,
-            PropositionStatus status
+            uint256 startBlock,
+            uint256 endBlock
         );
 
     function getPropositionVotes(uint256 propositionId)
@@ -58,6 +65,11 @@ interface IVote {
             uint256 totalVotesDeny,
             uint256 totalVotesReserved
         );
+
+    function getPropositionStatus(uint256 propositionId)
+        external
+        view
+        returns (PropositionStatus);
 
     function vote(uint256 propositionId, VotingOptions votingOption) external;
 }

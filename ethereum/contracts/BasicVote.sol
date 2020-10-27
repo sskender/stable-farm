@@ -7,7 +7,7 @@ import "./IVote.sol";
 contract BasicVote is IVote {
 
     // Name of the contract
-    string internal contractName;
+    string internal constant contractName = "EESTEC LC Zagreb Basic Voting Contract";
 
     // Total propositions
     uint256 internal totalPropositions;
@@ -19,7 +19,6 @@ contract BasicVote is IVote {
      * @dev Initialize contract on deployment.
      */
     constructor() {
-        contractName = "EESTEC LC Zagreb Basic Voting Contract";
         totalPropositions = 0;
     }
 
@@ -52,7 +51,10 @@ contract BasicVote is IVote {
         uint activeCount = 0;
 
         for (uint p = 0; p < totalPropositions && activeCount < 10; p++) {
-            if (propositionsList[p].status == PropositionStatus.ACTIVE) {
+            if (
+                propositionsList[p].startBlock <= block.number &&
+                    propositionsList[p].endBlock >= block.number
+            ) {
                 activeIds[activeCount] = p;
                 activeCount++;
             }
@@ -65,9 +67,16 @@ contract BasicVote is IVote {
      * @dev
      */
     function createProposition(
-        string memory title,
-        string memory description
-    ) external override returns (uint256)
+            string memory title,
+            string memory description,
+            uint256 startBlock,
+            uint256 endBlock
+        )
+        external
+        override
+        validStartBlock(startBlock)
+        validEndBlock(startBlock, endBlock)
+        returns (uint256)
     {
         Proposition storage p = propositionsList[totalPropositions];
 
@@ -81,7 +90,8 @@ contract BasicVote is IVote {
         p.totalVotesAccept = 0;
         p.totalVotesDeny = 0;
         p.totalVotesReserved = 0;
-        p.status = PropositionStatus.ACTIVE;
+        p.startBlock = startBlock;
+        p.endBlock = endBlock;
 
         return p.id;
     }
@@ -98,7 +108,8 @@ contract BasicVote is IVote {
             string memory title,
             string memory description,
             address proposedBy,
-            PropositionStatus status
+            uint256 startBlock,
+            uint256 endBlock
         )
     {
         return (
@@ -106,7 +117,8 @@ contract BasicVote is IVote {
             propositionsList[propositionId].title,
             propositionsList[propositionId].description,
             propositionsList[propositionId].proposedBy,
-            propositionsList[propositionId].status
+            propositionsList[propositionId].startBlock,
+            propositionsList[propositionId].endBlock
         );
     }
 
@@ -130,6 +142,18 @@ contract BasicVote is IVote {
             propositionsList[propositionId].totalVotesDeny,
             propositionsList[propositionId].totalVotesReserved
         );
+    }
+
+    /**
+     * @dev
+     */
+    function getPropositionStatus(uint256 propositionId)
+        external
+        view
+        override
+        returns (PropositionStatus)
+    {
+
     }
 
     /**
@@ -167,6 +191,34 @@ contract BasicVote is IVote {
     /**
      * @dev
      */
+    modifier validStartBlock(uint256 startBlock) {
+        require(
+            startBlock >= block.number,
+            "Block number can't be greater than the start block!"
+        );
+
+        _;
+    }
+
+    /**
+     * @dev
+     */
+    modifier validEndBlock(uint256 startBlock, uint256 endBlock) {
+        require(
+            startBlock < endBlock,
+            "End block must be greater than start block!"
+        );
+        require(
+            endBlock > block.number,
+            "Block number can't be greater than the end block!"
+        );
+
+        _;
+    }
+
+    /**
+     * @dev
+     */
     modifier haventVoted(uint256 propositionId) {
         require(
             !(propositionsList[propositionId].votersAccept[msg.sender]),
@@ -189,8 +241,9 @@ contract BasicVote is IVote {
      */
     modifier propositionIsActive(uint256 propositionId) {
         require(
-            propositionsList[propositionId].status == PropositionStatus.ACTIVE,
-            "Proposition is not active!"
+            propositionsList[propositionId].startBlock <= block.number &&
+            propositionsList[propositionId].endBlock >= block.number,
+            "Proposition is not active for voting!"
         );
 
         _;
