@@ -23,14 +23,16 @@ contract BasicVote is IVote {
     }
 
     /**
-     * @dev
+     * @notice Get the contract name.
+     * @return the contract name
      */
     function getName() external pure returns (string memory) {
         return contractName;
     }
 
     /**
-     * @dev
+     * @notice Get total number of all propositions in existance.
+     * @return number of propositions
      */
     function getNumberOfPropositions() external view override
         returns (uint256)
@@ -39,7 +41,8 @@ contract BasicVote is IVote {
     }
 
     /**
-     * @dev
+     * @notice Get list of active propositions's ids.
+     * @return list of ids
      */
     function getActivePropositions()
         external
@@ -64,7 +67,13 @@ contract BasicVote is IVote {
     }
 
     /**
-     * @dev
+     * @notice Create new proposition for voting.
+     * @dev Create new proposition struct and save it to list of propositions.
+     * @param title proposition title
+     * @param description proposition description
+     * @param startBlock block on which proposition is active for voting
+     * @param endBlock block on which proposition is no longer active
+     * @return proposition id
      */
     function createProposition(
             string memory title,
@@ -97,7 +106,15 @@ contract BasicVote is IVote {
     }
 
     /**
-     * @dev
+     * @notice Get basic info of proposition.
+     * @dev These do not include votes related data.
+     * @param propositionId id of proposition
+     * @return id
+     * @return title
+     * @return description
+     * @return proposedBy
+     * @return startBlock
+     * @return endBlock
      */
     function getPropositionInfo(uint256 propositionId)
         external
@@ -124,7 +141,17 @@ contract BasicVote is IVote {
     }
 
     /**
-     * @dev
+     * @notice Get voting info of proposition.
+     * @dev Voting info includes:
+     *      total number of votes,
+     *      number of support votes,
+     *      number of against votes and
+     *      number of reserved votes.
+     * @param propositionId id of proposition
+     * @return totalVotes
+     * @return totalVotesAccept
+     * @return totalVotesDeny
+     * @return totalVotesReserved
      */
     function getPropositionVotes(uint256 propositionId)
         external
@@ -147,7 +174,14 @@ contract BasicVote is IVote {
     }
 
     /**
-     * @dev
+     * @notice Get voting status of proposition.
+     * @dev Voting status can be:
+     *      pending if proposition is not available for voting,
+     *      active if proposition is currently available for voting,
+     *      succeeded if voters voted for support,
+     *      failed if voters voted against.
+     * @param propositionId id of proposition
+     * @return proposition current status
      */
     function getPropositionStatus(uint256 propositionId)
         external
@@ -169,7 +203,9 @@ contract BasicVote is IVote {
     }
 
     /**
-     * @dev
+     * @notice Vote on proposition by giving proposition id and your vote.
+     * @param propositionId id of proposition
+     * @param votingOption accept, deny or reserved
      */
     function vote(
         uint256 propositionId,
@@ -202,7 +238,8 @@ contract BasicVote is IVote {
     }
 
     /**
-     * @dev
+     * @dev Validate that proposition id is in range of propositions list.
+     * @param propositionId id of proposition
      */
     modifier validPropositionId(uint256 propositionId) {
         require(
@@ -214,7 +251,8 @@ contract BasicVote is IVote {
     }
 
     /**
-     * @dev
+     * @dev Validate number of block on which proposition becomes active.
+     * @param startBlock block number
      */
     modifier validStartBlock(uint256 startBlock) {
         require(
@@ -226,7 +264,9 @@ contract BasicVote is IVote {
     }
 
     /**
-     * @dev
+     * @dev Validate number of block on which proposition will no longer be active.
+     * @param startBlock block number
+     * @param endBlock block number
      */
     modifier validEndBlock(uint256 startBlock, uint256 endBlock) {
         require(
@@ -242,7 +282,8 @@ contract BasicVote is IVote {
     }
 
     /**
-     * @dev
+     * @dev Verify that voter has not voted yet. Only one vote is possible.
+     * @param propositionId id of proposition
      */
     modifier haventVoted(uint256 propositionId) {
         require(
@@ -262,7 +303,10 @@ contract BasicVote is IVote {
     }
 
     /**
-     * @dev
+     * @dev Check if proposition is active for voting.
+     *      Proposition is active for voting if current block number is
+     *      between proposition's start block and end block.
+     * @param propositionId id of proposition
      */
     modifier propositionIsActive(uint256 propositionId) {
         require(
