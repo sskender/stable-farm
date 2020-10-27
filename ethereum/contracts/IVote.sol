@@ -21,6 +21,9 @@ interface IVote {
         string description;
         address proposedBy;
         uint256 totalVotes;
+        uint256 totalVotesAccept;
+        uint256 totalVotesDeny;
+        uint256 totalVotesReserved;
         mapping(address => bool) votersAccept;
         mapping(address => bool) votersDeny;
         mapping(address => bool) votersReserved;
@@ -29,7 +32,7 @@ interface IVote {
 
     function getNumberOfPropositions() external view returns (uint256);
 
-    function getActivePropositions() external view returns (uint256[] memory);
+    function getActivePropositions() external view returns (uint[10] memory);
 
     function createProposition(string memory title, string memory description)
         external
@@ -43,24 +46,18 @@ interface IVote {
             string memory title,
             string memory description,
             address proposedBy,
-            uint256 totalVotes,
             PropositionStatus status
         );
 
-    function getPropositionAcceptList(uint256 propositionId)
+    function getPropositionVotes(uint256 propositionId)
         external
         view
-        returns (address[] memory);
-
-    function getPropositionDenyList(uint256 propositionId)
-        external
-        view
-        returns (address[] memory);
-
-    function getPropositionReservedList(uint256 propositionId)
-        external
-        view
-        returns (address[] memory);
+        returns (
+            uint256 totalVotes,
+            uint256 totalVotesAccept,
+            uint256 totalVotesDeny,
+            uint256 totalVotesReserved
+        );
 
     function vote(uint256 propositionId, VotingOptions votingOption) external;
 }
