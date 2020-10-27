@@ -2,7 +2,6 @@
 pragma solidity ^0.7.0;
 
 contract Ownable {
-
     // Token chairman address (owner)
     address internal tokenChairman;
 
@@ -17,7 +16,7 @@ contract Ownable {
      * @dev Verify that sender is contract owner.
      */
     modifier onlyOwner {
-        require(msg.sender == tokenChairman, 'You are not a chairman');
+        require(msg.sender == tokenChairman, "You are not a chairman");
         _;
     }
 
@@ -28,5 +27,4 @@ contract Ownable {
     function chairman() external view returns (address) {
         return tokenChairman;
     }
-
 }

@@ -5,9 +5,9 @@ import "./SafeMath.sol";
 import "./IVote.sol";
 
 contract BasicVote is IVote {
-
     // Name of the contract
-    string internal constant contractName = "EESTEC LC Zagreb Basic Voting Contract";
+    string
+        internal constant contractName = "EESTEC LC Zagreb Basic Voting Contract";
 
     // Total propositions
     uint256 internal totalPropositions;
@@ -34,7 +34,10 @@ contract BasicVote is IVote {
      * @notice Get total number of all propositions in existance.
      * @return number of propositions
      */
-    function getNumberOfPropositions() external view override
+    function getNumberOfPropositions()
+        external
+        view
+        override
         returns (uint256)
     {
         return totalPropositions;
@@ -48,15 +51,15 @@ contract BasicVote is IVote {
         external
         view
         override
-        returns (uint[10] memory)
+        returns (uint256[10] memory)
     {
-        uint[10] memory activeIds;
-        uint activeCount = 0;
+        uint256[10] memory activeIds;
+        uint256 activeCount = 0;
 
-        for (uint p = 0; p < totalPropositions && activeCount < 10; p++) {
+        for (uint256 p = 0; p < totalPropositions && activeCount < 10; p++) {
             if (
                 propositionsList[p].startBlock <= block.number &&
-                    propositionsList[p].endBlock >= block.number
+                propositionsList[p].endBlock >= block.number
             ) {
                 activeIds[activeCount] = p;
                 activeCount++;
@@ -76,11 +79,11 @@ contract BasicVote is IVote {
      * @return proposition id
      */
     function createProposition(
-            string memory title,
-            string memory description,
-            uint256 startBlock,
-            uint256 endBlock
-        )
+        string memory title,
+        string memory description,
+        uint256 startBlock,
+        uint256 endBlock
+    )
         external
         override
         validStartBlock(startBlock)
@@ -192,11 +195,9 @@ contract BasicVote is IVote {
     {
         if (propositionsList[propositionId].startBlock > block.number) {
             return PropositionStatus.PENDING;
-        }
-        else if (propositionsList[propositionId].endBlock >= block.number) {
+        } else if (propositionsList[propositionId].endBlock >= block.number) {
             return PropositionStatus.ACTIVE;
-        }
-        else {
+        } else {
             // TODO calculate treshold
             return PropositionStatus.SUCCEEDED;
         }
@@ -207,10 +208,7 @@ contract BasicVote is IVote {
      * @param propositionId id of proposition
      * @param votingOption accept, deny or reserved
      */
-    function vote(
-        uint256 propositionId,
-        VotingOptions votingOption
-        )
+    function vote(uint256 propositionId, VotingOptions votingOption)
         external
         override
         validPropositionId(propositionId)
@@ -222,12 +220,10 @@ contract BasicVote is IVote {
         if (votingOption == VotingOptions.ACCEPT) {
             p.votersAccept[msg.sender] = true;
             p.totalVotesAccept = SafeMath.add(p.totalVotesAccept, 1);
-        }
-        else if (votingOption == VotingOptions.DENY) {
+        } else if (votingOption == VotingOptions.DENY) {
             p.votersDeny[msg.sender] = true;
             p.totalVotesDeny = SafeMath.add(p.totalVotesDeny, 1);
-        }
-        else if (votingOption == VotingOptions.RESERVED) {
+        } else if (votingOption == VotingOptions.RESERVED) {
             p.votersReserved[msg.sender] = true;
             p.totalVotesReserved = SafeMath.add(p.totalVotesReserved, 1);
         } else {
@@ -311,11 +307,10 @@ contract BasicVote is IVote {
     modifier propositionIsActive(uint256 propositionId) {
         require(
             propositionsList[propositionId].startBlock <= block.number &&
-            propositionsList[propositionId].endBlock >= block.number,
+                propositionsList[propositionId].endBlock >= block.number,
             "Proposition is not active for voting!"
         );
 
         _;
     }
 }
-

@@ -33,16 +33,14 @@ interface IVote {
 
     function getNumberOfPropositions() external view returns (uint256);
 
-    function getActivePropositions() external view returns (uint[10] memory);
+    function getActivePropositions() external view returns (uint256[10] memory);
 
     function createProposition(
-            string memory title, 
-            string memory description,
-            uint256 startBlock,
-            uint256 endBlock
-        )
-        external
-        returns (uint256);
+        string memory title,
+        string memory description,
+        uint256 startBlock,
+        uint256 endBlock
+    ) external returns (uint256);
 
     function getPropositionInfo(uint256 propositionId)
         external

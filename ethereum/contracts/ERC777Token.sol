@@ -9,7 +9,6 @@ import "./Ownable.sol";
  * @dev Implementation of the IERC777 Token Interface.
  */
 contract ERC777Token is IERC777Token, IMintableToken, Ownable {
-
     // Token name
     string internal tokenName;
 
@@ -54,7 +53,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
      * @dev Gets the token name.
      * @return the token name
      */
-    function name() external override view returns (string memory) {
+    function name() external view override returns (string memory) {
         return tokenName;
     }
 
@@ -62,7 +61,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
      * @dev Gets the token symbol.
      * @return the token symbol
      */
-    function symbol() external override view returns (string memory) {
+    function symbol() external view override returns (string memory) {
         return tokenSymbol;
     }
 
@@ -70,7 +69,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
      * @dev Gets the total number of minted tokens.
      * @return the total supply of tokens
      */
-    function totalSupply() external override view returns (uint256) {
+    function totalSupply() external view override returns (uint256) {
         return tokenTotalSupply;
     }
 
@@ -81,8 +80,8 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
      */
     function balanceOf(address holder)
         external
-        override
         view
+        override
         returns (uint256)
     {
         return tokenHoldersBalances[holder];
@@ -90,7 +89,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
 
     /**
      * @dev Return all token holders who hold token.
-     * @return addresses of holders 
+     * @return addresses of holders
      */
     function tokenHolders() external view returns (address[] memory) {
         return tokenHoldersList;
@@ -100,7 +99,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
      * @dev Gets the smallest part of the token that is not divisible.
      * @return the token granularity
      */
-    function granularity() external override view returns (uint256) {
+    function granularity() external view override returns (uint256) {
         return tokenGranularity;
     }
 
@@ -110,8 +109,8 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
      */
     function defaultOperators()
         external
-        override
         view
+        override
         returns (address[] memory)
     {
         return defaultTokenOperators;
@@ -125,8 +124,8 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
      */
     function isOperatorFor(address operator, address holder)
         external
-        override
         view
+        override
         returns (bool)
     {
         return false;
@@ -197,7 +196,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
      * @dev Verify that token is mintable before minting.
      */
     modifier mintEnabled {
-        require(tokenMintable, 'Token is not mintable at the moment');
+        require(tokenMintable, "Token is not mintable at the moment");
         _;
     }
 
@@ -209,7 +208,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
             tokenHoldersBalances[msg.sender] = 1;
             tokenHoldersList.push(msg.sender);
         } else {
-            revert('You already have a token');
+            revert("You already have a token");
         }
     }
 
@@ -228,7 +227,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
         if (!tokenMintable) {
             tokenMintable = true;
         } else {
-            revert('Token minting is already enabled');
+            revert("Token minting is already enabled");
         }
     }
 
@@ -239,8 +238,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
         if (tokenMintable) {
             tokenMintable = false;
         } else {
-            revert('Token minting is already disabled');
+            revert("Token minting is already disabled");
         }
     }
-
 }

@@ -18,4 +18,3 @@ library SafeMath {
         return c;
     }
 }
-

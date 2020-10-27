@@ -13,6 +13,8 @@
     "eslint": "^7.10.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.1",
+    "prettier": "^2.1.2",
+    "prettier-plugin-solidity": "^1.0.0-alpha.59",
     "solhint": "^3.2.1"
   },
   "scripts": {
@@ -20,7 +22,8 @@
     "migrate": "truffle migrate --reset",
     "test": "truffle test",
     "console": "truffle console",
-    "solhint": "solhint \"contracts/**/*.sol\""
+    "solhint": "solhint \"contracts/**/*.sol\"",
+    "prettier": "prettier --write **/*.sol"
   },
   "author": "sskender",
   "license": "MIT"
