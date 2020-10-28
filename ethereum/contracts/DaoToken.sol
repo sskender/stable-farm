@@ -8,7 +8,7 @@ import "./Ownable.sol";
 /**
  * @dev Implementation of the IERC777 Token Interface.
  */
-contract ERC777Token is IERC777Token, IMintableToken, Ownable {
+contract DaoToken is IERC777Token, IMintableToken, Ownable {
     // Token name
     string internal tokenName;
 
