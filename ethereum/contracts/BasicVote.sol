@@ -15,11 +15,23 @@ contract BasicVote is IVote {
     // List of propositions
     mapping(uint256 => Proposition) internal propositionsList;
 
+    // Token interface
+    DaoToken internal token;
+
     /**
      * @dev Initialize contract on deployment.
      */
-    constructor() {
+    constructor(address tokenContract) {
         totalPropositions = 0;
+        token = DaoToken(tokenContract);
+    }
+
+    /**
+     * @notice Get the address of token contract.
+     * @return the contract address
+     */
+    function getTokenAddress() external view returns (address) {
+        return address(token);
     }
 
     /**
@@ -86,6 +98,7 @@ contract BasicVote is IVote {
     )
         external
         override
+        activeMember
         validStartBlock(startBlock)
         validEndBlock(startBlock, endBlock)
         returns (uint256)
@@ -213,6 +226,7 @@ contract BasicVote is IVote {
         override
         validPropositionId(propositionId)
         propositionIsActive(propositionId)
+        activeMember
         haventVoted(propositionId)
     {
         Proposition storage p = propositionsList[propositionId];
@@ -278,6 +292,18 @@ contract BasicVote is IVote {
     }
 
     /**
+     * @dev Verifiy that sender is an active dao member and holds the dao token.
+     */
+    modifier activeMember() {
+        require(
+            token.balanceOf(msg.sender) > 0,
+            "You are not an active member"
+        );
+
+        _;
+    }
+
+    /**
      * @dev Verify that voter has not voted yet. Only one vote is possible.
      * @param propositionId id of proposition
      */
@@ -313,4 +339,11 @@ contract BasicVote is IVote {
 
         _;
     }
+}
+
+/**
+ * @dev ERC777 interface with methods only used in voting contract.
+ */
+interface DaoToken {
+    function balanceOf(address holder) external view returns (uint256);
 }
