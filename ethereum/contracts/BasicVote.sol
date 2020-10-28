@@ -227,7 +227,7 @@ contract BasicVote is IVote {
             p.votersReserved[msg.sender] = true;
             p.totalVotesReserved = SafeMath.add(p.totalVotesReserved, 1);
         } else {
-            revert("Invalid voting option!");
+            revert("Invalid voting option");
         }
 
         p.totalVotes = SafeMath.add(p.totalVotes, 1);
@@ -240,7 +240,7 @@ contract BasicVote is IVote {
     modifier validPropositionId(uint256 propositionId) {
         require(
             propositionId >= 0 && propositionId < totalPropositions,
-            "Invalid proposition ID!"
+            "Invalid proposition ID"
         );
 
         _;
@@ -253,7 +253,7 @@ contract BasicVote is IVote {
     modifier validStartBlock(uint256 startBlock) {
         require(
             startBlock >= block.number,
-            "Block number can't be greater than the start block!"
+            "Block number can't be greater than the start block"
         );
 
         _;
@@ -267,11 +267,11 @@ contract BasicVote is IVote {
     modifier validEndBlock(uint256 startBlock, uint256 endBlock) {
         require(
             startBlock < endBlock,
-            "End block must be greater than start block!"
+            "End block must be greater than start block"
         );
         require(
             endBlock > block.number,
-            "Block number can't be greater than the end block!"
+            "Block number can't be greater than the end block"
         );
 
         _;
@@ -284,15 +284,15 @@ contract BasicVote is IVote {
     modifier haventVoted(uint256 propositionId) {
         require(
             !(propositionsList[propositionId].votersAccept[msg.sender]),
-            "You already voted!"
+            "You already voted"
         );
         require(
             !(propositionsList[propositionId].votersDeny[msg.sender]),
-            "You already voted!"
+            "You already voted"
         );
         require(
             !(propositionsList[propositionId].votersReserved[msg.sender]),
-            "You already voted!"
+            "You already voted"
         );
 
         _;
@@ -308,7 +308,7 @@ contract BasicVote is IVote {
         require(
             propositionsList[propositionId].startBlock <= block.number &&
                 propositionsList[propositionId].endBlock >= block.number,
-            "Proposition is not active for voting!"
+            "Proposition is not active for voting"
         );
 
         _;
