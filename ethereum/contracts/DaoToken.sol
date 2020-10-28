@@ -4,6 +4,7 @@ pragma solidity ^0.7.0;
 import "./IERC777Token.sol";
 import "./IMintableToken.sol";
 import "./Ownable.sol";
+import "./SafeMath.sol";
 
 /**
  * @dev Implementation of the IERC777 Token Interface.
@@ -207,6 +208,7 @@ contract DaoToken is IERC777Token, IMintableToken, Ownable {
      */
     function mint() external override mintEnabled {
         if (tokenHoldersBalances[msg.sender] == 0) {
+            tokenTotalSupply = SafeMath.add(tokenTotalSupply, 1);
             tokenHoldersBalances[msg.sender] = 1;
             tokenHoldersList.push(msg.sender);
         } else {
