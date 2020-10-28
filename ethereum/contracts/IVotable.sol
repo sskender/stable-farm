@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
 
-interface IVote {
+interface IVotable {
     /**
      * @dev Possible states of one proposition.
      */

@@ -2,9 +2,9 @@
 pragma solidity ^0.7.0;
 
 import "./SafeMath.sol";
-import "./IVote.sol";
+import "./IVotable.sol";
 
-contract BasicVote is IVote {
+contract CommunityVoting is IVotable {
     // Name of the contract
     string
         internal constant contractName = "EESTEC LC Zagreb Basic Voting Contract";
