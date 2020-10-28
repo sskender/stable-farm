@@ -50,7 +50,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
     }
 
     /**
-     * @dev Gets the token name.
+     * @notice Gets the token name.
      * @return the token name
      */
     function name() external view override returns (string memory) {
@@ -58,7 +58,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
     }
 
     /**
-     * @dev Gets the token symbol.
+     * @notice Gets the token symbol.
      * @return the token symbol
      */
     function symbol() external view override returns (string memory) {
@@ -66,7 +66,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
     }
 
     /**
-     * @dev Gets the total number of minted tokens.
+     * @notice Gets the total number of minted tokens.
      * @return the total supply of tokens
      */
     function totalSupply() external view override returns (uint256) {
@@ -74,7 +74,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
     }
 
     /**
-     * @dev Gets the balance of the account with address holder.
+     * @notice Gets the balance of the account with address holder.
      * @param holder the address of token holder for which the balance is returned
      * @return the balance of token holder
      */
@@ -88,7 +88,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
     }
 
     /**
-     * @dev Return all token holders who hold token.
+     * @notice Return all token holders who hold token.
      * @return addresses of holders
      */
     function tokenHolders() external view returns (address[] memory) {
@@ -96,7 +96,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
     }
 
     /**
-     * @dev Gets the smallest part of the token that is not divisible.
+     * @notice Gets the smallest part of the token that is not divisible.
      * @return the token granularity
      */
     function granularity() external view override returns (uint256) {
@@ -104,7 +104,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
     }
 
     /**
-     * @dev Gets the list of addresses which are allowed to operate with tokens on behalf of some holder.
+     * @notice Gets the list of addresses which are allowed to operate with tokens on behalf of some holder.
      * @return the token operators
      */
     function defaultOperators()
@@ -117,6 +117,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
     }
 
     /**
+     * @notice Check if operator of holder.
      * @dev Check whether the operator is allowed to manage tokens held by the holder address.
      * @param operator the address of the operator
      * @param holder the address of the token holder
@@ -201,6 +202,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
     }
 
     /**
+     * @notice Mint yourself a token.
      * @dev Mint exactly one token for caller's address if one hasn't minted already.
      */
     function mint() external override mintEnabled {
@@ -213,7 +215,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
     }
 
     /**
-     * @dev Check whether the token is mintable or not.
+     * @notice Check whether the token is mintable or not.
      * @return true if token is mintable
      */
     function isMintable() external view override returns (bool) {
@@ -221,7 +223,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
     }
 
     /**
-     * @dev Enable token minting from public.
+     * @notice Enable token minting for public.
      */
     function enableMinting() external override onlyOwner {
         if (!tokenMintable) {
@@ -232,7 +234,7 @@ contract ERC777Token is IERC777Token, IMintableToken, Ownable {
     }
 
     /**
-     * @dev Disable token minting from public.
+     * @notice Disable token minting for public.
      */
     function disableMinting() external override onlyOwner {
         if (tokenMintable) {
