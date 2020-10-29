@@ -273,7 +273,7 @@ tags
 docs/_book
 
 # TODO: where does this rule come from?
-test/
+#test/
 
 ### Vuejs ###
 # Recommended template: Node.gitignore
