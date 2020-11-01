@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const DaoToken = artifacts.require('DaoToken');
 
 contract('DaoToken test', async (accounts) => {
