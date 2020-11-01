@@ -172,4 +172,42 @@ contract('CommunityVoting test', async (accounts) => {
     const propositionStatus = await instance.getPropositionStatus(0);
     assert.equal(propositionStatus.valueOf(), 0);
   });
+
+  it('it should fetch proposition votes', async () => {
+    const instance = await CommunityVoting.deployed();
+    const votes = await instance.getPropositionVotes(0);
+    assert.equal(votes.totalVotes, 0);
+    assert.equal(votes.totalVotesAccept, 0);
+    assert.equal(votes.totalVotesDeny, 0);
+    assert.equal(votes.totalVotesReserved, 0);
+  });
+
+  it('it should create another proposition from deployer', async () => {
+    const deployer = accounts[0];
+    const instance = await CommunityVoting.deployed();
+    const blockNumber = await web3.eth.getBlockNumber();
+    await instance.createProposition(
+      'Prop title 2',
+      'Prop desc 2',
+      blockNumber + 2,
+      blockNumber + 11
+    );
+    const totalPropositions = await instance.getNumberOfPropositions();
+    const oldPropositionInfo = await instance.getPropositionInfo(0);
+    const propositionInfo = await instance.getPropositionInfo(1);
+
+    assert.equal(totalPropositions.valueOf(), 2);
+    assert.equal(oldPropositionInfo.title, 'Prop title');
+    assert.equal(oldPropositionInfo.description, 'Prop desc');
+    assert.equal(oldPropositionInfo.proposedBy, deployer);
+    assert.equal(propositionInfo.title, 'Prop title 2');
+    assert.equal(propositionInfo.description, 'Prop desc 2');
+    assert.equal(propositionInfo.proposedBy, deployer);
+  });
+
+  it('it should fetch proposition active status info', async () => {
+    const instance = await CommunityVoting.deployed();
+    const propositionStatus = await instance.getPropositionStatus(0);
+    assert.equal(propositionStatus.valueOf(), 1);
+  });
 });
