@@ -1,13 +1,32 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
 
-import "./SafeMath.sol";
-import "./IVotable.sol";
+import './SafeMath.sol';
+import './IVotable.sol';
 
 contract CommunityVoting is IVotable {
+    /**
+     * @dev Definition of one proposition.
+     */
+    struct Proposition {
+        uint256 id;
+        string title;
+        string description;
+        address proposedBy;
+        uint256 totalVotes;
+        uint256 totalVotesAccept;
+        uint256 totalVotesDeny;
+        uint256 totalVotesReserved;
+        mapping(address => bool) votersAccept;
+        mapping(address => bool) votersDeny;
+        mapping(address => bool) votersReserved;
+        uint256 startBlock;
+        uint256 endBlock;
+    }
+
     // Name of the contract
     string
-        internal constant contractName = "EESTEC LC Zagreb Basic Voting Contract";
+        internal constant contractName = 'EESTEC LC Zagreb Basic Voting Contract';
 
     // Total propositions
     uint256 internal totalPropositions;
@@ -16,14 +35,22 @@ contract CommunityVoting is IVotable {
     mapping(uint256 => Proposition) internal propositionsList;
 
     // Token interface
-    DaoToken internal token;
+    IDaoToken internal token;
+
+    /**
+     * @dev Minimum difference between voting start and end block.
+     * @return minimum block difference
+     */
+    function getMinimumVotingBlockDifference() internal pure returns (uint256) {
+        return 10;
+    }
 
     /**
      * @dev Initialize contract on deployment.
      */
     constructor(address tokenContract) {
         totalPropositions = 0;
-        token = DaoToken(tokenContract);
+        token = IDaoToken(tokenContract);
     }
 
     /**
@@ -46,39 +73,8 @@ contract CommunityVoting is IVotable {
      * @notice Get total number of all propositions in existance.
      * @return number of propositions
      */
-    function getNumberOfPropositions()
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function getNumberOfPropositions() external view returns (uint256) {
         return totalPropositions;
-    }
-
-    /**
-     * @notice Get list of active propositions's ids.
-     * @return list of ids
-     */
-    function getActivePropositions()
-        external
-        view
-        override
-        returns (uint256[10] memory)
-    {
-        uint256[10] memory activeIds;
-        uint256 activeCount = 0;
-
-        for (uint256 p = 0; p < totalPropositions && activeCount < 10; p++) {
-            if (
-                propositionsList[p].startBlock <= block.number &&
-                propositionsList[p].endBlock >= block.number
-            ) {
-                activeIds[activeCount] = p;
-                activeCount++;
-            }
-        }
-
-        return activeIds;
     }
 
     /**
@@ -88,7 +84,6 @@ contract CommunityVoting is IVotable {
      * @param description proposition description
      * @param startBlock block on which proposition is active for voting
      * @param endBlock block on which proposition is no longer active
-     * @return proposition id
      */
     function createProposition(
         string memory title,
@@ -97,11 +92,9 @@ contract CommunityVoting is IVotable {
         uint256 endBlock
     )
         external
-        override
         activeMember
         validStartBlock(startBlock)
         validEndBlock(startBlock, endBlock)
-        returns (uint256)
     {
         Proposition storage p = propositionsList[totalPropositions];
 
@@ -117,8 +110,6 @@ contract CommunityVoting is IVotable {
         p.totalVotesReserved = 0;
         p.startBlock = startBlock;
         p.endBlock = endBlock;
-
-        return p.id;
     }
 
     /**
@@ -135,7 +126,6 @@ contract CommunityVoting is IVotable {
     function getPropositionInfo(uint256 propositionId)
         external
         view
-        override
         validPropositionId(propositionId)
         returns (
             uint256 id,
@@ -172,7 +162,6 @@ contract CommunityVoting is IVotable {
     function getPropositionVotes(uint256 propositionId)
         external
         view
-        override
         validPropositionId(propositionId)
         returns (
             uint256 totalVotes,
@@ -241,7 +230,7 @@ contract CommunityVoting is IVotable {
             p.votersReserved[msg.sender] = true;
             p.totalVotesReserved = SafeMath.add(p.totalVotesReserved, 1);
         } else {
-            revert("Invalid voting option");
+            revert('Invalid voting option');
         }
 
         p.totalVotes = SafeMath.add(p.totalVotes, 1);
@@ -254,7 +243,7 @@ contract CommunityVoting is IVotable {
     modifier validPropositionId(uint256 propositionId) {
         require(
             propositionId >= 0 && propositionId < totalPropositions,
-            "Invalid proposition ID"
+            'Invalid proposition Id'
         );
 
         _;
@@ -265,10 +254,7 @@ contract CommunityVoting is IVotable {
      * @param startBlock block number
      */
     modifier validStartBlock(uint256 startBlock) {
-        require(
-            startBlock >= block.number,
-            "Block number can't be greater than the start block"
-        );
+        require(startBlock >= block.number, 'Invalid start block number');
 
         _;
     }
@@ -280,12 +266,9 @@ contract CommunityVoting is IVotable {
      */
     modifier validEndBlock(uint256 startBlock, uint256 endBlock) {
         require(
-            startBlock < endBlock,
-            "End block must be greater than start block"
-        );
-        require(
-            endBlock > block.number,
-            "Block number can't be greater than the end block"
+            SafeMath.add(startBlock, getMinimumVotingBlockDifference()) <=
+                endBlock,
+            'Invalid end block number'
         );
 
         _;
@@ -297,7 +280,7 @@ contract CommunityVoting is IVotable {
     modifier activeMember() {
         require(
             token.balanceOf(msg.sender) > 0,
-            "You are not an active member"
+            'You are not an active member'
         );
 
         _;
@@ -310,15 +293,15 @@ contract CommunityVoting is IVotable {
     modifier haventVoted(uint256 propositionId) {
         require(
             !(propositionsList[propositionId].votersAccept[msg.sender]),
-            "You already voted"
+            'You already voted'
         );
         require(
             !(propositionsList[propositionId].votersDeny[msg.sender]),
-            "You already voted"
+            'You already voted'
         );
         require(
             !(propositionsList[propositionId].votersReserved[msg.sender]),
-            "You already voted"
+            'You already voted'
         );
 
         _;
@@ -334,7 +317,7 @@ contract CommunityVoting is IVotable {
         require(
             propositionsList[propositionId].startBlock <= block.number &&
                 propositionsList[propositionId].endBlock >= block.number,
-            "Proposition is not active for voting"
+            'Proposition is not active for voting'
         );
 
         _;
@@ -344,6 +327,6 @@ contract CommunityVoting is IVotable {
 /**
  * @dev ERC777 interface with methods only used in voting contract.
  */
-interface DaoToken {
+interface IDaoToken {
     function balanceOf(address holder) external view returns (uint256);
 }
