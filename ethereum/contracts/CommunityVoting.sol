@@ -196,13 +196,31 @@ contract CommunityVoting is IVotable {
         returns (PropositionStatus)
     {
         if (propositionsList[propositionId].startBlock > block.number) {
+            // voting pending
             return PropositionStatus.PENDING;
         } else if (propositionsList[propositionId].endBlock >= block.number) {
+            // voting in progress
             return PropositionStatus.ACTIVE;
         } else {
-            // TODO calculate treshold
-            return PropositionStatus.SUCCEEDED;
+            // voting finished - calculate votes
+            uint256 totalMembers = token.totalSupply();
+            uint256 votersTreshold = SafeMath.div(totalMembers, 2);
+
+            // voters quorum
+            if (propositionsList[propositionId].totalVotes > votersTreshold) {
+                uint256 totalVotes = propositionsList[propositionId].totalVotes;
+                uint256 votesTreshold = SafeMath.div(totalVotes, 2);
+
+                // votes for accept quorum
+                if (
+                    propositionsList[propositionId].totalVotesAccept >
+                    votesTreshold
+                ) {
+                    return PropositionStatus.SUCCEEDED;
+                }
+            }
         }
+        return PropositionStatus.FAILED;
     }
 
     /**
