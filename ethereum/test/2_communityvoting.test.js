@@ -148,7 +148,7 @@ contract('CommunityVoting test', async (accounts) => {
     assert.equal(totalPropositions.valueOf(), 0);
   });
 
-  it('it should create a new proposition from contract deployer', async () => {
+  it('it should create proposition #1 from contract deployer', async () => {
     const deployer = accounts[0];
     const instance = await CommunityVoting.deployed();
     const blockNumber = await web3.eth.getBlockNumber();
@@ -167,13 +167,13 @@ contract('CommunityVoting test', async (accounts) => {
     assert.equal(propositionInfo.proposedBy, deployer);
   });
 
-  it('it should fetch proposition pending status info', async () => {
+  it('it should fetch proposition #1 pending status info', async () => {
     const instance = await CommunityVoting.deployed();
     const propositionStatus = await instance.getPropositionStatus(0);
     assert.equal(propositionStatus.valueOf(), 0);
   });
 
-  it('it should fail to vote on a pending proposition', async () => {
+  it('it should fail to vote on a pending proposition #1', async () => {
     const instance = await CommunityVoting.deployed();
     let e = null;
     try {
@@ -189,7 +189,7 @@ contract('CommunityVoting test', async (accounts) => {
     assert.equal(votes.totalVotesReserved, 0);
   });
 
-  it('it should fetch proposition 0 votes', async () => {
+  it('it should fetch proposition #1 0 votes', async () => {
     const instance = await CommunityVoting.deployed();
     const votes = await instance.getPropositionVotes(0);
     assert.equal(votes.totalVotes, 0);
@@ -198,7 +198,7 @@ contract('CommunityVoting test', async (accounts) => {
     assert.equal(votes.totalVotesReserved, 0);
   });
 
-  it('it should create another proposition from deployer', async () => {
+  it('it should create proposition #2 from deployer', async () => {
     const deployer = accounts[0];
     const instance = await CommunityVoting.deployed();
     const blockNumber = await web3.eth.getBlockNumber();
@@ -221,7 +221,7 @@ contract('CommunityVoting test', async (accounts) => {
     assert.equal(propositionInfo.proposedBy, deployer);
   });
 
-  it('it should allow members to create a proposition', async () => {
+  it('it should allow members to create proposition #3', async () => {
     const member = accounts[1];
     const blockNumber = await web3.eth.getBlockNumber();
     const tokenInstance = await DaoToken.deployed();
@@ -243,7 +243,7 @@ contract('CommunityVoting test', async (accounts) => {
     assert.equal(propositionInfo.proposedBy, member);
   });
 
-  it('it should fetch propositions status info', async () => {
+  it('it should fetch propositions #1 #2 #3 status info', async () => {
     const instance = await CommunityVoting.deployed();
     const propositionStatus1 = await instance.getPropositionStatus(0);
     const propositionStatus2 = await instance.getPropositionStatus(1);
@@ -253,7 +253,7 @@ contract('CommunityVoting test', async (accounts) => {
     assert.equal(propositionStatus3.valueOf(), 0);
   });
 
-  it('it should vote FOR on the first proposition', async () => {
+  it('it should vote FOR on proposition #1', async () => {
     const instance = await CommunityVoting.deployed();
     await instance.vote(0, 0);
     const votes = await instance.getPropositionVotes(0);
@@ -263,7 +263,7 @@ contract('CommunityVoting test', async (accounts) => {
     assert.equal(votes.totalVotesReserved, 0);
   });
 
-  it('it should fail to vote again', async () => {
+  it('it should fail to vote again on proposition #1', async () => {
     const instance = await CommunityVoting.deployed();
     let e = null;
     try {
@@ -279,7 +279,7 @@ contract('CommunityVoting test', async (accounts) => {
     assert.equal(votes.totalVotesReserved, 0);
   });
 
-  it('it should fail for a non member to vote', async () => {
+  it('it should fail for a non member to vote on proposition #1', async () => {
     const nonMember = accounts[2];
     const instance = await CommunityVoting.deployed();
     let e = null;
@@ -296,13 +296,15 @@ contract('CommunityVoting test', async (accounts) => {
     assert.equal(votes.totalVotesReserved, 0);
   });
 
-  it('it should be voted by quorum to accept the first proposition', async () => {
+  it('it should be voted by quorum to accept proposition #1', async () => {
     const tokenInstance = await DaoToken.deployed();
     await tokenInstance.mint({from: accounts[2]});
     await tokenInstance.mint({from: accounts[3]});
     await tokenInstance.mint({from: accounts[4]});
     await tokenInstance.mint({from: accounts[5]});
     await tokenInstance.mint({from: accounts[6]});
+    await tokenInstance.mint({from: accounts[7]});
+    await tokenInstance.mint({from: accounts[8]});
     const instance = await CommunityVoting.deployed();
     await instance.vote(0, 1, {from: accounts[1]});
     await instance.vote(0, 0, {from: accounts[2]});
@@ -315,7 +317,7 @@ contract('CommunityVoting test', async (accounts) => {
     assert.equal(votes.totalVotesReserved, 1);
   });
 
-  it('it should be voted by quorum to deny the second proposition', async () => {
+  it('it should be voted by quorum to deny proposition #2', async () => {
     const instance = await CommunityVoting.deployed();
     await instance.vote(1, 1);
     await instance.vote(1, 1, {from: accounts[1]});
@@ -329,25 +331,36 @@ contract('CommunityVoting test', async (accounts) => {
     assert.equal(votes.totalVotesReserved, 0);
   });
 
-  it('it should fail to gather voting quorum on the third proposition', async () => {
-    const tokenInstance = await DaoToken.deployed();
-    await tokenInstance.mint({from: accounts[7]});
-    await tokenInstance.mint({from: accounts[8]});
-    await tokenInstance.mint({from: accounts[9]});
-    await tokenInstance.disableMinting();
+  it('it should fail to gather voting quorum on proposition #3', async () => {
     const instance = await CommunityVoting.deployed();
-    await instance.vote(2, 1);
-    await instance.vote(2, 1, {from: accounts[1]});
-    await instance.vote(2, 1, {from: accounts[2]});
-    await instance.vote(2, 1, {from: accounts[3]});
+    await instance.vote(2, 0);
+    await instance.vote(2, 0, {from: accounts[1]});
+    await instance.vote(2, 0, {from: accounts[2]});
+    await instance.vote(2, 0, {from: accounts[3]});
     const votes = await instance.getPropositionVotes(2);
     assert.equal(votes.totalVotes, 4);
-    assert.equal(votes.totalVotesAccept, 0);
-    assert.equal(votes.totalVotesDeny, 4);
+    assert.equal(votes.totalVotesAccept, 4);
+    assert.equal(votes.totalVotesDeny, 0);
     assert.equal(votes.totalVotesReserved, 0);
   });
 
-  it('it should fail to vote on a closed proposition', async () => {
+  it('it should fail to vote on a closed proposition #1', async () => {
+    const instance = await CommunityVoting.deployed();
+    let e = null;
+    try {
+      await instance.vote(0, 2);
+    } catch (err) {
+      e = err.reason;
+    }
+    const votes = await instance.getPropositionVotes(0);
+    assert.equal(e, 'Proposition is not active for voting');
+    assert.equal(votes.totalVotes, 5);
+    assert.equal(votes.totalVotesAccept, 3);
+    assert.equal(votes.totalVotesDeny, 1);
+    assert.equal(votes.totalVotesReserved, 1);
+  });
+
+  it('it should fail to vote on a closed proposition #2', async () => {
     const instance = await CommunityVoting.deployed();
     let e = null;
     try {
@@ -363,19 +376,35 @@ contract('CommunityVoting test', async (accounts) => {
     assert.equal(votes.totalVotesReserved, 0);
   });
 
-  it('it should fetch the first proposition succeeded status info', async () => {
+  it('it should fail to vote on a closed proposition #3', async () => {
+    const instance = await CommunityVoting.deployed();
+    let e = null;
+    try {
+      await instance.vote(2, 2);
+    } catch (err) {
+      e = err.reason;
+    }
+    const votes = await instance.getPropositionVotes(2);
+    assert.equal(e, 'Proposition is not active for voting');
+    assert.equal(votes.totalVotes, 4);
+    assert.equal(votes.totalVotesAccept, 4);
+    assert.equal(votes.totalVotesDeny, 0);
+    assert.equal(votes.totalVotesReserved, 0);
+  });
+
+  it('it should fetch proposition #1 succeeded status info', async () => {
     const instance = await CommunityVoting.deployed();
     const propositionStatus = await instance.getPropositionStatus(0);
     assert.equal(propositionStatus.valueOf(), 2);
   });
 
-  it('it should fetch the second proposition failed status info', async () => {
+  it('it should fetch proposition #2 failed status info', async () => {
     const instance = await CommunityVoting.deployed();
     const propositionStatus = await instance.getPropositionStatus(1);
     assert.equal(propositionStatus.valueOf(), 3);
   });
 
-  it('it should fetch the third proposition failed status info - no quorum', async () => {
+  it('it should fetch proposition #3 failed status info - no quorum', async () => {
     const instance = await CommunityVoting.deployed();
     const propositionStatus = await instance.getPropositionStatus(2);
     assert.equal(propositionStatus.valueOf(), 3);
