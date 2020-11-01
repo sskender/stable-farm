@@ -155,7 +155,7 @@ contract('CommunityVoting test', async (accounts) => {
     await instance.createProposition(
       'Prop title',
       'Prop desc',
-      blockNumber + 2,
+      blockNumber + 3,
       blockNumber + 11
     );
     const totalPropositions = await instance.getNumberOfPropositions();
@@ -176,6 +176,22 @@ contract('CommunityVoting test', async (accounts) => {
   it('it should fetch proposition votes', async () => {
     const instance = await CommunityVoting.deployed();
     const votes = await instance.getPropositionVotes(0);
+    assert.equal(votes.totalVotes, 0);
+    assert.equal(votes.totalVotesAccept, 0);
+    assert.equal(votes.totalVotesDeny, 0);
+    assert.equal(votes.totalVotesReserved, 0);
+  });
+
+  it('it should fail to vote on pending proposition', async () => {
+    const instance = await CommunityVoting.deployed();
+    let e = null;
+    try {
+      await instance.vote(0, 0);
+    } catch (err) {
+      e = err.reason;
+    }
+    const votes = await instance.getPropositionVotes(0);
+    assert.equal(e, 'Proposition is not active for voting');
     assert.equal(votes.totalVotes, 0);
     assert.equal(votes.totalVotesAccept, 0);
     assert.equal(votes.totalVotesDeny, 0);
