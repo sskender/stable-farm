@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
 
-import "./IERC777Token.sol";
-import "./IMintableToken.sol";
-import "./Ownable.sol";
-import "./SafeMath.sol";
+import './IERC777Token.sol';
+import './IMintableToken.sol';
+import './Ownable.sol';
+import './SafeMath.sol';
 
 /**
  * @dev Implementation of the IERC777 Token Interface.
@@ -39,8 +39,8 @@ contract DaoToken is IERC777Token, IMintableToken, Ownable {
      */
     constructor() Ownable() {
         // set basic token attributes
-        tokenName = "EESTEC LC Zagreb";
-        tokenSymbol = "EZG";
+        tokenName = 'EESTEC LC Zagreb';
+        tokenSymbol = 'EZG';
         tokenGranularity = 1;
 
         // set token holder and initial supply
@@ -198,7 +198,7 @@ contract DaoToken is IERC777Token, IMintableToken, Ownable {
      * @dev Verify that token is mintable before minting.
      */
     modifier mintEnabled {
-        require(tokenMintable, "Token is not mintable at the moment");
+        require(tokenMintable, 'Token is not mintable at the moment');
         _;
     }
 
@@ -212,7 +212,7 @@ contract DaoToken is IERC777Token, IMintableToken, Ownable {
             tokenHoldersBalances[msg.sender] = 1;
             tokenHoldersList.push(msg.sender);
         } else {
-            revert("You already have a token");
+            revert('You already have a token');
         }
     }
 
@@ -231,7 +231,7 @@ contract DaoToken is IERC777Token, IMintableToken, Ownable {
         if (!tokenMintable) {
             tokenMintable = true;
         } else {
-            revert("Token minting is already enabled");
+            revert('Token minting is already enabled');
         }
     }
 
@@ -242,7 +242,7 @@ contract DaoToken is IERC777Token, IMintableToken, Ownable {
         if (tokenMintable) {
             tokenMintable = false;
         } else {
-            revert("Token minting is already disabled");
+            revert('Token minting is already disabled');
         }
     }
 }

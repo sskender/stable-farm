@@ -16,7 +16,7 @@ contract Ownable {
      * @dev Verify that sender is contract owner.
      */
     modifier onlyOwner {
-        require(msg.sender == tokenChairman, "You are not a chairman");
+        require(msg.sender == tokenChairman, 'You are not a chairman');
         _;
     }
 
