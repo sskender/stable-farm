@@ -149,10 +149,10 @@ contract CommunityVoting is IVotable {
     /**
      * @notice Get voting info of proposition.
      * @dev Voting info includes:
-     *      total number of votes,
-     *      number of support votes,
-     *      number of against votes and
-     *      number of reserved votes.
+     * - total number of votes,
+     * - number of support votes,
+     * - number of against votes and
+     * - number of reserved votes.
      * @param propositionId id of proposition
      * @return totalVotes
      * @return totalVotesAccept
@@ -181,10 +181,10 @@ contract CommunityVoting is IVotable {
     /**
      * @notice Get voting status of proposition.
      * @dev Voting status can be:
-     *      pending if proposition is not available for voting,
-     *      active if proposition is currently available for voting,
-     *      succeeded if voters voted for support,
-     *      failed if voters voted against.
+     * - pending if proposition is not available for voting,
+     * - active if proposition is currently available for voting,
+     * - succeeded if voters voted for support,
+     * - failed if voters voted against.
      * @param propositionId id of proposition
      * @return proposition current status
      */
@@ -309,8 +309,8 @@ contract CommunityVoting is IVotable {
 
     /**
      * @dev Check if proposition is active for voting.
-     *      Proposition is active for voting if current block number is
-     *      between proposition's start block and end block.
+     * Proposition is active for voting if current block number is
+     * between proposition's start block and end block.
      * @param propositionId id of proposition
      */
     modifier propositionIsActive(uint256 propositionId) {
@@ -329,4 +329,6 @@ contract CommunityVoting is IVotable {
  */
 interface IDaoToken {
     function balanceOf(address holder) external view returns (uint256);
+
+    function totalSupply() external view returns (uint256);
 }
