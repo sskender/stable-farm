@@ -3,6 +3,7 @@
     <div class="wrap-token">
       <TokenHolders />
     </div>
+    <div class="wrap-vote"></div>
   </div>
 </template>
 
