@@ -18,12 +18,18 @@ Proof of concept for running a nonprofit organization on Ethereum blockchain.
   - `npm run test`
   - `npm run migrate`
   - `npm run console`
+- Interact with contract in truffle console:
+  - `npm run console`
+  - ```javascript
+    let instance = await DaoToken.deployed();
+    let tokenAddress = instance.address;
+    ```
 - Interact with contract using ContractABI.json and Web3
 
 #### Web development:
 
-- Set [Web3 provider URI](client/src/providers/web3.js) (default provider is `http://localhost:7545`)
-- Replace contract ABI after build from [build](ethereum/) to [client/src/providers/abi](client/src/providers/abi)
+- Set [Web3 provider URI](client/src/providers/web3.js) (default provider is ganache `http://localhost:7545`)
+- Replace contract ABI json after [build](#contract-development) from [build folder](ethereum/) to [client/src/providers/abi folder](client/src/providers/abi)
 - Replace contract address after deployment in [contract provider file](client/src/providers)
 - `cd client`
 - `npm run serve`
@@ -32,8 +38,9 @@ Proof of concept for running a nonprofit organization on Ethereum blockchain.
 
 #### Ethereum development:
 
-- [Truffle](https://www.trufflesuite.com/docs/truffle/quickstart)
 - [Ganache](https://www.trufflesuite.com/ganache)
+- [Truffle](https://www.trufflesuite.com/docs/truffle/quickstart)
+- [Truffle console interact](https://www.trufflesuite.com/docs/truffle/getting-started/interacting-with-your-contracts)
 
 #### Token:
 
