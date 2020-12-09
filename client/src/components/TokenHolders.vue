@@ -6,7 +6,7 @@
       <span id="chairman-address">{{ this.chairmanAddress }}</span>
     </p>
     <p>
-      Active members: <span>{{ this.tokenHoldersList.length }}</span>
+      Total members: <span>{{ this.tokenHoldersList.length }}</span>
     </p>
     <ul>
       <li v-for="holder in tokenHoldersList" :key="holder">
