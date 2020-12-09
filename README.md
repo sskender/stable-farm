@@ -20,10 +20,10 @@ Proof of concept for running a nonprofit organization on Ethereum blockchain.
   - `npm run console`
 - Interact with contract in truffle console:
   - `npm run console`
-  - ```javascript
+  - ````javascript
     let instance = await DaoToken.deployed();
-    let tokenAddress = instance.address;
-    ```
+    let tokenAddress = instance.address;```
+    ````
 - Interact with contract using ContractABI.json and Web3
 
 #### Web development:
