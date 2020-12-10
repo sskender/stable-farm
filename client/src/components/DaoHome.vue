@@ -2,6 +2,7 @@
   <div class="dao-home">
     <div class="wrap-token">
       <BlockInfo />
+      <WalletInfo />
       <TokenInfo />
       <TokenMint />
       <TokenHolders />
@@ -15,6 +16,7 @@ import BlockInfo from "./../components/BlockInfo.vue";
 import TokenInfo from "./../components/TokenInfo.vue";
 import TokenHolders from "./../components/TokenHolders.vue";
 import TokenMint from "./../components/TokenMint.vue";
+import WalletInfo from "./../components/WalletInfo.vue";
 
 export default {
   name: "DaoHome",
@@ -23,6 +25,7 @@ export default {
     TokenHolders,
     TokenInfo,
     TokenMint,
+    WalletInfo,
   },
 };
 </script>
