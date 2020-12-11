@@ -1,8 +1,8 @@
 <template>
   <div class="wrap-wallet-info">
-    <div v-if="accountAddress">
-      Hello, <span>{{ accountAddress }}</span> <br />
-      <span>You are {{ accountBalance > 0 ? "" : "not" }} a member!</span>
+    <div v-if="this.$store.state.accountAddress">
+      Hello, <span>{{ this.$store.state.accountAddress }}</span> <br />
+      <span>You are {{ this.$store.state.member ? "" : "not" }} a member!</span>
     </div>
     <div v-else>
       <span>Please connect wallet</span><br />
@@ -16,12 +16,6 @@ import Web3 from "web3";
 import DaoTokenJson from "./../providers/abi/DaoToken.json";
 
 export default {
-  data: () => {
-    return {
-      accountAddress: null,
-      accountBalance: 0,
-    };
-  },
   methods: {
     async loadWeb3() {
       if (window.ethereum) {
@@ -36,16 +30,11 @@ export default {
     async loadAccountData() {
       const web3 = window.web3;
 
-      // store account address to vuex
+      // store account data to vuex
       const accounts = await web3.eth.getAccounts();
       const account = accounts[0];
       this.accountAddress = account;
       this.$store.commit("saveAccountAddress", this.accountAddress);
-
-      // load balance
-      const contract = this.$store.state.DaoTokenContract;
-      const balance = await contract.methods.balanceOf(account).call();
-      this.accountBalance = balance;
     },
     async prepareContracts() {
       const web3 = window.web3;
@@ -65,9 +54,6 @@ export default {
       await this.prepareContracts();
       await this.loadAccountData();
     },
-  },
-  created() {
-    this.accountAddress = this.$store.state.accountAddress;
   },
 };
 </script>
