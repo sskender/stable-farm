@@ -1,6 +1,6 @@
 <template>
   <div class="wrap-wallet-info">
-    <div v-if="account">
+    <div v-if="accountAddress">
       Hello, <span>{{ accountAddress }}</span> <br />
       <span>You are {{ accountBalance > 0 ? "" : "not" }} a member!</span>
     </div>
@@ -36,11 +36,10 @@ export default {
     async loadAccountData() {
       const web3 = window.web3;
       const accounts = await web3.eth.getAccounts();
-      const balance = await DaoTokenContract.methods
-        .balanceOf(this.account)
-        .call();
+      const account = accounts[0];
+      const balance = await DaoTokenContract.methods.balanceOf(account).call();
 
-      this.accountAddress = accounts[0];
+      this.accountAddress = account;
       this.accountBalance = balance;
 
       // store account to vuex
