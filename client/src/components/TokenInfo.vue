@@ -3,7 +3,7 @@
     <h3>{{ this.tokenName }}</h3>
     <div>
       <table>
-        <th>Contract wallet info</th>
+        <th>Token contract information</th>
         <tr>
           <td>Address</td>
           <td>{{ this.contractAddress }}</td>
@@ -13,7 +13,7 @@
           <td>{{ this.tokenSymbol }}</td>
         </tr>
         <tr>
-          <td>Granularity</td>
+          <td>Decimals</td>
           <td>{{ this.tokenGranularity }}</td>
         </tr>
       </table>

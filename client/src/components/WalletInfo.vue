@@ -2,7 +2,7 @@
   <div class="wrap-wallet-info">
     <div v-if="account">
       Hello, <span>{{ account }}</span> <br />
-      Balance: {{ accountBalance }}
+      <span>You are {{ accountBalance > 0 ? "" : "not" }} a member!</span>
     </div>
     <div v-else>
       <span>Please connect wallet</span><br />
