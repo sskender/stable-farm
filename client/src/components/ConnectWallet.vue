@@ -70,7 +70,6 @@ export default {
     this.accountAddress = this.$store.state.accountAddress;
   },
 };
-</script>>
+</script>
 
-<style scoped>
-</style>>
+<style scoped></style>
