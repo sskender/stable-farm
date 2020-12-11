@@ -14,7 +14,6 @@
 <script>
 import Web3 from "web3";
 import DaoTokenJson from "./../providers/abi/DaoToken.json";
-import DaoTokenContract from "./../providers/DaoTokenContract";
 
 export default {
   data: () => {
@@ -36,20 +35,17 @@ export default {
     },
     async loadAccountData() {
       const web3 = window.web3;
+
+      // store account address to vuex
       const accounts = await web3.eth.getAccounts();
       const account = accounts[0];
-      const balance = await DaoTokenContract.methods.balanceOf(account).call();
-      const chairmanAddress = await DaoTokenContract.methods.chairman().call();
-
       this.accountAddress = account;
-      this.accountBalance = balance;
-
-      // store account info to vuex
       this.$store.commit("saveAccountAddress", this.accountAddress);
-      this.$store.commit(
-        "verifyChairmanConnected",
-        this.accountAddress == chairmanAddress
-      );
+
+      // load balance
+      const contract = this.$store.state.DaoTokenContract;
+      const balance = await contract.methods.balanceOf(account).call();
+      this.accountBalance = balance;
     },
     async prepareContracts() {
       const web3 = window.web3;
@@ -61,13 +57,13 @@ export default {
         tokenAddress
       );
 
-      // store dao token contract
+      // store dao token contract to vuex
       this.$store.state.DaoTokenContract = DaoTokenContract;
     },
     async connectWallet() {
       await this.loadWeb3();
-      await this.loadAccountData();
       await this.prepareContracts();
+      await this.loadAccountData();
     },
   },
   created() {

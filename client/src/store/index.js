@@ -12,9 +12,14 @@ const store = new Vuex.Store({
   mutations: {
     saveAccountAddress: (state, accountAddress) => {
       state.accountAddress = accountAddress;
-    },
-    verifyChairmanConnected: (state, chairmanConnected) => {
-      state.chairmanConnected = chairmanConnected;
+
+      const contract = state.DaoTokenContract;
+      contract.methods
+        .chairman()
+        .call()
+        .then((c) => {
+          state.chairmanConnected = state.accountAddress == c;
+        });
     },
   },
 });
