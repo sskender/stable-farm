@@ -6,10 +6,14 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     accountAddress: null,
+    chairmanConnected: false,
   },
   mutations: {
     saveAccountAddress: (state, accountAddress) => {
       state.accountAddress = accountAddress;
+    },
+    verifyChairmanConnected: (state, chairmanConnected) => {
+      state.chairmanConnected = chairmanConnected;
     },
   },
 });

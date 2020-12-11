@@ -8,7 +8,7 @@
       <button v-on:click="mintToken">JOIN</button>
     </div>
     <div v-else>We are not accepting new members at the moment</div>
-    <div v-if="chairmanConnected">
+    <div v-if="this.$store.state.chairmanConnected">
       <span>Minting new tokens</span>
       <button v-if="mintingEnabled" v-on:click="disableMinting">DISABLE</button>
       <button v-else v-on:click="enableMinting">ENABLE</button>
@@ -22,16 +22,10 @@ import DaoTokenContract from "./../providers/DaoTokenContract";
 export default {
   data: () => {
     return {
-      chairmanAddress: null,
-      mintingEnabled: null,
-      chairmanConnected: true,
+      mintingEnabled: false,
     };
   },
   methods: {
-    async getChairman() {
-      const chairman = await DaoTokenContract.methods.chairman().call();
-      this.chairmanAddress = chairman;
-    },
     async getMintingStatus() {
       const minting = await DaoTokenContract.methods.isMintable().call();
       this.mintingEnabled = minting;
@@ -49,7 +43,6 @@ export default {
     },
   },
   async created() {
-    await this.getChairman();
     await this.getMintingStatus();
   },
 };

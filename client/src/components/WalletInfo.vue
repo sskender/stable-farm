@@ -38,17 +38,25 @@ export default {
       const accounts = await web3.eth.getAccounts();
       const account = accounts[0];
       const balance = await DaoTokenContract.methods.balanceOf(account).call();
+      const chairmanAddress = await DaoTokenContract.methods.chairman().call();
 
       this.accountAddress = account;
       this.accountBalance = balance;
 
-      // store account to vuex
+      // store account info to vuex
       this.$store.commit("saveAccountAddress", this.accountAddress);
+      this.$store.commit(
+        "verifyChairmanConnected",
+        this.accountAddress == chairmanAddress
+      );
     },
     async connectWallet() {
       await this.loadWeb3();
       await this.loadAccountData();
     },
+  },
+  created() {
+    this.accountAddress = this.$store.state.accountAddress;
   },
 };
 </script>>
