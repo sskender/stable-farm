@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
+    DaoTokenContract: null,
     accountAddress: null,
     chairmanConnected: false,
   },

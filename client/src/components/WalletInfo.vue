@@ -13,6 +13,7 @@
 
 <script>
 import Web3 from "web3";
+import DaoTokenJson from "./../providers/abi/DaoToken.json";
 import DaoTokenContract from "./../providers/DaoTokenContract";
 
 export default {
@@ -50,9 +51,23 @@ export default {
         this.accountAddress == chairmanAddress
       );
     },
+    async prepareContracts() {
+      const web3 = window.web3;
+
+      // prepare dao token contract
+      const tokenAddress = "0xebc303f547DB6c9f18355E247871f3563E1E86d4";
+      const DaoTokenContract = new web3.eth.Contract(
+        DaoTokenJson.abi,
+        tokenAddress
+      );
+
+      // store dao token contract
+      this.$store.state.DaoTokenContract = DaoTokenContract;
+    },
     async connectWallet() {
       await this.loadWeb3();
       await this.loadAccountData();
+      await this.prepareContracts();
     },
   },
   created() {
