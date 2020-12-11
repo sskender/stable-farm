@@ -1,13 +1,13 @@
 <template>
   <div class="wrap-token-mint">
-    <div v-if="mintingEnabled">
-      <p>
-        We are accepting new members!<br />
-        <span>Claim your membership token here</span>
-      </p>
+    <p v-if="mintingEnabled">We are accepting new members!</p>
+    <p v-else>We are not accepting new members at the moment</p>
+
+    <div v-if="mintingEnabled && !this.$store.state.member">
+      <span>Claim your membership token here</span>
       <button v-on:click="mintToken">JOIN</button>
     </div>
-    <div v-else>We are not accepting new members at the moment</div>
+
     <div v-if="this.$store.state.chairmanConnected">
       <span>Minting new tokens</span>
       <button v-if="mintingEnabled" v-on:click="disableMinting">DISABLE</button>
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+// TODO replace from store
 import DaoTokenContract from "./../providers/DaoTokenContract";
 
 export default {
@@ -31,15 +32,36 @@ export default {
       this.mintingEnabled = minting;
     },
     async enableMinting() {
-      console.log("enabling minting");
-      this.mintingEnabled = true;
+      const caller = this.$store.state.accountAddress;
+      const contract = this.$store.state.DaoTokenContract;
+
+      try {
+        await contract.methods.enableMinting().send({ from: caller });
+        this.mintingEnabled = true;
+      } catch (err) {
+        //
+      }
     },
     async disableMinting() {
-      console.log("disabling minting");
-      this.mintingEnabled = false;
+      const caller = this.$store.state.accountAddress;
+      const contract = this.$store.state.DaoTokenContract;
+
+      try {
+        await contract.methods.disableMinting().send({ from: caller });
+        this.mintingEnabled = false;
+      } catch (err) {
+        //
+      }
     },
     async mintToken() {
-      console.log("minting started");
+      const caller = this.$store.state.accountAddress;
+      const contract = this.$store.state.DaoTokenContract;
+
+      try {
+        await contract.methods.mint().send({ from: caller });
+      } catch (err) {
+        //
+      }
     },
   },
   async created() {
