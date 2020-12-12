@@ -3,7 +3,13 @@
     <p v-if="mintingEnabled">We are accepting new members!</p>
     <p v-else>We are not accepting new members at the moment</p>
 
-    <div v-if="mintingEnabled && !this.$store.state.member">
+    <div
+      v-if="
+        mintingEnabled &&
+        !this.$store.state.member &&
+        this.$store.state.accountAddress
+      "
+    >
       <span>Claim your membership token here</span>
       <button v-on:click="mintToken">JOIN</button>
     </div>
@@ -17,9 +23,6 @@
 </template>
 
 <script>
-// TODO replace from store
-import DaoTokenContract from "./../providers/DaoTokenContract";
-
 export default {
   data: () => {
     return {
@@ -28,7 +31,8 @@ export default {
   },
   methods: {
     async getMintingStatus() {
-      const minting = await DaoTokenContract.methods.isMintable().call();
+      const contract = this.$store.state.DaoTokenContract;
+      const minting = await contract.methods.isMintable().call();
       this.mintingEnabled = minting;
     },
     async enableMinting() {
@@ -39,7 +43,7 @@ export default {
         await contract.methods.enableMinting().send({ from: caller });
         this.mintingEnabled = true;
       } catch (err) {
-        //
+        // TODO
       }
     },
     async disableMinting() {
@@ -50,7 +54,7 @@ export default {
         await contract.methods.disableMinting().send({ from: caller });
         this.mintingEnabled = false;
       } catch (err) {
-        //
+        // TODO
       }
     },
     async mintToken() {
@@ -60,7 +64,7 @@ export default {
       try {
         await contract.methods.mint().send({ from: caller });
       } catch (err) {
-        //
+        // TODO
       }
     },
   },
