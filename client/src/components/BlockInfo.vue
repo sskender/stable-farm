@@ -6,15 +6,13 @@
 </template>
 
 <script>
-import web3 from "./../providers/web3";
-
 export default {
   data: () => {
     return { blockNumber: null, updatedAt: null, lastUpdateInSeconds: 0 };
   },
   methods: {
     async updateBlockNumber() {
-      const block = await web3.eth.getBlockNumber();
+      const block = await this.$store.state.web3.eth.getBlockNumber();
       this.blockNumber = block;
       this.updatedAt = new Date();
     },
