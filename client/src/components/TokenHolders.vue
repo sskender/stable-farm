@@ -17,19 +17,19 @@
 </template>
 
 <script>
-import DaoTokenContract from "./../providers/DaoTokenContract";
-
 export default {
   data: () => {
     return { tokenHoldersList: [], chairmanAddress: null };
   },
   methods: {
     async getChairman() {
-      const chairman = await DaoTokenContract.methods.chairman().call();
+      const contract = this.$store.state.DaoTokenContract;
+      const chairman = await contract.methods.chairman().call();
       this.chairmanAddress = chairman;
     },
     async getTokenHolders() {
-      const holders = await DaoTokenContract.methods.tokenHolders().call();
+      const contract = this.$store.state.DaoTokenContract;
+      const holders = await contract.methods.tokenHolders().call();
       this.tokenHoldersList = holders;
     },
   },
