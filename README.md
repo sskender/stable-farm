@@ -60,6 +60,7 @@ Proof of concept for running a nonprofit organization on Ethereum blockchain.
 
 - [Installation](https://cli.vuejs.org/guide/installation.html)
 - [Official docs](https://vuejs.org/v2/guide/installation.html)
+- [Vuex](https://vuex.vuejs.org/)
 
 ## License
 
