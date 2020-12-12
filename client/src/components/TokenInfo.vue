@@ -22,8 +22,6 @@
 </template>
 
 <script>
-import DaoTokenContract from "./../providers/DaoTokenContract";
-
 export default {
   data: () => {
     return {
@@ -35,19 +33,23 @@ export default {
   },
   methods: {
     async getContractAddress() {
-      const address = await DaoTokenContract.options.address;
+      const contract = this.$store.state.DaoTokenContract;
+      const address = await contract.options.address;
       this.contractAddress = address;
     },
     async getName() {
-      const name = await DaoTokenContract.methods.name().call();
+      const contract = this.$store.state.DaoTokenContract;
+      const name = await contract.methods.name().call();
       this.tokenName = name;
     },
     async getSymbol() {
-      const symbol = await DaoTokenContract.methods.symbol().call();
+      const contract = this.$store.state.DaoTokenContract;
+      const symbol = await contract.methods.symbol().call();
       this.tokenSymbol = symbol;
     },
     async getGranularity() {
-      const granularity = await DaoTokenContract.methods.granularity().call();
+      const contract = this.$store.state.DaoTokenContract;
+      const granularity = await contract.methods.granularity().call();
       this.tokenGranularity = Number(granularity);
     },
   },
