@@ -1,6 +1,10 @@
 <template>
   <div class="wrap-block-info">
     Current block: <span>{{ this.blockNumber }}</span> <br />
+    <b-icon-arrow-clockwise
+      animation="spin"
+      font-scale="1"
+    ></b-icon-arrow-clockwise>
     Updated <span>{{ this.lastUpdateInSeconds }}</span> s ago.
   </div>
 </template>
