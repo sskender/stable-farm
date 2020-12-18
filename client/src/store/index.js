@@ -3,6 +3,7 @@ import Vuex from "vuex";
 
 import web3 from "../providers/web3";
 import DaoTokenJson from "../providers/abi/DaoToken.json";
+import CommunityVotingJson from "../providers/abi/CommunityVoting.json";
 
 Vue.use(Vuex);
 
@@ -10,6 +11,7 @@ const store = new Vuex.Store({
   state: {
     web3: null,
     DaoTokenContract: null,
+    CommunityVotingContract: null,
     accountAddress: null,
     member: false,
     chairmanConnected: false,
@@ -48,8 +50,16 @@ const store = new Vuex.Store({
         tokenAddress
       );
 
-      // store contract reference
+      // load community voting contract
+      const communityAddress = "0x153BcF2593E3e2645A443BC2739a0b504932c9b4";
+      const CommunityVotingContract = new state.web3.eth.Contract(
+        CommunityVotingJson.abi,
+        communityAddress
+      );
+
+      // store contract references
       state.DaoTokenContract = DaoTokenContract;
+      state.CommunityVotingContract = CommunityVotingContract;
     },
   },
 });
