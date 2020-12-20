@@ -2,7 +2,10 @@
   <div id="app">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-4">
+          <BlockInfo />
+        </div>
+        <div class="col-md-8">
           <ConnectWallet />
         </div>
       </div>
@@ -12,11 +15,6 @@
         </div>
         <div class="col-md-6">
           <CommunityVoting />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <BlockInfo />
         </div>
       </div>
     </div>
