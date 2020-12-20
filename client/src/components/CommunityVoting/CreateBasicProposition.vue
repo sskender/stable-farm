@@ -4,11 +4,14 @@
     <form @submit.prevent="createProposition">
       <input type="text" v-model="propositionTitle" placeholder="Title" />
       <br />
-      <input
+      <textarea
+        rows="4"
+        cols="30"
         type="text"
         v-model="propositionDescription"
-        placeholder="Proposition text"
-      /><br />
+        placeholder="Description"
+      ></textarea>
+      <br />
       <input
         type="number"
         v-model="startBlock"
