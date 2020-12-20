@@ -11,6 +11,7 @@
       Start: <span>{{ proposition.startBlock }}</span> End:
       <span>{{ proposition.endBlock }}</span>
     </div>
+    <div>Display details</div>
   </div>
 </template>
 
