@@ -32,6 +32,17 @@ export default {
     },
     async vote(propositionId, votingOption) {
       console.log(propositionId, votingOption);
+      const caller = this.$store.state.accountAddress;
+      const contract = this.$store.state.CommunityVotingContract;
+
+      try {
+        const transation = await contract.methods
+          .vote(propositionId, votingOption)
+          .send({ from: caller });
+        console.log(transation);
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
 };
