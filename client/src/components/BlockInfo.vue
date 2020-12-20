@@ -11,6 +11,7 @@
 
 <script>
 export default {
+  name: "BlockInfo",
   data: () => {
     return { blockNumber: null, updatedAt: null, lastUpdateInSeconds: 0 };
   },

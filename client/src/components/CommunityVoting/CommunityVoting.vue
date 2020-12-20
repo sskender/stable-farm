@@ -18,8 +18,13 @@ import CreateBasicProposition from "./CreateBasicProposition";
 import PropositionsList from "./PropositionsList";
 
 export default {
+  name: "CommunityVoting",
   data: () => {
     return { communityVotingContractName: null };
+  },
+  components: {
+    CreateBasicProposition,
+    PropositionsList,
   },
   methods: {
     async getContractName() {
@@ -27,10 +32,6 @@ export default {
       const name = await contract.methods.getName().call();
       this.communityVotingContractName = name;
     },
-  },
-  components: {
-    CreateBasicProposition,
-    PropositionsList,
   },
   async created() {
     await this.getContractName();

@@ -2,11 +2,21 @@
   <div id="app">
     <div class="container-fluid">
       <div class="row">
+        <div class="col-md-12">
+          <ConnectWallet />
+        </div>
+      </div>
+      <div class="row">
         <div class="col-md-6">
-          <DaoHome />
+          <TokenDao />
         </div>
         <div class="col-md-6">
           <CommunityVoting />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <BlockInfo />
         </div>
       </div>
     </div>
@@ -14,14 +24,17 @@
 </template>
 
 <script>
-// TODO extract wallet stuff here
-import DaoHome from "./components/DaoHome";
-import CommunityVoting from "./components/CommunityVoting/CommunityVoting";
+import ConnectWallet from "./components/ConnectWallet.vue";
+import BlockInfo from "./components/BlockInfo.vue";
+import TokenDao from "./components/TokenDao/TokenDao.vue";
+import CommunityVoting from "./components/CommunityVoting/CommunityVoting.vue";
 
 export default {
   name: "App",
   components: {
-    DaoHome,
+    ConnectWallet,
+    BlockInfo,
+    TokenDao,
     CommunityVoting,
   },
 };
