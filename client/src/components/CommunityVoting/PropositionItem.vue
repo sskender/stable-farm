@@ -1,10 +1,11 @@
 <template>
-  <div>
+  <div class="wrap-proposition-item">
     <p>{{ proposition.title }}</p>
     <p>{{ proposition.description }}</p>
     <p>
       Proposed by <span>{{ proposition.proposedBy }}</span>
     </p>
+    <Vote :propositionId="Number(proposition.id)" />
     <div>Status: {{ this.propositionStatusText }}</div>
     <div>
       Start: <span>{{ proposition.startBlock }}</span> End:
@@ -14,12 +15,17 @@
 </template>
 
 <script>
+import Vote from "./Vote.vue";
+
 export default {
   data: () => {
     return { propositionStatus: 0, propositionStatusText: "Pending" };
   },
   props: {
     proposition: Object,
+  },
+  components: {
+    Vote,
   },
   methods: {
     showPropositionText(statusId) {
