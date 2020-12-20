@@ -1,11 +1,12 @@
 <template>
   <div class="wrap-block-info">
-    Current block: <span>{{ this.blockNumber }}</span> <br />
     <b-icon-arrow-clockwise
       animation="spin"
       font-scale="1"
     ></b-icon-arrow-clockwise>
-    Updated <span>{{ this.lastUpdateInSeconds }}</span> s ago.
+    Updated <span>{{ this.lastUpdateInSeconds }}</span> seconds ago. Block
+    number is
+    <span>{{ this.blockNumber }}</span>
   </div>
 </template>
 
@@ -23,7 +24,7 @@ export default {
     },
     async getTimeDifference() {
       const timeDiff = new Date() - this.updatedAt;
-      this.lastUpdateInSeconds = Math.round(timeDiff / 1000);
+      this.lastUpdateInSeconds = Math.round(timeDiff / 1000) - 1;
     },
   },
   async created() {

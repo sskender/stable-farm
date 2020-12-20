@@ -2,10 +2,10 @@
   <div id="app">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-4 text-left">
           <BlockInfo />
         </div>
-        <div class="col-md-8">
+        <div class="col-md-8 text-right">
           <ConnectWallet />
         </div>
       </div>

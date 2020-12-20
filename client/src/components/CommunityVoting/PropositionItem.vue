@@ -3,10 +3,13 @@
     <p>{{ proposition.title }}</p>
     <p>{{ proposition.description }}</p>
     <p>
-      Proposed by <span>{{ proposition.proposedBy }}</span>
+      Proposed by
+      <span class="account-address">{{ proposition.proposedBy }}</span>
     </p>
     <Vote :propositionId="Number(proposition.id)" />
-    <div>Status: {{ this.propositionStatusText }}</div>
+    <div>
+      Status: <span>{{ this.propositionStatusText }}</span>
+    </div>
     <div>
       Start: <span>{{ proposition.startBlock }}</span> End:
       <span>{{ proposition.endBlock }}</span>

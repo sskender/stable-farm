@@ -3,14 +3,14 @@
     <h3>Active members</h3>
     <p>
       Chairman: <br />
-      <span id="chairman-address">{{ this.chairmanAddress }}</span>
+      <span class="account-address">{{ this.chairmanAddress }}</span>
     </p>
     <p>
       Total members: <span>{{ this.tokenHoldersList.length }}</span>
     </p>
     <ul>
       <li v-for="holder in tokenHoldersList" :key="holder">
-        <span id="holder-address"> {{ holder }} </span>
+        <span class="account-address"> {{ holder }} </span>
       </li>
     </ul>
   </div>

@@ -6,15 +6,21 @@
         <th>Token contract information</th>
         <tr>
           <td>Address</td>
-          <td>{{ this.contractAddress }}</td>
+          <td>
+            <span class="account-address">{{ this.contractAddress }}</span>
+          </td>
         </tr>
         <tr>
           <td>Symbol</td>
-          <td>{{ this.tokenSymbol }}</td>
+          <td>
+            <span class="account-address">{{ this.tokenSymbol }}</span>
+          </td>
         </tr>
         <tr>
           <td>Decimals</td>
-          <td>{{ this.tokenGranularity }}</td>
+          <td>
+            <span class="account-address">{{ this.tokenGranularity }}</span>
+          </td>
         </tr>
       </table>
     </div>

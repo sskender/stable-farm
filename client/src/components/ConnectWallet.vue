@@ -1,11 +1,15 @@
 <template>
   <div class="wrap-wallet-info">
     <div v-if="this.$store.state.accountAddress">
-      Hello, <span>{{ this.$store.state.accountAddress }}</span> <br />
-      <span>You are {{ this.$store.state.member ? "" : "not" }} a member!</span>
+      Hello,
+      <span class="account-address">{{
+        this.$store.state.accountAddress
+      }}</span>
+      <br />
+      <p>You are {{ this.$store.state.member ? "" : "not" }} a member!</p>
     </div>
     <div v-else>
-      <span>Please connect wallet</span><br />
+      Please connect wallet
       <button v-on:click="connectWallet">Connect</button>
     </div>
   </div>
