@@ -1,7 +1,15 @@
 <template>
   <div id="app">
-    <DaoHome />
-    <CommunityVoting />
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6">
+          <DaoHome />
+        </div>
+        <div class="col-md-6">
+          <CommunityVoting />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
