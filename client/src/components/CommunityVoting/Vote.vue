@@ -1,8 +1,22 @@
 <template>
   <div class="wrap-proposition-vote">
-    <button v-on:click="voteApprove">APPROVE</button>
-    <button v-on:click="voteDeny">DENY</button>
-    <button v-on:click="voteReserved">RESERVED</button>
+    <button
+      type="button"
+      class="btn btn-success btn-sm"
+      v-on:click="voteApprove"
+    >
+      APPROVE
+    </button>
+    <button type="button" class="btn btn-danger btn-sm" v-on:click="voteDeny">
+      DENY
+    </button>
+    <button
+      type="button"
+      class="btn btn-warning btn-sm"
+      v-on:click="voteReserved"
+    >
+      RESERVED
+    </button>
   </div>
 </template>
 

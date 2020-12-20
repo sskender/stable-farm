@@ -1,20 +1,25 @@
 <template>
   <div class="wrap-proposition-item">
-    <p>{{ proposition.title }}</p>
-    <p>{{ proposition.description }}</p>
-    <p>
-      Proposed by
-      <span class="account-address">{{ proposition.proposedBy }}</span>
-    </p>
-    <Vote :propositionId="Number(proposition.id)" />
-    <div>
-      Status: <span>{{ this.propositionStatusText }}</span>
+    <div class="card border-dark bg-light mb-3" style="max-width: 28rem">
+      <div class="card-header">
+        <b>{{ proposition.title }}</b>
+      </div>
+      <div class="card-body">
+        <p class="card-text">
+          <i>{{ proposition.description }}</i>
+        </p>
+        <p class="card-text">
+          <small>
+            Proposed by
+            <span class="account-address">{{ proposition.proposedBy }}</span>
+          </small>
+        </p>
+      </div>
+      <div class="card-footer bg-light">
+        <Vote :propositionId="Number(proposition.id)" />
+        Status: <span>{{ this.propositionStatusText }}</span>
+      </div>
     </div>
-    <div>
-      Start: <span>{{ proposition.startBlock }}</span> End:
-      <span>{{ proposition.endBlock }}</span>
-    </div>
-    <div>Display details</div>
   </div>
 </template>
 
