@@ -20,14 +20,12 @@ const store = new Vuex.Store({
     propositionsList: [],
   },
   getters: {
-    // TODO account related data is actually getter
     numberOfTokenHolders: (state) => {
       return state.tokenHoldersList.length;
     },
   },
   mutations: {
-    // TODO change to load
-    saveAccountData: async (state) => {
+    loadAccountData: async (state) => {
       const accounts = await state.web3.eth.getAccounts();
       state.accountAddress = accounts[0];
 

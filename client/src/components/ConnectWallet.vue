@@ -31,16 +31,15 @@ export default {
         );
       }
     },
-    async loadAccount() {
+    async connectWallet() {
+      // load web3 and wallet
+      await this.loadWeb3();
+
       // save web3 to vuex and reload contracts
       this.$store.commit("prepareWeb3", window.web3);
 
       // save account data to vuex
-      this.$store.commit("saveAccountData");
-    },
-    async connectWallet() {
-      await this.loadWeb3();
-      await this.loadAccount();
+      this.$store.commit("loadAccountData");
     },
   },
 };
