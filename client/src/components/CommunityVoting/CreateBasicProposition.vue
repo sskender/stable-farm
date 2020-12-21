@@ -72,7 +72,7 @@ export default {
 
       try {
         // wallet method call
-        const transation = await contract.methods
+        await contract.methods
           .createProposition(title, desc, start, end)
           .send({ from: caller });
 
