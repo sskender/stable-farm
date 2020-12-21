@@ -23,6 +23,12 @@ const store = new Vuex.Store({
     numberOfTokenHolders: (state) => {
       return state.tokenHoldersList.length;
     },
+    propositions: (state) => {
+      return state.propositionsList.reverse();
+    },
+    numberOfPropositions: (state) => {
+      return state.propositionsList.length;
+    },
   },
   mutations: {
     loadAccountData: async (state) => {
@@ -57,6 +63,19 @@ const store = new Vuex.Store({
 
       state.tokenHoldersList = sorter;
     },
+    loadPropositionsList: async (state) => {
+      const contract = state.CommunityVotingContract;
+      const propositionsNumber = await contract.methods
+        .getNumberOfPropositions()
+        .call();
+
+      // load only newer propositions
+      const currentLen = state.propositionsList.length;
+      for (let i = currentLen; i < propositionsNumber; i++) {
+        const prop = await contract.methods.getPropositionInfo(i).call();
+        state.propositionsList.push(prop);
+      }
+    },
     prepareWeb3: (state, web3) => {
       // store new web3
       state.web3 = web3;
@@ -84,6 +103,7 @@ const store = new Vuex.Store({
     updateApplicationData(context) {
       context.commit("loadBlockNumber");
       context.commit("loadMembers");
+      context.commit("loadPropositionsList");
     },
   },
 });
