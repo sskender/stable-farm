@@ -4,7 +4,10 @@
     <div>
       <p>{{ this.communityVotingContractName }}</p>
     </div>
-    <div>
+    <button @click="toggleShowCreateBasicProposition">
+      Make a new proposition
+    </button>
+    <div v-if="showCreateBasicProposition">
       <CreateBasicProposition />
     </div>
     <div>
@@ -20,7 +23,10 @@ import PropositionsList from "./PropositionsList";
 export default {
   name: "CommunityVoting",
   data: () => {
-    return { communityVotingContractName: null };
+    return {
+      communityVotingContractName: null,
+      showCreateBasicProposition: false,
+    };
   },
   components: {
     CreateBasicProposition,
@@ -31,6 +37,10 @@ export default {
       const contract = this.$store.state.CommunityVotingContract;
       const name = await contract.methods.getName().call();
       this.communityVotingContractName = name;
+    },
+    toggleShowCreateBasicProposition() {
+      console.log("clicked");
+      this.showCreateBasicProposition = !this.showCreateBasicProposition;
     },
   },
   async created() {

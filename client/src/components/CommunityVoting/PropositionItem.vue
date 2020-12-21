@@ -1,15 +1,12 @@
 <template>
   <div class="wrap-proposition-item">
     <div class="card border-dark bg-light mb-3" style="max-width: 28rem">
-      <div class="card-header bg-light text-dark">
-        <b>{{ proposition.title }}</b>
-      </div>
       <div class="card-body text-dark">
+        <h5 class="card-title">{{ proposition.title }}</h5>
         <p class="card-text">
           <i>{{ proposition.description }}</i>
-        </p>
-        <p class="card-text">
-          <small>
+          <br />
+          <small class="card-text text-right">
             Proposed by
             <span class="account-address">{{ proposition.proposedBy }}</span>
           </small>
