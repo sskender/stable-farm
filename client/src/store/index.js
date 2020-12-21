@@ -24,7 +24,7 @@ const store = new Vuex.Store({
       return state.tokenHoldersList.length;
     },
     propositions: (state) => {
-      return state.propositionsList.reverse();
+      return state.propositionsList;
     },
     numberOfPropositions: (state) => {
       return state.propositionsList.length;
@@ -71,7 +71,7 @@ const store = new Vuex.Store({
 
       // load only newer propositions
       const currentLen = state.propositionsList.length;
-      for (let i = currentLen; i < propositionsNumber; i++) {
+      for (let i = propositionsNumber - 1; i >= currentLen; i--) {
         const prop = await contract.methods.getPropositionInfo(i).call();
         state.propositionsList.push(prop);
       }

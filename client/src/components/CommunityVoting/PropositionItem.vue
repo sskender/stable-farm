@@ -1,6 +1,6 @@
 <template>
   <div class="wrap-proposition-item">
-    <div class="card border-dark bg-light mb-3" style="max-width: 28rem">
+    <div class="card border-dark bg-light mb-2" style="max-width: 28rem">
       <div class="card-body text-dark">
         <h5 class="card-title">{{ proposition.title }}</h5>
         <p class="card-text">
@@ -12,12 +12,20 @@
           </small>
         </p>
       </div>
-      <div class="card-footer bg-light">
+      <div class="card-footer text-center">
         <div v-if="isVotable(proposition)">
           <Vote :propositionId="Number(proposition.id)" />
         </div>
         <div v-else>
-          <span>{{ propositionStatusText }}</span>
+          <span
+            v-bind:class="{
+              'text-danger': propositionStatus == 3,
+              'text-success': propositionStatus == 2,
+              'text-primary': propositionStatus == 1,
+              'text-secondary': propositionStatus == 0,
+            }"
+            >{{ propositionStatusText }}</span
+          >
         </div>
       </div>
     </div>

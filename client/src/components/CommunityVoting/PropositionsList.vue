@@ -1,10 +1,10 @@
 <template>
   <div>
     <h4>
-      All propositions (<span>{{ getNumberOfPropositions() }}</span
+      Community propositions (<span>{{ numberOfPropositions }}</span
       >)
     </h4>
-    <div v-for="proposition in getPropositions()" :key="proposition.id">
+    <div v-for="proposition in propositionsList" :key="proposition.id">
       <PropositionItem :proposition="proposition" />
     </div>
   </div>
@@ -15,20 +15,23 @@ import PropositionItem from "./PropositionItem.vue";
 
 export default {
   data: () => {
-    return {};
+    return { propositionsList: [], numberOfPropositions: 0 };
   },
   components: {
     PropositionItem,
   },
   methods: {
     getPropositions() {
-      return this.$store.getters.propositions;
+      this.propositionsList = this.$store.getters.propositions;
     },
     getNumberOfPropositions() {
-      return this.$store.getters.numberOfPropositions;
+      this.numberOfPropositions = this.$store.getters.numberOfPropositions;
     },
   },
-  created() {},
+  created() {
+    this.getNumberOfPropositions();
+    this.getPropositions();
+  },
 };
 </script>
 
