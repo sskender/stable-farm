@@ -6,12 +6,12 @@
       <span class="account-address">{{ this.chairmanAddress }}</span>
     </p>
     <p>
-      Total members: <span>{{ this.tokenHoldersList.length }}</span>
+      Total members: <span>{{ numberOfTokenHolders() }}</span>
     </p>
     <ul class="list-group list-group-flush">
       <li
         class="list-group-item"
-        v-for="holder in tokenHoldersList"
+        v-for="holder in tokenHolders()"
         :key="holder"
       >
         <span class="account-address"> {{ holder }} </span>
@@ -23,7 +23,7 @@
 <script>
 export default {
   data: () => {
-    return { tokenHoldersList: [], chairmanAddress: null };
+    return { chairmanAddress: null };
   },
   methods: {
     async getChairman() {
@@ -31,15 +31,15 @@ export default {
       const chairman = await contract.methods.chairman().call();
       this.chairmanAddress = chairman;
     },
-    async getTokenHolders() {
-      const contract = this.$store.state.DaoTokenContract;
-      const holders = await contract.methods.tokenHolders().call();
-      this.tokenHoldersList = holders;
+    numberOfTokenHolders() {
+      return this.$store.getters.numberOfTokenHolders;
+    },
+    tokenHolders() {
+      return this.$store.state.tokenHoldersList;
     },
   },
   async created() {
     await this.getChairman();
-    await this.getTokenHolders();
   },
 };
 </script>

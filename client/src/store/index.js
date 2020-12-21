@@ -15,8 +15,18 @@ const store = new Vuex.Store({
     accountAddress: null,
     member: false,
     chairmanConnected: false,
+    blockNumber: 0,
+    tokenHoldersList: [],
+    propositionsList: [],
+  },
+  getters: {
+    // TODO account related data is actually getter
+    numberOfTokenHolders: (state) => {
+      return state.tokenHoldersList.length;
+    },
   },
   mutations: {
+    // TODO change to load
     saveAccountData: async (state) => {
       const accounts = await state.web3.eth.getAccounts();
       state.accountAddress = accounts[0];
@@ -24,20 +34,30 @@ const store = new Vuex.Store({
       const contract = state.DaoTokenContract;
 
       // check if account is a member
-      contract.methods
+      const balance = await contract.methods
         .balanceOf(state.accountAddress)
-        .call()
-        .then((b) => {
-          state.member = b > 0;
-        });
+        .call();
+      state.member = balance > 0;
 
-      // check if account is chairman
-      contract.methods
-        .chairman()
-        .call()
-        .then((c) => {
-          state.chairmanConnected = state.accountAddress == c;
-        });
+      // check if account is a chairman
+      const chairmanAddress = await contract.methods.chairman().call();
+      state.chairmanConnected = state.accountAddress == chairmanAddress;
+    },
+    loadBlockNumber: async (state) => {
+      const block = await state.web3.eth.getBlockNumber();
+      state.blockNumber = block;
+    },
+    loadMembers: async (state) => {
+      const contract = state.DaoTokenContract;
+      const members = await contract.methods.tokenHolders().call();
+
+      // shuffle for fun
+      var arrayCopy = members.slice(0);
+      const sorter = arrayCopy.sort(function() {
+        return Math.random() - 0.5;
+      });
+
+      state.tokenHoldersList = sorter;
     },
     prepareWeb3: (state, web3) => {
       // store new web3
@@ -60,6 +80,12 @@ const store = new Vuex.Store({
       // store contract references
       state.DaoTokenContract = DaoTokenContract;
       state.CommunityVotingContract = CommunityVotingContract;
+    },
+  },
+  actions: {
+    updateApplicationData(context) {
+      context.commit("loadBlockNumber");
+      context.commit("loadMembers");
     },
   },
 });
