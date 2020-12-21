@@ -64,21 +64,26 @@ export default {
       const caller = this.$store.state.accountAddress;
       const contract = this.$store.state.CommunityVotingContract;
 
-      // proposition data
+      // pick up proposition data
       const title = this.propositionTitle;
       const desc = this.propositionDescription;
       const start = Number(this.startBlock);
       const end = Number(this.endBlock);
 
       try {
-        // wallet call
+        // wallet method call
         const transation = await contract.methods
           .createProposition(title, desc, start, end)
           .send({ from: caller });
 
-        console.log(transation);
+        // clean form data
+        this.propositionTitle = null;
+        this.propositionDescription = null;
+        this.startBlock = null;
+        this.endBlock = null;
       } catch (err) {
         console.log(err);
+        window.alert("Failed to create a new proposal!");
       }
     },
   },
