@@ -49,7 +49,6 @@ export default {
       await this.vote(id, votingOption);
     },
     async vote(propositionId, votingOption) {
-      console.log(propositionId, votingOption);
       const caller = this.$store.state.accountAddress;
       const contract = this.$store.state.CommunityVotingContract;
 
@@ -60,6 +59,7 @@ export default {
         console.log(transation);
       } catch (err) {
         console.log(err);
+        window.error("Error while voting");
       }
     },
   },
