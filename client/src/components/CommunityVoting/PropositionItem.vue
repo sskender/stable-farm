@@ -13,8 +13,12 @@
         </p>
       </div>
       <div class="card-footer bg-light">
-        <Vote :propositionId="Number(proposition.id)" />
-        Status: <span>{{ this.propositionStatusText }}</span>
+        <div v-if="isVotable(proposition)">
+          <Vote :propositionId="Number(proposition.id)" />
+        </div>
+        <div v-else>
+          <span>{{ propositionStatusText }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -25,7 +29,7 @@ import Vote from "./Vote.vue";
 
 export default {
   data: () => {
-    return { propositionStatus: 0, propositionStatusText: "Pending" };
+    return { propositionStatus: 0, propositionStatusText: "" };
   },
   props: {
     proposition: Object,
@@ -34,23 +38,33 @@ export default {
     Vote,
   },
   methods: {
-    showPropositionText(statusId) {
-      switch (statusId) {
+    isVotable(proposition) {
+      const blockNumber = this.$store.state.blockNumber;
+      return (
+        this.$store.state.member &&
+        proposition.startBlock <= blockNumber &&
+        proposition.endBlock >= blockNumber
+      );
+    },
+    async getPropositionStatusText() {
+      let statusText;
+      switch (this.propositionStatus) {
         case "0":
-          this.propositionStatusText = "Pending";
+          statusText = "Pending";
           break;
         case "1":
-          this.propositionStatusText = "Active";
+          statusText = "Active";
           break;
         case "2":
-          this.propositionStatusText = "Succeeded";
+          statusText = "Succeeded";
           break;
         case "3":
-          this.propositionStatusText = "Failed";
+          statusText = "Failed";
           break;
         default:
           break;
       }
+      this.propositionStatusText = statusText.toUpperCase();
     },
     async getPropositionStatus() {
       const contract = this.$store.state.CommunityVotingContract;
@@ -58,13 +72,11 @@ export default {
         .getPropositionStatus(this.proposition.id - 1)
         .call();
       this.propositionStatus = status;
-
-      // display proposition status as text
-      this.showPropositionText(status);
     },
   },
   async created() {
     await this.getPropositionStatus();
+    await this.getPropositionStatusText();
   },
 };
 </script>
