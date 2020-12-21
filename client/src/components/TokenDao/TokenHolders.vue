@@ -8,8 +8,12 @@
     <p>
       Total members: <span>{{ this.tokenHoldersList.length }}</span>
     </p>
-    <ul>
-      <li v-for="holder in tokenHoldersList" :key="holder">
+    <ul class="list-group list-group-flush">
+      <li
+        class="list-group-item"
+        v-for="holder in tokenHoldersList"
+        :key="holder"
+      >
         <span class="account-address"> {{ holder }} </span>
       </li>
     </ul>

@@ -2,17 +2,21 @@
   <div class="wrap-proposition-vote">
     <button
       type="button"
-      class="btn btn-success btn-sm"
+      class="btn btn-success btn-sm col-4"
       v-on:click="voteApprove"
     >
       APPROVE
     </button>
-    <button type="button" class="btn btn-danger btn-sm" v-on:click="voteDeny">
+    <button
+      type="button"
+      class="btn btn-danger btn-sm col-4"
+      v-on:click="voteDeny"
+    >
       DENY
     </button>
     <button
       type="button"
-      class="btn btn-warning btn-sm"
+      class="btn btn-warning btn-sm col-4"
       v-on:click="voteReserved"
     >
       RESERVED

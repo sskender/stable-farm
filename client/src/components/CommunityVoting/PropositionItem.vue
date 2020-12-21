@@ -1,10 +1,10 @@
 <template>
   <div class="wrap-proposition-item">
     <div class="card border-dark bg-light mb-3" style="max-width: 28rem">
-      <div class="card-header">
+      <div class="card-header bg-light text-dark">
         <b>{{ proposition.title }}</b>
       </div>
-      <div class="card-body">
+      <div class="card-body text-dark">
         <p class="card-text">
           <i>{{ proposition.description }}</i>
         </p>

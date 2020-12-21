@@ -2,28 +2,49 @@
   <div>
     <h4>Make a community proposition</h4>
     <form @submit.prevent="createProposition">
-      <input type="text" v-model="propositionTitle" placeholder="Title" />
-      <br />
-      <textarea
-        rows="4"
-        cols="30"
-        type="text"
-        v-model="propositionDescription"
-        placeholder="Description"
-      ></textarea>
-      <br />
-      <input
-        type="number"
-        v-model="startBlock"
-        placeholder="Starting block number"
-      />
-      <input
-        type="number"
-        v-model="endBlock"
-        placeholder="Ending block number"
-      />
-      <br />
-      <button type="submit">Propose</button>
+      <div class="form-row">
+        <div class="form-group col-4">
+          <input
+            class="form-control"
+            type="text"
+            v-model="propositionTitle"
+            placeholder="Proposition title"
+          />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-4">
+          <textarea
+            class="form-control"
+            rows="3"
+            cols="30"
+            type="text"
+            v-model="propositionDescription"
+            placeholder="Please type your proposition description in here"
+          ></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-2">
+          <input
+            class="form-control"
+            type="number"
+            v-model="startBlock"
+            placeholder="Start block"
+          />
+        </div>
+        <div class="form-group col-md-2">
+          <input
+            class="form-control"
+            type="number"
+            v-model="endBlock"
+            placeholder="End block"
+          />
+        </div>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-secondary col-2" type="submit">Propose</button>
+      </div>
     </form>
   </div>
 </template>

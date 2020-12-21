@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h4>All propositions</h4>
-    <div>
-      Total propositions: <span>{{ this.totalPropositions }}</span>
-    </div>
+    <h4>
+      All propositions (<span>{{ this.totalPropositions }}</span
+      >)
+    </h4>
     <div v-for="proposition in propositionsList" :key="proposition.id">
       <PropositionItem :proposition="proposition" />
     </div>
@@ -16,6 +16,9 @@ import PropositionItem from "./PropositionItem.vue";
 export default {
   data: () => {
     return { totalPropositions: 0, propositionsList: [] };
+  },
+  components: {
+    PropositionItem,
   },
   methods: {
     async loadPropositionsList() {
@@ -33,9 +36,6 @@ export default {
         this.propositionsList.push(proposition);
       }
     },
-  },
-  components: {
-    PropositionItem,
   },
   async created() {
     this.loadPropositionsList();
