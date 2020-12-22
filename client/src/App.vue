@@ -13,11 +13,8 @@
         <div class="col-md-4">
           <ContractsInfo />
         </div>
-        <div class="col-md-4">
+        <div class="col-md-8">
           <MembersCenter />
-        </div>
-        <div class="col-md-4">
-          <CommunityPropositions />
         </div>
       </div>
     </div>
@@ -29,7 +26,6 @@ import ConnectWallet from "./components/ConnectWallet.vue";
 import BlockInfo from "./components/BlockInfo.vue";
 import ContractsInfo from "./components/ContractsInfo.vue";
 import MembersCenter from "./components/MembersCenter.vue";
-import CommunityPropositions from "./components/CommunityPropositions.vue";
 
 export default {
   name: "App",
@@ -38,7 +34,6 @@ export default {
     BlockInfo,
     ContractsInfo,
     MembersCenter,
-    CommunityPropositions,
   },
 };
 </script>
