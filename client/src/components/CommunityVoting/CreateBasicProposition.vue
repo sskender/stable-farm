@@ -1,5 +1,5 @@
 <template>
-  <div class="wrap-create-proposition">
+  <div class="wrap-create-proposition" v-if="this.$store.state.member">
     <h5>Make a community proposition</h5>
     <form @submit.prevent="createProposition">
       <div class="form-row">
@@ -83,7 +83,7 @@ export default {
         this.startBlock = null;
         this.endBlock = null;
       } catch (err) {
-        console.log(err);
+        console.error(err);
         window.alert("Failed to create a new proposal!");
       }
     },
@@ -92,4 +92,7 @@ export default {
 </script>
 
 <style scoped>
+.wrap-create-proposition {
+  padding-top: 30px;
+}
 </style>

@@ -10,7 +10,9 @@
     </div>
     <div v-else>
       Please connect wallet
-      <button v-on:click="connectWallet">Connect</button>
+      <button class="btn btn-success" v-on:click="connectWallet">
+        Connect
+      </button>
     </div>
   </div>
 </template>
@@ -45,4 +47,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.wrap-wallet-info {
+  padding-top: 5px;
+  padding-right: 10px;
+}
+</style>

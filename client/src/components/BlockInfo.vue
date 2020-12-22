@@ -54,5 +54,9 @@ export default {
 </script>
 
 <style scoped>
+.wrap-block-info {
+  padding-top: 5px;
+  padding-left: 10px;
+}
 </style>
 

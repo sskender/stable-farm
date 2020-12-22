@@ -1,29 +1,50 @@
 <template>
   <div class="wrap-token-mint">
-    <p v-if="mintingEnabled">We are accepting new members!</p>
-    <p v-else>We are not accepting new members at the moment</p>
-
+    <h4 v-if="mintingEnabled">We are accepting new members!</h4>
+    <h4 v-else>We are not accepting new members at the moment</h4>
     <div
+      class="connect-wallet"
+      v-if="mintingEnabled && !this.$store.state.accountAddress"
+    >
+      Connect your wallet to join
+    </div>
+    <div
+      class="wrap-join"
       v-if="
         mintingEnabled &&
         !this.$store.state.member &&
         this.$store.state.accountAddress
       "
     >
-      <span>Claim your membership token here</span>
-      <button v-on:click="mintToken">JOIN</button>
+      <p>Claim your membership token now</p>
+      <button id="btn-join" class="btn btn-info" v-on:click="mintToken">
+        JOIN
+      </button>
     </div>
-
-    <div v-if="this.$store.state.chairmanConnected">
+    <div class="admin-center" v-if="this.$store.state.chairmanConnected">
+      <h5>Admin center</h5>
       <span>Minting new tokens</span>
-      <button v-if="mintingEnabled" v-on:click="disableMinting">DISABLE</button>
-      <button v-else v-on:click="enableMinting">ENABLE</button>
+      <button
+        class="btn-mint btn btn-danger"
+        v-if="mintingEnabled"
+        v-on:click="disableMinting"
+      >
+        DISABLE
+      </button>
+      <button
+        class="btn-mint btn btn-success"
+        v-else
+        v-on:click="enableMinting"
+      >
+        ENABLE
+      </button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  name: "TokenMint",
   data: () => {
     return {
       mintingEnabled: false,
@@ -32,8 +53,12 @@ export default {
   methods: {
     async getMintingStatus() {
       const contract = this.$store.state.DaoTokenContract;
-      const minting = await contract.methods.isMintable().call();
-      this.mintingEnabled = minting;
+      try {
+        const minting = await contract.methods.isMintable().call();
+        this.mintingEnabled = minting;
+      } catch (err) {
+        console.error(err);
+      }
     },
     async enableMinting() {
       const caller = this.$store.state.accountAddress;
@@ -43,7 +68,8 @@ export default {
         await contract.methods.enableMinting().send({ from: caller });
         this.mintingEnabled = true;
       } catch (err) {
-        // TODO
+        console.error(err);
+        window.alert("Unable to mint");
       }
     },
     async disableMinting() {
@@ -54,7 +80,8 @@ export default {
         await contract.methods.disableMinting().send({ from: caller });
         this.mintingEnabled = false;
       } catch (err) {
-        // TODO
+        console.error(err);
+        window.alert("Unable to mint");
       }
     },
     async mintToken() {
@@ -64,7 +91,8 @@ export default {
       try {
         await contract.methods.mint().send({ from: caller });
       } catch (err) {
-        // TODO
+        console.error(err);
+        window.alert("Unable to mint");
       }
     },
   },
@@ -75,5 +103,32 @@ export default {
 </script>
 
 <style scoped>
+h4 {
+  padding-left: 5%;
+}
+
+.connect-wallet {
+  padding-top: 5%;
+  text-align: center;
+}
+
+.wrap-join {
+  padding-top: 5%;
+  text-align: center;
+}
+
+.btn-mint {
+  margin-left: 10px;
+}
+
+.admin-center {
+  padding-top: 30px;
+}
+
+#btn-join {
+  padding-left: 30px;
+  padding-right: 30px;
+  margin-left: 10px;
+}
 </style>
 

@@ -20,13 +20,21 @@ export default {
   methods: {
     async getContractName() {
       const contract = this.$store.state.CommunityVotingContract;
-      const name = await contract.methods.getName().call();
-      this.communityVotingContractName = name;
+      try {
+        const name = await contract.methods.getName().call();
+        this.communityVotingContractName = name;
+      } catch (err) {
+        console.error(err);
+      }
     },
     async getContractAddress() {
       const contract = this.$store.state.CommunityVotingContract;
-      const address = await contract.options.address;
-      this.communityVotingContractAddress = address;
+      try {
+        const address = await contract.options.address;
+        this.communityVotingContractAddress = address;
+      } catch (err) {
+        console.error(err);
+      }
     },
   },
   async created() {
@@ -37,4 +45,7 @@ export default {
 </script>
 
 <style scoped>
+.wrap-community-contract-info {
+  padding-top: 3%;
+}
 </style>

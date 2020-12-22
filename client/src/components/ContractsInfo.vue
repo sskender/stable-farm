@@ -22,4 +22,7 @@ export default {
 </script>
 
 <style scoped>
+.wrap-contracts-info {
+  padding-top: 2%;
+}
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="wrap-token-info">
     <h3>{{ this.tokenName }}</h3>
-    <div>
+    <div class="token-contract-info">
       <table>
         <th>Token contract information</th>
         <tr>
@@ -41,23 +41,39 @@ export default {
   methods: {
     async getContractAddress() {
       const contract = this.$store.state.DaoTokenContract;
-      const address = await contract.options.address;
-      this.contractAddress = address;
+      try {
+        const address = await contract.options.address;
+        this.contractAddress = address;
+      } catch (err) {
+        console.error(err);
+      }
     },
     async getName() {
       const contract = this.$store.state.DaoTokenContract;
-      const name = await contract.methods.name().call();
-      this.tokenName = name;
+      try {
+        const name = await contract.methods.name().call();
+        this.tokenName = name;
+      } catch (err) {
+        console.error(err);
+      }
     },
     async getSymbol() {
       const contract = this.$store.state.DaoTokenContract;
-      const symbol = await contract.methods.symbol().call();
-      this.tokenSymbol = symbol;
+      try {
+        const symbol = await contract.methods.symbol().call();
+        this.tokenSymbol = symbol;
+      } catch (err) {
+        console.error(err);
+      }
     },
     async getGranularity() {
       const contract = this.$store.state.DaoTokenContract;
-      const granularity = await contract.methods.granularity().call();
-      this.tokenGranularity = Number(granularity);
+      try {
+        const granularity = await contract.methods.granularity().call();
+        this.tokenGranularity = Number(granularity);
+      } catch (err) {
+        console.error(err);
+      }
     },
   },
   async created() {
@@ -70,5 +86,9 @@ export default {
 </script>
 
 <style scoped>
+h3 {
+  padding-left: 2%;
+  padding-bottom: 2%;
+}
 </style>
 

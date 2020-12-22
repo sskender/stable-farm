@@ -1,11 +1,11 @@
 <template>
   <div class="wrap-token-holders">
-    <h3>Active members</h3>
-    <p>
+    <h4>Active members</h4>
+    <p id="chairman">
       Chairman: <br />
       <span class="account-address">{{ this.chairmanAddress }}</span>
     </p>
-    <p>
+    <p id="holders">
       Total members: <span>{{ numberOfTokenHolders() }}</span>
     </p>
     <ul class="list-group list-group-flush">
@@ -29,8 +29,12 @@ export default {
   methods: {
     async getChairman() {
       const contract = this.$store.state.DaoTokenContract;
-      const chairman = await contract.methods.chairman().call();
-      this.chairmanAddress = chairman;
+      try {
+        const chairman = await contract.methods.chairman().call();
+        this.chairmanAddress = chairman;
+      } catch (err) {
+        console.error(err);
+      }
     },
     numberOfTokenHolders() {
       return this.$store.getters.numberOfTokenHolders;
@@ -46,5 +50,16 @@ export default {
 </script>
 
 <style scoped>
+.wrap-token-holders {
+  padding-top: 5%;
+}
+
+p#chairman {
+  padding-top: 1%;
+}
+
+p#holders {
+  padding-top: 1%;
+}
 </style>
 
