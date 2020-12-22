@@ -1,16 +1,25 @@
 <template>
   <div class="wrap-proposition-item">
-    <div class="card border-dark bg-light mb-2" style="max-width: 28rem">
+    <div class="card border-dark bg-light mb-2" style="max-width: 30rem">
       <div class="card-body text-dark">
         <h5 class="card-title">{{ proposition.title }}</h5>
         <p class="card-text">
           <i>{{ proposition.description }}</i>
-          <br />
-          <small class="card-text text-right">
-            Proposed by
-            <span class="account-address">{{ proposition.proposedBy }}</span>
-          </small>
         </p>
+        <div class="card-text">
+          <small>
+            <div class="text-left">
+              Proposed by<br />
+              <span class="account-address">{{ proposition.proposedBy }}</span>
+            </div>
+            <div class="wrap-votes-stat text-right">
+              Votes:
+              <span id="accept">{{ this.votes.accept }}</span> /
+              <span id="deny">{{ this.votes.deny }}</span> /
+              <span id="reserved">{{ this.votes.reserved }}</span>
+            </div>
+          </small>
+        </div>
       </div>
       <div class="card-footer text-center">
         <div v-if="isVotable(proposition)">
@@ -38,7 +47,11 @@ import Vote from "./Vote.vue";
 
 export default {
   data: () => {
-    return { propositionStatus: 0, propositionStatusText: "" };
+    return {
+      propositionStatus: 0,
+      propositionStatusText: "",
+      votes: { total: 0, accept: 0, deny: 0, reserved: 0 },
+    };
   },
   props: {
     proposition: Object,
@@ -87,10 +100,25 @@ export default {
         console.error(err);
       }
     },
+    async getPropositionVotes() {
+      const contract = this.$store.state.CommunityVotingContract;
+      try {
+        const votes = await contract.methods
+          .getPropositionVotes(this.proposition.id - 1)
+          .call();
+        this.votes.total = votes.totalVotes;
+        this.votes.accept = votes.totalVotesAccept;
+        this.votes.deny = votes.totalVotesDeny;
+        this.votes.reserved = votes.totalVotesReserved;
+      } catch (err) {
+        console.error(err);
+      }
+    },
   },
   async created() {
     await this.getPropositionStatus();
     await this.getPropositionStatusText();
+    await this.getPropositionVotes();
   },
 };
 </script>
@@ -98,5 +126,21 @@ export default {
 <style scoped>
 span.prop-status-text {
   font-weight: bold;
+}
+
+.wrap-votes-stat {
+  margin-top: -1.25rem;
+}
+
+span#accept {
+  color: green;
+}
+
+span#deny {
+  color: red;
+}
+
+span#reserved {
+  color: orange;
 }
 </style>
