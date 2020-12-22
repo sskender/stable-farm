@@ -59,7 +59,7 @@ export default {
         console.log(transation);
       } catch (err) {
         console.error(err);
-        window.error("Error while voting");
+        window.alert("Error while voting");
       }
     },
   },
