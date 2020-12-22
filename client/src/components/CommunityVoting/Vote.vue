@@ -58,7 +58,7 @@ export default {
           .send({ from: caller });
         console.log(transation);
       } catch (err) {
-        console.log(err);
+        console.error(err);
         window.error("Error while voting");
       }
     },

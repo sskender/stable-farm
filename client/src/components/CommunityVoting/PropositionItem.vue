@@ -18,6 +18,7 @@
         </div>
         <div v-else>
           <span
+            class="prop-status-text"
             v-bind:class="{
               'text-danger': propositionStatus == 3,
               'text-success': propositionStatus == 2,
@@ -70,16 +71,21 @@ export default {
           statusText = "Failed";
           break;
         default:
+          statusText = "Pending";
           break;
       }
       this.propositionStatusText = statusText.toUpperCase();
     },
     async getPropositionStatus() {
       const contract = this.$store.state.CommunityVotingContract;
-      const status = await contract.methods
-        .getPropositionStatus(this.proposition.id - 1)
-        .call();
-      this.propositionStatus = status;
+      try {
+        const status = await contract.methods
+          .getPropositionStatus(this.proposition.id - 1)
+          .call();
+        this.propositionStatus = status;
+      } catch (err) {
+        console.error(err);
+      }
     },
   },
   async created() {
@@ -90,4 +96,7 @@ export default {
 </script>
 
 <style scoped>
+span.prop-status-text {
+  font-weight: bold;
+}
 </style>
