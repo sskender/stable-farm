@@ -42,6 +42,12 @@
           />
         </div>
       </div>
+      <div v-if="startBlock && endBlock">
+        <p>
+          Estimated proposition duration is
+          <span>{{ estimateDuration() }}</span> hours
+        </p>
+      </div>
       <div class="form-group">
         <button class="btn btn-secondary col-2" type="submit">Propose</button>
       </div>
@@ -61,6 +67,19 @@ export default {
     };
   },
   methods: {
+    estimateDuration() {
+      if (
+        this.startBlock &&
+        this.endBlock &&
+        this.endBlock - this.startBlock > 0
+      ) {
+        const calc =
+          (Math.round(this.endBlock - this.startBlock) * 15) / 60 / 60;
+        return calc.toFixed(1);
+      } else {
+        return 0;
+      }
+    },
     async createProposition() {
       const caller = this.$store.state.accountAddress;
       const contract = this.$store.state.CommunityVotingContract;
