@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="container-fluid">
-      <div class="row wrap-header-info">
+      <div class="row wrap-info-header">
         <div class="col-md-4 text-left">
           <BlockInfo />
         </div>
@@ -11,10 +11,13 @@
       </div>
       <div class="row">
         <div class="col-md-4">
-          <TokenDao />
+          <ContractsInfo />
         </div>
-        <div class="col-md-8">
-          <CommunityVoting />
+        <div class="col-md-4">
+          <MembersCenter />
+        </div>
+        <div class="col-md-4">
+          <PropositionsList />
         </div>
       </div>
     </div>
@@ -24,16 +27,18 @@
 <script>
 import ConnectWallet from "./components/ConnectWallet.vue";
 import BlockInfo from "./components/BlockInfo.vue";
-import TokenDao from "./components/TokenDao/TokenDao.vue";
-import CommunityVoting from "./components/CommunityVoting/CommunityVoting.vue";
+import ContractsInfo from "./components/ContractsInfo.vue";
+import MembersCenter from "./components/MembersCenter.vue";
+import PropositionsList from "./components/CommunityVoting/PropositionsList.vue";
 
 export default {
   name: "App",
   components: {
     ConnectWallet,
     BlockInfo,
-    TokenDao,
-    CommunityVoting,
+    ContractsInfo,
+    MembersCenter,
+    PropositionsList,
   },
 };
 </script>
@@ -45,7 +50,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.wrap-header-info {
+.wrap-info-header {
   font-size: 18px;
 }
 </style>

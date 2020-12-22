@@ -29,6 +29,7 @@
 
 <script>
 export default {
+  name: "TokenDaoContractInfo",
   data: () => {
     return {
       tokenName: null,

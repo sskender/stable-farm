@@ -22,6 +22,7 @@
 
 <script>
 export default {
+  name: "TokenHolders",
   data: () => {
     return { chairmanAddress: null };
   },

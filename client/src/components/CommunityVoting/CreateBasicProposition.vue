@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrap-create-proposition">
     <h5>Make a community proposition</h5>
     <form @submit.prevent="createProposition">
       <div class="form-row">
@@ -51,6 +51,7 @@
 
 <script>
 export default {
+  name: "CreateBasicProposition",
   data: () => {
     return {
       propositionTitle: null,

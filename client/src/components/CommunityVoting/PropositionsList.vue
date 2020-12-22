@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrap-propositions-list">
     <h4>
       Community propositions (<span>{{ getNumberOfPropositions() }}</span
       >)
@@ -14,6 +14,7 @@
 import PropositionItem from "./PropositionItem.vue";
 
 export default {
+  name: "PropositionsList",
   data: () => {
     return { propositionsList: [] };
   },
