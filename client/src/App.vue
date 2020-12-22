@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="container-fluid">
-      <div class="row">
+      <div class="row wrap-header-info">
         <div class="col-md-4 text-left">
           <BlockInfo />
         </div>
@@ -10,10 +10,10 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <TokenDao />
         </div>
-        <div class="col-md-6">
+        <div class="col-md-8">
           <CommunityVoting />
         </div>
       </div>
@@ -43,5 +43,9 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.wrap-header-info {
+  font-size: 18px;
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h4>Make a community proposition</h4>
+    <h5>Make a community proposition</h5>
     <form @submit.prevent="createProposition">
       <div class="form-row">
-        <div class="form-group col-4">
+        <div class="form-group col-8">
           <input
             class="form-control"
             type="text"
@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group col-4">
+        <div class="form-group col-8">
           <textarea
             class="form-control"
             rows="3"
@@ -25,7 +25,7 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group col-md-2">
+        <div class="form-group col-md-4">
           <input
             class="form-control"
             type="number"
@@ -33,7 +33,7 @@
             placeholder="Start block"
           />
         </div>
-        <div class="form-group col-md-2">
+        <div class="form-group col-md-4">
           <input
             class="form-control"
             type="number"
