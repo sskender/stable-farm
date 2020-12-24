@@ -1,117 +1,51 @@
 <template>
-  <div class="wrap-create-proposition" v-if="this.$store.state.member">
-    <h5>Make a community proposition</h5>
-    <form @submit.prevent="createProposition">
-      <div class="form-row">
-        <div class="form-group col-8">
-          <input
-            class="form-control"
-            type="text"
-            v-model="propositionTitle"
-            placeholder="Proposition title"
+  <div class="wrap-create-proposition">
+    <div class="wrap-create-proposition-button">
+      <b-button class="btn btn-color" @click="showPropositionModal = true">
+        New
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-plus-circle-fill"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"
           />
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group col-8">
-          <textarea
-            class="form-control"
-            rows="3"
-            cols="30"
-            type="text"
-            v-model="propositionDescription"
-            placeholder="Please type your proposition description in here"
-          ></textarea>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group col-md-4">
-          <input
-            class="form-control"
-            type="number"
-            v-model="startBlock"
-            placeholder="Start block"
-          />
-        </div>
-        <div class="form-group col-md-4">
-          <input
-            class="form-control"
-            type="number"
-            v-model="endBlock"
-            placeholder="End block"
-          />
-        </div>
-      </div>
-      <div v-if="startBlock && endBlock">
-        <p>
-          Estimated proposition duration is
-          <span>{{ estimateDuration() }}</span> hours
-        </p>
-      </div>
-      <div class="form-group">
-        <button class="btn btn-secondary col-2" type="submit">Propose</button>
-      </div>
-    </form>
+        </svg>
+      </b-button>
+    </div>
+    <div>
+      <b-modal v-model="showPropositionModal" title="Create a new proposition">
+        <b-container fluid>
+          <PropositionForm />
+        </b-container>
+        <template #modal-footer>
+          <div class="w-100"></div>
+        </template>
+      </b-modal>
+    </div>
   </div>
 </template>
 
 <script>
+import PropositionForm from "./PropositionForm.vue";
+
 export default {
   name: "CreateBasicProposition",
   data: () => {
-    return {
-      propositionTitle: null,
-      propositionDescription: null,
-      startBlock: null,
-      endBlock: null,
-    };
+    return { showPropositionModal: false };
   },
-  methods: {
-    estimateDuration() {
-      if (
-        this.startBlock &&
-        this.endBlock &&
-        this.endBlock - this.startBlock > 0
-      ) {
-        const calc =
-          (Math.round(this.endBlock - this.startBlock) * 15) / 60 / 60;
-        return calc.toFixed(1);
-      } else {
-        return 0;
-      }
-    },
-    async createProposition() {
-      const caller = this.$store.state.accountAddress;
-      const contract = this.$store.state.CommunityVotingContract;
-
-      // pick up proposition data
-      const title = this.propositionTitle;
-      const desc = this.propositionDescription;
-      const start = Number(this.startBlock);
-      const end = Number(this.endBlock);
-
-      try {
-        // wallet method call
-        await contract.methods
-          .createProposition(title, desc, start, end)
-          .send({ from: caller });
-
-        // clean form data
-        this.propositionTitle = null;
-        this.propositionDescription = null;
-        this.startBlock = null;
-        this.endBlock = null;
-      } catch (err) {
-        console.error(err);
-        window.alert("Failed to create a new proposal!");
-      }
-    },
+  components: {
+    PropositionForm,
   },
 };
 </script>
 
-<style scoped>
-.wrap-create-proposition {
-  padding-top: 30px;
+<style>
+.wrap-create-proposition-button {
+  padding-bottom: 0.5rem;
 }
 </style>

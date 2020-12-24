@@ -2,19 +2,19 @@
   <div id="app">
     <div class="container-fluid">
       <div class="row wrap-info-header">
-        <div class="col-md-4 text-left">
+        <div class="col-md-6 text-left">
           <BlockInfo />
         </div>
-        <div class="col-md-8 text-right">
+        <div class="col-md-6 text-right">
           <ConnectWallet />
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <ContractsInfo />
         </div>
-        <div class="col-md-8">
-          <MembersCenter />
+        <div class="col-md-6">
+          <CommunityHome />
         </div>
       </div>
     </div>
@@ -25,7 +25,7 @@
 import ConnectWallet from "./components/ConnectWallet.vue";
 import BlockInfo from "./components/BlockInfo.vue";
 import ContractsInfo from "./components/ContractsInfo.vue";
-import MembersCenter from "./components/MembersCenter.vue";
+import CommunityHome from "./components/CommunityHome.vue";
 
 export default {
   name: "App",
@@ -33,7 +33,7 @@ export default {
     ConnectWallet,
     BlockInfo,
     ContractsInfo,
-    MembersCenter,
+    CommunityHome,
   },
 };
 </script>

@@ -1,27 +1,50 @@
 <template>
   <div class="wrap-proposition-item">
-    <div class="card border-dark bg-light mb-2" style="max-width: 30rem">
-      <div class="card-body text-dark">
+    <div
+      class="card border-dark bg-light mb-2 card-custom"
+      style="max-width: 35rem"
+    >
+      <div class="card-body text-dark card-body-custom">
         <h5 class="card-title">{{ proposition.title }}</h5>
         <p class="card-text">
           <i>{{ proposition.description }}</i>
         </p>
         <div class="card-text">
-          <small>
-            <div class="text-left">
-              Proposed by<br />
-              <span class="account-address">{{ proposition.proposedBy }}</span>
+          <div class="text-left">
+            Proposed by<br />
+            <span class="account-address">{{ proposition.proposedBy }}</span>
+          </div>
+          <div class="wrap-votes-stat text-right">
+            <div v-if="showVotes">
+              <div>
+                <button
+                  @click="toggleShowVotes()"
+                  type="button"
+                  class="btn btn-sm btn-color"
+                >
+                  Hide
+                </button>
+              </div>
+              <span id="accept">{{ this.votes.accept }} accept</span> /
+              <span id="deny">{{ this.votes.deny }} deny</span> /
+              <span id="reserved">{{ this.votes.reserved }} reserved</span>
             </div>
-            <div class="wrap-votes-stat text-right">
-              Votes:
-              <span id="accept">{{ this.votes.accept }}</span> /
-              <span id="deny">{{ this.votes.deny }}</span> /
-              <span id="reserved">{{ this.votes.reserved }}</span>
+            <div v-else>
+              <button
+                @click="toggleShowVotes()"
+                type="button"
+                class="btn btn-sm btn-color"
+              >
+                Votes
+                <span class="badge badge-pill badge-light">{{
+                  this.votes.total
+                }}</span>
+              </button>
             </div>
-          </small>
+          </div>
         </div>
       </div>
-      <div class="card-footer text-center">
+      <div class="card-footer card-footer-custom text-center">
         <div v-if="isVotable(proposition)">
           <Vote :propositionId="Number(proposition.id)" />
         </div>
@@ -46,10 +69,12 @@
 import Vote from "./Vote.vue";
 
 export default {
+  name: "PropositionItem",
   data: () => {
     return {
       propositionStatus: 0,
       propositionStatusText: "",
+      showVotes: false,
       votes: { total: 0, accept: 0, deny: 0, reserved: 0 },
     };
   },
@@ -60,6 +85,10 @@ export default {
     Vote,
   },
   methods: {
+    async toggleShowVotes() {
+      this.showVotes = !this.showVotes;
+      await this.getPropositionVotes();
+    },
     isVotable(proposition) {
       const blockNumber = this.$store.state.blockNumber;
       return (
@@ -124,12 +153,24 @@ export default {
 </script>
 
 <style scoped>
+.card-custom {
+  background-color: white !important;
+}
+
+.card-body-custom {
+  background-color: white !important;
+}
+
+.card-footer-custom {
+  background-color: #e0e0e0;
+}
+
 span.prop-status-text {
   font-weight: bold;
 }
 
 .wrap-votes-stat {
-  margin-top: -1.25rem;
+  margin-top: -1.5rem;
 }
 
 span#accept {

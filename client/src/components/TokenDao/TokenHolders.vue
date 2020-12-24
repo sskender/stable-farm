@@ -1,6 +1,6 @@
 <template>
   <div class="wrap-token-holders">
-    <h4>Active members</h4>
+    <h5>Active members</h5>
     <p id="chairman">
       Chairman: <br />
       <span class="account-address">{{ this.chairmanAddress }}</span>
@@ -51,15 +51,15 @@ export default {
 
 <style scoped>
 .wrap-token-holders {
-  padding-top: 5%;
+  padding-top: 4rem;
 }
 
 p#chairman {
-  padding-top: 1%;
+  padding-top: 0.5rem;
 }
 
 p#holders {
-  padding-top: 1%;
+  padding-top: 0.5rem;
 }
 </style>
 

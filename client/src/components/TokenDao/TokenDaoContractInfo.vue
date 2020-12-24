@@ -1,9 +1,14 @@
 <template>
   <div class="wrap-token-info">
-    <h3>{{ this.tokenName }}</h3>
     <div class="token-contract-info">
       <table>
         <th>Token contract information</th>
+        <tr>
+          <td>Full name</td>
+          <td>
+            <span class="account-address">{{ this.tokenName }}</span>
+          </td>
+        </tr>
         <tr>
           <td>Address</td>
           <td>

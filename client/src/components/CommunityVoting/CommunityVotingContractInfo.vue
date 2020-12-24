@@ -1,10 +1,26 @@
 <template>
   <div class="wrap-community-contract-info">
-    <p>{{ this.communityVotingContractName }}</p>
-    Address:
-    <span class="account-address">{{
-      this.communityVotingContractAddress
-    }}</span>
+    <div class="community-contract-info">
+      <table>
+        <th>Community voting contract</th>
+        <tr>
+          <td>Full name</td>
+          <td>
+            <span class="account-address">{{
+              this.communityVotingContractName
+            }}</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Address</td>
+          <td>
+            <span class="account-address">{{
+              this.communityVotingContractAddress
+            }}</span>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -46,6 +62,6 @@ export default {
 
 <style scoped>
 .wrap-community-contract-info {
-  padding-top: 3%;
+  padding-top: 2rem;
 }
 </style>

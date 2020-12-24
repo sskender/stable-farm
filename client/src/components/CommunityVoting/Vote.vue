@@ -26,6 +26,7 @@
 
 <script>
 export default {
+  name: "Vote",
   data: () => {
     return {};
   },

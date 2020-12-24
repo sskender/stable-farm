@@ -1,9 +1,14 @@
 <template>
   <div class="wrap-propositions-list">
     <h4>
-      Community propositions (<span>{{ getNumberOfPropositions() }}</span
-      >)
+      Community propositions
+      <span class="badge badge-pill badge-danger badge-red">{{
+        getNumberOfPropositions()
+      }}</span>
     </h4>
+    <div v-if="this.$store.state.member">
+      <CreateBasicProposition />
+    </div>
     <div v-for="proposition in propositionsList" :key="proposition.id">
       <PropositionItem :proposition="proposition" />
     </div>
@@ -11,6 +16,7 @@
 </template>
 
 <script>
+import CreateBasicProposition from "./CreateBasicProposition.vue";
 import PropositionItem from "./PropositionItem.vue";
 
 export default {
@@ -19,6 +25,7 @@ export default {
     return { propositionsList: [] };
   },
   components: {
+    CreateBasicProposition,
     PropositionItem,
   },
   methods: {
@@ -38,5 +45,9 @@ export default {
 <style scoped>
 h4 {
   padding-bottom: 2rem;
+}
+
+.badge-red {
+  background-color: #e50400;
 }
 </style>

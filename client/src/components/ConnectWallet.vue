@@ -10,9 +10,7 @@
     </div>
     <div v-else>
       Please connect wallet
-      <button class="btn btn-success" v-on:click="connectWallet">
-        Connect
-      </button>
+      <button class="btn btn-color" v-on:click="connectWallet">Connect</button>
     </div>
   </div>
 </template>

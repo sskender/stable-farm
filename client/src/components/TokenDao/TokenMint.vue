@@ -25,18 +25,18 @@
       <h5>Admin center</h5>
       <span>Minting new tokens</span>
       <button
-        class="btn-mint btn btn-danger"
+        class="btn-mint btn btn-color"
         v-if="mintingEnabled"
         v-on:click="disableMinting"
       >
-        DISABLE
+        Disable
       </button>
       <button
-        class="btn-mint btn btn-success"
+        class="btn-mint btn btn-primary"
         v-else
         v-on:click="enableMinting"
       >
-        ENABLE
+        Enable
       </button>
     </div>
   </div>
