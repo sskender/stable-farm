@@ -16,6 +16,7 @@ const store = new Vuex.Store({
     member: false,
     chairmanConnected: false,
     blockNumber: 0,
+    mintingEnabled: false,
     tokenHoldersList: [],
     propositionsList: [],
   },
@@ -63,6 +64,15 @@ const store = new Vuex.Store({
 
       state.tokenHoldersList = sorter;
     },
+    loadMintingStatus: async (state) => {
+      const contract = state.DaoTokenContract;
+      try {
+        const minting = await contract.methods.isMintable().call();
+        state.mintingEnabled = minting;
+      } catch (err) {
+        console.error(err);
+      }
+    },
     loadPropositionsList: async (state) => {
       const contract = state.CommunityVotingContract;
       const propositionsNumber = await contract.methods
@@ -103,6 +113,7 @@ const store = new Vuex.Store({
     updateApplicationData(context) {
       context.commit("loadBlockNumber");
       context.commit("loadMembers");
+      context.commit("loadMintingStatus");
       context.commit("loadPropositionsList");
     },
   },

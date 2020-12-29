@@ -10,6 +10,11 @@
         </div>
       </div>
       <div class="row">
+        <div class="col-md-12">
+          <TokenMint />
+        </div>
+      </div>
+      <div class="row">
         <div class="col-md-6">
           <ContractsInfo />
         </div>
@@ -24,6 +29,7 @@
 <script>
 import ConnectWallet from "./components/ConnectWallet.vue";
 import BlockInfo from "./components/BlockInfo.vue";
+import TokenMint from "./components/TokenMint.vue";
 import ContractsInfo from "./components/ContractsInfo.vue";
 import CommunityHome from "./components/CommunityHome.vue";
 
@@ -32,6 +38,7 @@ export default {
   components: {
     ConnectWallet,
     BlockInfo,
+    TokenMint,
     ContractsInfo,
     CommunityHome,
   },
