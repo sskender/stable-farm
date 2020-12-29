@@ -2,7 +2,13 @@
   <div class="container">
     <div class="row text-center">
       <div class="col-12">
-        <TokenMintMembers />
+        <div v-if="mintingEnabled()">
+          <h5>WE ARE ACCEPTING NEW MEMBERS!</h5>
+          <TokenMintMembers />
+        </div>
+        <div v-else>
+          <h5>SORRY, WE ARE NOT ACCEPTING NEW MEMBERS AT THE MOMENT</h5>
+        </div>
         <div v-if="this.$store.state.chairmanConnected">
           <TokenMintAdmin />
         </div>
@@ -17,6 +23,11 @@ import TokenMintAdmin from "./TokenDao/TokenMintAdmin.vue";
 
 export default {
   name: "TokenMint",
+  methods: {
+    mintingEnabled() {
+      return this.$store.state.mintingEnabled;
+    },
+  },
   components: {
     TokenMintMembers,
     TokenMintAdmin,
