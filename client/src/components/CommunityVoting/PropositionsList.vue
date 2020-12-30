@@ -9,7 +9,7 @@
     <div v-if="this.$store.state.member">
       <CreateBasicProposition />
     </div>
-    <div v-for="proposition in propositionsList" :key="proposition.id">
+    <div v-for="proposition in getPropositions" :key="proposition.id">
       <PropositionItem :proposition="proposition" />
     </div>
   </div>
@@ -21,17 +21,16 @@ import PropositionItem from "./PropositionItem.vue";
 
 export default {
   name: "PropositionsList",
-  data: () => {
-    return { propositionsList: [] };
-  },
   components: {
     CreateBasicProposition,
     PropositionItem,
   },
-  methods: {
+  computed: {
     getPropositions() {
-      this.propositionsList = this.$store.getters.propositions;
+      return this.$store.getters.propositions;
     },
+  },
+  methods: {
     getNumberOfPropositions() {
       return this.$store.getters.numberOfPropositions;
     },
