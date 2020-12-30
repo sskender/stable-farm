@@ -11,8 +11,27 @@
         </p>
         <div class="card-text">
           <div class="text-left">
-            Proposed by<br />
-            <span class="account-address">{{ proposition.proposedBy }}</span>
+            <small>
+              Proposed by:<br />
+              <ul>
+                <li>
+                  <span class="account-address">{{
+                    proposition.proposedBy
+                  }}</span>
+                </li>
+              </ul>
+            </small>
+          </div>
+          <div class="text-left">
+            <small
+              >Block start:
+              <span class="account-address">{{ proposition.startBlock }}</span>
+              <br />
+              Block finish:
+              <span class="account-address">{{
+                proposition.endBlock
+              }}</span></small
+            >
           </div>
           <div class="wrap-votes-stat text-right">
             <div v-if="showVotes">
