@@ -35,9 +35,6 @@ export default {
       return this.$store.getters.numberOfPropositions;
     },
   },
-  created() {
-    this.getPropositions();
-  },
 };
 </script>
 
