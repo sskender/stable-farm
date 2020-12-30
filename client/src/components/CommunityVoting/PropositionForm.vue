@@ -102,8 +102,10 @@ export default {
         this.endBlock = null;
       } catch (err) {
         console.error(err);
-        window.alert("Failed to create a new proposal!");
+        window.alert("Failed to create proposition");
       }
+
+      this.$emit("close-modal");
     },
   },
 };

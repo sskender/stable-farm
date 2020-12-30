@@ -20,7 +20,7 @@
     <div>
       <b-modal v-model="showPropositionModal" title="Create a new proposition">
         <b-container fluid>
-          <PropositionForm />
+          <PropositionForm v-on:close-modal="showPropositionModal = false" />
         </b-container>
         <template #modal-footer>
           <div class="w-100"></div>
