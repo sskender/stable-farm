@@ -42,7 +42,7 @@ contract CommunityVoting is IVotable {
      * @return minimum block difference
      */
     function getMinimumVotingBlockDifference() internal pure returns (uint256) {
-        return 10;
+        return 3;
     }
 
     /**
