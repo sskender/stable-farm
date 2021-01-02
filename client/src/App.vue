@@ -1,12 +1,14 @@
 <template>
   <div id="app">
     <div class="container-fluid">
-      <div class="row wrap-info-header">
-        <div class="col-md-6 text-left">
-          <BlockInfo />
-        </div>
-        <div class="col-md-6 text-right">
-          <ConnectWallet />
+      <div class="alert alert-info" role="alert">
+        <div class="row wrap-info-header">
+          <div class="col-md-6 text-left">
+            <BlockInfo />
+          </div>
+          <div class="col-md-6 text-right">
+            <ConnectWallet />
+          </div>
         </div>
       </div>
       <div class="row">
