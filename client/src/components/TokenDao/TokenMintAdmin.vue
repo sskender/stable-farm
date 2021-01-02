@@ -28,7 +28,7 @@ export default {
         await contract.methods.enableMinting().send({ from: caller });
       } catch (err) {
         console.error(err);
-        window.alert("Unable to mint");
+        this.$store.commit("createAlert", "Unable to mint!");
       }
     },
     async disableMinting() {
@@ -39,7 +39,7 @@ export default {
         await contract.methods.disableMinting().send({ from: caller });
       } catch (err) {
         console.error(err);
-        window.alert("Unable to mint");
+        this.$store.commit("createAlert", "Unable to mint!");
       }
     },
   },

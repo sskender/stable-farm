@@ -60,7 +60,7 @@ export default {
         console.log(transation);
       } catch (err) {
         console.error(err);
-        window.alert("Unable to vote");
+        this.$store.commit("createAlert", "Unable to vote!");
       }
     },
   },

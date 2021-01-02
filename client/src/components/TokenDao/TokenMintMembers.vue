@@ -22,7 +22,7 @@ export default {
         await contract.methods.mint().send({ from: caller });
       } catch (err) {
         console.error(err);
-        window.alert("Unable to mint");
+        this.$store.commit("createAlert", "Unable to mint token!");
       }
     },
   },

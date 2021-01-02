@@ -102,7 +102,7 @@ export default {
         this.endBlock = null;
       } catch (err) {
         console.error(err);
-        window.alert("Failed to create proposition");
+        this.$store.commit("createAlert", "Failed to create a proposition!");
       }
 
       this.$emit("close-modal");
