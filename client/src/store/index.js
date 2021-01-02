@@ -19,6 +19,10 @@ const store = new Vuex.Store({
     mintingEnabled: false,
     tokenHoldersList: [],
     propositionsList: [],
+    alert: {
+      visible: false,
+      message: null,
+    },
   },
   getters: {
     numberOfTokenHolders: (state) => {
@@ -29,6 +33,12 @@ const store = new Vuex.Store({
     },
     numberOfPropositions: (state) => {
       return state.propositionsList.length;
+    },
+    alertVisible: (state) => {
+      return state.alert.visible;
+    },
+    alertMessage: (state) => {
+      return state.alert.message;
     },
   },
   mutations: {
@@ -107,6 +117,14 @@ const store = new Vuex.Store({
       // store contract references
       state.DaoTokenContract = DaoTokenContract;
       state.CommunityVotingContract = CommunityVotingContract;
+    },
+    clearAlert: (state) => {
+      state.alert.visible = false;
+      state.alert.message = null;
+    },
+    createAlert: (state, message) => {
+      state.alert.visible = true;
+      state.alert.message = message;
     },
   },
   actions: {
