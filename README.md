@@ -1,14 +1,14 @@
 # Nonprofit decentralized autonomous organization (npo-dao)
 
-Proof of concept for running a nonprofit organization on Ethereum blockchain.
+Proof of concept for running a nonprofit type of organization on Ethereum blockchain.
 
 ### Quickstart
 
 #### Running:
 
-#### Contract development:
+#### Contracts development:
 
-- Run ganache: `http://localhost:7545` -> this is defined in [truffle configuration](ethereum/truffle-config.js)
+- Run ganache: `http://localhost:8545` -> this is defined in [truffle configuration](ethereum/truffle-config.js)
 - Run truffle console: `truffle console`
 - In truffle console: `compile`, `test` and `migrate`
 - Or use npm scripts for that:
@@ -25,13 +25,13 @@ Proof of concept for running a nonprofit organization on Ethereum blockchain.
     let tokenAddress = instance.address;
     let accounts = await web3.eth.getAccounts();
     ```
-- Interact with contract using ContractABI.json and Web3
+- Interact with contract using contract ABI json and Web3 library
 
 #### Web development:
 
-- Set [Web3 provider URI](client/src/providers/web3.js) (default provider is ganache `http://localhost:7545`)
+- Change [Web3 provider URI](client/src/providers/web3.js) (default provider is ganache `http://localhost:8545`)
 - Replace contract ABI json after [build](#contract-development) from [build folder](ethereum/) to [client/src/providers/abi folder](client/src/providers/abi)
-- Replace contract address after deployment in [contract provider file](client/src/providers)
+- Replace contract addresses after deployment in [vue store](client/src/store/index.js)
 - `cd client`
 - `npm run serve`
 
@@ -56,11 +56,20 @@ Proof of concept for running a nonprofit organization on Ethereum blockchain.
 - [Contract interaction](https://web3js.readthedocs.io/en/v1.2.1/web3-eth-contract.html)
 - [ABI (Application Binary Interface)](https://web3js.readthedocs.io/en/v1.2.11/web3-eth-abi.html)
 
-#### Vue.js
+#### Vue.js:
 
 - [Installation](https://cli.vuejs.org/guide/installation.html)
 - [Official docs](https://vuejs.org/v2/guide/installation.html)
 - [Vuex](https://vuex.vuejs.org/)
+
+#### Inspired by:
+
+- [Maker DAO](https://github.com/makerdao)
+- [Pool balancer management](https://github.com/balancer-labs/pool-management-vue)
+- [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts)
+- [Chainlink](https://github.com/smartcontractkit/chainlink)
+- [Proof-of-humanity](https://github.com/Proof-Of-Humanity)
+- [1inch-token](https://github.com/ajsantander/1inch-token-distribution)
 
 ## License
 
