@@ -42,6 +42,7 @@ Proof of concept for running a nonprofit type of organization on Ethereum blockc
 - [Ganache](https://www.trufflesuite.com/ganache)
 - [Truffle](https://www.trufflesuite.com/docs/truffle/quickstart)
 - [Truffle console interact](https://www.trufflesuite.com/docs/truffle/getting-started/interacting-with-your-contracts)
+- [Ganache CLI](https://github.com/trufflesuite/ganache-cli)
 
 #### Token:
 
