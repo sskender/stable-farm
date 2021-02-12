@@ -535,7 +535,7 @@ blockchain/history
 
 #truffle
 yarn.lock
-package-lock.json
+# package-lock.json
 
 ### SublimeText ###
 # Cache files for Sublime Text
