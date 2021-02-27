@@ -12,7 +12,10 @@ contract Vault {
 
     function withdrawEth(uint256 value) external {
         // log
-        // check value matches
-        msg.sender.transfer(value);
+        if (value > address(this).balance) {
+            msg.sender.transfer(address(this).balance);
+        } else {
+            msg.sender.transfer(value);
+        }
     }
 }
