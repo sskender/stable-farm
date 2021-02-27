@@ -1,6 +1,6 @@
 pragma solidity ^0.6.0;
 
-contract BankAccount {
+contract Vault {
     // TODO add owner
     function getBalance() external view returns (uint256) {
         return address(this).balance;

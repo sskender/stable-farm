@@ -1,5 +1,5 @@
-const BankAccount = artifacts.require("BankAccount");
+const Vault = artifacts.require("Vault");
 
 module.exports = async (deployer) => {
-  await deployer.deploy(BankAccount);
+  await deployer.deploy(Vault);
 };

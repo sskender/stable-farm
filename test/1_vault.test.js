@@ -1,8 +1,8 @@
-const BankAccount = artifacts.require("BankAccount");
+const Vault = artifacts.require("Vault");
 
-contract("Mint dai", async (accounts) => {
-  it("it should deposit eth to bank account", async () => {
-    const instance = await BankAccount.deployed();
+contract("Vault", async (accounts) => {
+  it("it should deposit eth to vault", async () => {
+    const instance = await Vault.deployed();
     const sender = accounts[0];
     const amountToDeposit = "5";
 
