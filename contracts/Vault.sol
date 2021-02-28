@@ -11,11 +11,15 @@ contract Vault {
     }
 
     function withdrawEth(uint256 value) external {
+        this.withdrawEthTo(msg.sender, value);
+    }
+
+    function withdrawEthTo(address payable to, uint256 value) external {
         // log
         if (value > address(this).balance) {
-            msg.sender.transfer(address(this).balance);
+            to.transfer(address(this).balance);
         } else {
-            msg.sender.transfer(value);
+            to.transfer(value);
         }
     }
 }
