@@ -73,4 +73,23 @@ contract DAICompoundLeveragePool is IPool {
         uint256 borrowed = _cDai.borrowBalanceCurrent(address(this));
         emit Log("DAI borrowed successfully", borrowed);
     }
+
+    function withdraw(uint256 _amount) external override {
+        // Approve transfer
+        _dai.approve(address(_cDai), _amount);
+
+        // Repay borrowed and get COMP reward
+        uint256 error = _cDai.repayBorrow(_amount);
+        require(error == 0, "CErc20.repayBorrow Error");
+
+        // Redeem cDai for Dai
+        // TODO how much cdai should i redeem ???
+        uint256 balancecDai = _cDai.balanceOf(address(this));
+        _cDai.redeem(balancecDai);
+    }
+
+    function withdrawAll() external override {
+        uint256 borrowed = _cDai.borrowBalanceCurrent(address(this));
+        this.withdraw(borrowed);
+    }
 }

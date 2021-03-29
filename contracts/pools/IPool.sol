@@ -8,4 +8,10 @@ interface IPool {
 
     /// @dev Supply the given amount of an asset to protocol
     function deposit(uint256 _amount) external;
+
+    /// @dev Withdraw the given amount of supplied collateral
+    function withdraw(uint256 _amount) external;
+
+    /// @dev Withdraw all supplied collateral amount and rewards
+    function withdrawAll() external;
 }

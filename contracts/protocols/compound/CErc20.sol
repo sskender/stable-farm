@@ -20,4 +20,6 @@ interface CErc20 {
     function redeem(uint256) external returns (uint256);
 
     function redeemUnderlying(uint256) external returns (uint256);
+
+    function balanceOf(address account) external view returns (uint256);
 }
