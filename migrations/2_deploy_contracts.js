@@ -7,6 +7,7 @@ module.exports = async (deployer) => {
     DAICompoundLeveragePool,
     MainnetAddresses.COMPTROLLER_ADDRESS,
     MainnetAddresses.CDAI_ADDRESS,
-    MainnetAddresses.DAI_ADDRESS
+    MainnetAddresses.DAI_ADDRESS,
+    MainnetAddresses.ORACLE_PRICE_FEED_ADDRESS
   );
 };
