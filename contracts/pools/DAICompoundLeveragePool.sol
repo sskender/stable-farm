@@ -12,6 +12,8 @@ contract DAICompoundLeveragePool is IPool {
     CErc20 private _cDai;
     Erc20 private _dai;
 
+    event Log(string, uint256);
+
     constructor(
         address _comptrollerAddress,
         address _cDaiAddress,

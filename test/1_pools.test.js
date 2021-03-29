@@ -15,6 +15,8 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
     const sender = accounts[0];
     const amountOfDaiToSupply = 5000;
 
+    // TODO transfer but keep track of who deposited
+
     // test initial balance
     const balanceSender = await Dai.balanceOf(sender);
     const balanceContract = await Dai.balanceOf(instance.address);
