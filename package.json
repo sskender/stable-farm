@@ -15,7 +15,8 @@
     "test": "truffle test",
     "console": "truffle console",
     "solhint": "solhint \"contracts/**/*.sol\"",
-    "prettier:solidity": "prettier --write contracts/**/*.sol"
+    "prettier:solidity": "prettier --write contracts/**/*.sol",
+    "ganache": "ganache-cli -f https://mainnet.infura.io/v3/$infuraApiKey -m 'clutch captain shoe salt awake harvest setup primary inmate ugly among become' -i 1 -u 0x9759A6Ac90977b93B58547b4A71c78317f391A28"
   },
   "dependencies": {
     "axios": "^0.21.1",
