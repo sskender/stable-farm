@@ -9,32 +9,6 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
     assert.equal(poolName, "DAI Compound Leverage Pool");
   });
 
-  it("it should transfer DAI to contract", async () => {
-    const instance = await DAICompoundLeveragePool.deployed();
-    const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
-    const sender = accounts[0];
-    const amountOfDaiToSupply = 5000;
-
-    // TODO transfer but keep track of who deposited
-
-    // test initial balance
-    const balanceSender = await Dai.balanceOf(sender);
-    const balanceContract = await Dai.balanceOf(instance.address);
-    assert.isAbove(Number(balanceSender), amountOfDaiToSupply * 1e18);
-    assert.equal(Number(balanceContract), 0);
-
-    // transfer
-    // TODO replace with approve and check allowance
-    const mantissa = web3.utils.toWei(amountOfDaiToSupply.toString(), "ether");
-    await Dai.transfer(instance.address, mantissa);
-
-    // test balance afterwards
-    const balanceSenderAfter = await Dai.balanceOf(sender);
-    const balanceContractAfter = await Dai.balanceOf(instance.address);
-    assert.equal(Number(balanceSenderAfter), Number(balanceSender) - mantissa);
-    assert.equal(Number(balanceContractAfter), mantissa);
-  });
-
   it("it should deposit DAI to contract", async () => {
     const instance = await DAICompoundLeveragePool.deployed();
     const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
@@ -43,21 +17,31 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
     const amountOfDaiToSupply = 1000;
     const mantissa = web3.utils.toWei(amountOfDaiToSupply.toString(), "ether");
 
-    // approve contract
-    // await Dai.approve(instance.address, amountOfDaiToSupply);
-
-    // deposit DAI
-    const result = await instance.deposit(mantissa);
-
-    // test
-    // TODO add tests
+    // balances before
+    const balanceDaiSender = await Dai.balanceOf(sender);
+    const balancecDaiSender = await cDai.balanceOf(sender);
     const balanceDai = await Dai.balanceOf(instance.address);
     const balancecDai = await cDai.balanceOf(instance.address);
-    assert.isAbove(Number(balancecDai), 0);
 
-    // TODO remove
-    console.log(Number(balanceDai));
-    console.log(Number(balancecDai));
+    // approve contract and deposit dai
+    await Dai.approve(instance.address, mantissa);
+    await instance.deposit(mantissa);
+
+    // balances after
+    const balanceDaiSenderAfter = await Dai.balanceOf(sender);
+    const balancecDaiSenderAfter = await cDai.balanceOf(sender);
+    const balanceDaiAfter = await Dai.balanceOf(instance.address);
+    const balancecDaiAfter = await cDai.balanceOf(instance.address);
+    const totalDai = Number(balanceDaiSenderAfter) + Number(mantissa);
+
+    // test
+    assert.equal(Number(balanceDaiSender), totalDai);
+    assert.isAbove(Number(balanceDaiAfter), 0);
+    assert.equal(Number(balancecDaiSender), 0);
+    assert.equal(Number(balanceDai), 0);
+    assert.equal(Number(balancecDai), 0);
+    assert.equal(Number(balancecDaiSenderAfter), 0);
+    assert.isBelow(Number(balancecDaiAfter) / 1e18, 2);
   });
 
   it("it should withdraw all DAI from contract", async () => {
@@ -68,17 +52,34 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
     const amountOfDaiToSupply = 1000;
     const mantissa = web3.utils.toWei(amountOfDaiToSupply.toString(), "ether");
 
-    await instance.withdrawAll();
-
-    // test
-    // TODO add tests
+    // balances before
     const balanceDai = await Dai.balanceOf(instance.address);
     const balancecDai = await cDai.balanceOf(instance.address);
-    assert.isAbove(Number(balanceDai), mantissa * 0.9);
-    assert.equal(Number(balancecDai), 0);
+    const balanceDaiSender = await Dai.balanceOf(sender);
+    const balancecDaiSender = await cDai.balanceOf(sender);
+    console.log(Number(balanceDai) / 1e18);
 
-    // TODO remove
-    console.log(Number(balanceDai));
-    console.log(Number(balancecDai));
+    // approve contract to repay borrow
+    await Dai.approve(instance.address, mantissa);
+
+    await instance.withdrawAll();
+
+    // balances after
+    const balanceDaiAfter = await Dai.balanceOf(instance.address);
+    const balancecDaiAfter = await cDai.balanceOf(instance.address);
+    const balanceDaiSenderAfter = await Dai.balanceOf(sender);
+    const balancecDaiSenderAfter = await cDai.balanceOf(sender);
+    console.log(Number(balanceDaiAfter) / 1e18);
+    console.log(Number(balancecDaiAfter) / 1e18);
+    console.log(Number(balanceDaiSenderAfter) / 1e18);
+    console.log(Number(balancecDaiSenderAfter) / 1e18);
+
+    // test
+    assert.isBelow(Number(balanceDaiSender), Number(balanceDaiSenderAfter));
+    assert.isBelow(Number(balancecDai) / 1e18, 2);
+    assert.equal(Number(balanceDaiAfter), 0);
+    assert.equal(Number(balancecDaiAfter), 0);
+    assert.equal(Number(balancecDaiSender), 0);
+    assert.equal(Number(balancecDaiSenderAfter), 0);
   });
 });

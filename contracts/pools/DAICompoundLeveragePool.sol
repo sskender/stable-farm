@@ -31,7 +31,7 @@ contract DAICompoundLeveragePool is IPool {
         _enterMarkets();
     }
 
-    // @note Enter the market to borrow another type of asset
+    /// @dev Enter the market to borrow another type of asset
     function _enterMarkets() private {
         address[] memory cTokens = new address[](1);
         cTokens[0] = address(_cDai);
@@ -47,6 +47,9 @@ contract DAICompoundLeveragePool is IPool {
     }
 
     function deposit(uint256 _amount) external override {
+        // Deposit token on user behalf
+        _dai.transferFrom(msg.sender, address(this), _amount);
+
         // Approve transfer
         _dai.approve(address(_cDai), _amount);
 
@@ -74,22 +77,38 @@ contract DAICompoundLeveragePool is IPool {
         emit Log("DAI borrowed successfully", borrowed);
     }
 
-    function withdraw(uint256 _amount) external override {
+    /// @dev Repay the borrow and convert back
+    function _closePosition(uint256 _amount) private {
         // Approve transfer
         _dai.approve(address(_cDai), _amount);
 
-        // Repay borrowed and get COMP reward
+        // Repay borrow and get COMP reward
         uint256 error = _cDai.repayBorrow(_amount);
         require(error == 0, "CErc20.repayBorrow Error");
 
         // Redeem cDai for Dai
-        // TODO how much cdai should i redeem ???
         uint256 balancecDai = _cDai.balanceOf(address(this));
         _cDai.redeem(balancecDai);
     }
 
+    function withdraw(uint256 _amount) external override {}
+
     function withdrawAll() external override {
-        uint256 borrowed = _cDai.borrowBalanceCurrent(address(this));
-        this.withdraw(borrowed);
+        uint256 borrow = _cDai.borrowBalanceCurrent(address(this));
+
+        // Transfer more DAI to repay if necessary
+        uint256 availableForRepay = _dai.balanceOf(address(this));
+        int256 shortage = int256(borrow) - int256(availableForRepay);
+        if (shortage > 0) {
+            _dai.transferFrom(msg.sender, address(this), uint256(shortage));
+            emit Log("Transfering to repay", uint256(shortage));
+        }
+
+        // Close leverage position
+        _closePosition(borrow);
+
+        // Transfer DAI back to user
+        uint256 balance = _dai.balanceOf(address(this));
+        _dai.transfer(msg.sender, balance);
     }
 }
