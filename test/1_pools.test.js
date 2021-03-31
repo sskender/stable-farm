@@ -1,8 +1,28 @@
-const MainnetAddresses = require("./../scripts/mainnet_addresses");
+const MainnetAddresses = require("./mainnet.addresses");
+const daiAbi = require("./abi/dai-abi.json");
+
 const DAICompoundLeveragePool = artifacts.require("DAICompoundLeveragePool");
 const Erc20 = artifacts.require("Erc20");
 
 contract("DAI Compound Leverage Pool", async (accounts) => {
+  it("it should mint 10000 test DAI", async () => {
+    const daiMcdJoin = MainnetAddresses.DAI_MCD_JOIN;
+    const daiAddress = MainnetAddresses.DAI_ADDRESS;
+
+    const daiContract = new web3.eth.Contract(daiAbi, daiAddress);
+    const numbDaiToMint = web3.utils.toWei("10000", "ether");
+
+    await daiContract.methods.mint(accounts[0], numbDaiToMint).send({
+      from: daiMcdJoin,
+      gasPrice: web3.utils.toHex(0),
+    });
+
+    const balance = await daiContract.methods.balanceOf(accounts[0]).call();
+    const dai = balance / 1e18;
+
+    assert.isAtLeast(dai, 10000);
+  });
+
   it("it should get pool name", async () => {
     const instance = await DAICompoundLeveragePool.deployed();
     const poolName = await instance.getName();

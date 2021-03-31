@@ -1,6 +1,6 @@
 const DAICompoundLeveragePool = artifacts.require("DAICompoundLeveragePool");
 
-const MainnetAddresses = require("./../scripts/mainnet_addresses");
+const MainnetAddresses = require("./../test/mainnet.addresses");
 
 module.exports = async (deployer) => {
   await deployer.deploy(
