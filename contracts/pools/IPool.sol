@@ -3,6 +3,12 @@
 pragma solidity ^0.6.0;
 
 interface IPool {
+    /// @dev Event upon collateral deposit
+    event Deposit(uint256);
+
+    /// @dev Event upon withdrawal
+    event Withdrawal(uint256);
+
     /// @dev Get the name of the pool
     function getName() external pure returns (string memory);
 
