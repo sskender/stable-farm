@@ -7,6 +7,8 @@ import "./../protocols/compound/PriceFeed.sol";
 import "./../protocols/compound/Comptroller.sol";
 import "./../protocols/compound/CErc20.sol";
 import "./../ERC20/Erc20.sol";
+import "./../math/SafeMath.sol";
+import "./../math/SignedSafeMath.sol";
 
 contract DAICompoundLeveragePool is IPool {
     uint256 internal constant MIN_COLLATERAL_VALUE = 25;
@@ -74,7 +76,8 @@ contract DAICompoundLeveragePool is IPool {
 
         // Borrow maximum of underlying asset
         uint256 cDaiPrice = _oracle.getUnderlyingPrice(address(_cDai));
-        uint256 borrow = (liquidity / cDaiPrice) * 10**18;
+        uint256 borrow =
+            SafeMath.mul(SafeMath.div(liquidity, cDaiPrice), 10**18);
         _cDai.borrow(borrow);
 
         emit Log("borrow successful", borrow);
@@ -89,7 +92,7 @@ contract DAICompoundLeveragePool is IPool {
 
         // Supply and borrow
         uint256 collateral = _amount;
-        while (collateral > MIN_COLLATERAL_VALUE * 10**18) {
+        while (collateral > SafeMath.mul(MIN_COLLATERAL_VALUE, 10**18)) {
             _supplyCollateral(collateral);
             collateral = _borrowAsset();
         }
@@ -119,7 +122,8 @@ contract DAICompoundLeveragePool is IPool {
 
         // Transfer more DAI to repay borrow if necessary
         uint256 availableForRepay = _dai.balanceOf(address(this));
-        int256 shortage = int256(borrow) - int256(availableForRepay);
+        int256 shortage =
+            SignedSafeMath.sub(int256(borrow), int256(availableForRepay));
         if (shortage > 0) {
             _dai.transferFrom(msg.sender, address(this), uint256(shortage));
         }
