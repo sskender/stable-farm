@@ -17,6 +17,10 @@ contract DAICompoundLeveragePool is IPool {
 
     event Log(string, uint256);
 
+    event Deposit(uint256);
+
+    event Withdraw(uint256);
+
     constructor(
         address _comptrollerAddress,
         address _cDaiAddress,
@@ -91,7 +95,7 @@ contract DAICompoundLeveragePool is IPool {
         }
         _supplyCollateral(collateral);
 
-        // TODO emit deposit event
+        emit Deposit(_amount);
     }
 
     /// @dev Repay the borrow and convert back
@@ -127,6 +131,6 @@ contract DAICompoundLeveragePool is IPool {
         uint256 balance = _dai.balanceOf(address(this));
         _dai.transfer(msg.sender, balance);
 
-        // TODO emit withdraw event
+        emit Withdraw(balance);
     }
 }
