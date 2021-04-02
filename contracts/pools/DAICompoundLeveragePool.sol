@@ -113,12 +113,11 @@ contract DAICompoundLeveragePool is IPool {
     function withdrawAll() external override {
         uint256 borrow = _cDai.borrowBalanceCurrent(address(this));
 
-        // Transfer more DAI to repay if necessary
+        // Transfer more DAI to repay borrow if necessary
         uint256 availableForRepay = _dai.balanceOf(address(this));
         int256 shortage = int256(borrow) - int256(availableForRepay);
         if (shortage > 0) {
             _dai.transferFrom(msg.sender, address(this), uint256(shortage));
-            emit Log("Transfering to repay", uint256(shortage));
         }
 
         // Close leverage position
@@ -127,5 +126,7 @@ contract DAICompoundLeveragePool is IPool {
         // Transfer DAI back to user
         uint256 balance = _dai.balanceOf(address(this));
         _dai.transfer(msg.sender, balance);
+
+        // TODO emit withdraw event
     }
 }
