@@ -64,7 +64,7 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
     assert.equal(Number(balanceDai), 0);
     assert.equal(Number(balancecDai), 0);
     assert.equal(Number(balancecDaiSenderAfter), 0);
-    assert.isBelow(Number(balancecDaiAfter) / 1e18, 2);
+    assert.isAbove(Number(balancecDaiAfter) / 1e18, 0);
   });
 
   it("it should withdraw all DAI from contract", async () => {
@@ -72,7 +72,7 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
     const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
     const cDai = await Erc20.at(MainnetAddresses.CDAI_ADDRESS);
     const sender = accounts[0];
-    const amountOfDaiToSupply = 1000;
+    const amountOfDaiToSupply = 1000 * 5;
     const mantissa = web3.utils.toWei(amountOfDaiToSupply.toString(), "ether");
 
     // balances before
@@ -80,7 +80,6 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
     const balancecDai = await cDai.balanceOf(instance.address);
     const balanceDaiSender = await Dai.balanceOf(sender);
     const balancecDaiSender = await cDai.balanceOf(sender);
-    console.log(Number(balanceDai) / 1e18);
 
     // approve contract to repay borrow
     await Dai.approve(instance.address, mantissa);
@@ -92,14 +91,11 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
     const balancecDaiAfter = await cDai.balanceOf(instance.address);
     const balanceDaiSenderAfter = await Dai.balanceOf(sender);
     const balancecDaiSenderAfter = await cDai.balanceOf(sender);
-    console.log(Number(balanceDaiAfter) / 1e18);
-    console.log(Number(balancecDaiAfter) / 1e18);
-    console.log(Number(balanceDaiSenderAfter) / 1e18);
-    console.log(Number(balancecDaiSenderAfter) / 1e18);
 
     // test
     assert.isBelow(Number(balanceDaiSender), Number(balanceDaiSenderAfter));
-    assert.isBelow(Number(balancecDai) / 1e18, 2);
+    assert.isAbove(Number(balancecDai) / 1e18, 0);
+    assert.equal(Number(balanceDai), 0);
     assert.equal(Number(balanceDaiAfter), 0);
     assert.equal(Number(balancecDaiAfter), 0);
     assert.equal(Number(balancecDaiSender), 0);
