@@ -9,6 +9,7 @@ import "./../protocols/compound/CErc20.sol";
 import "./../ERC20/Erc20.sol";
 
 contract DAICompoundLeveragePool is IPool {
+    uint256 internal constant MIN_COLLATERAL_VALUE = 25;
     Comptroller private _comptroller;
     CErc20 private _cDai;
     Erc20 private _dai;
@@ -46,17 +47,18 @@ contract DAICompoundLeveragePool is IPool {
         return "DAI Compound Leverage Pool";
     }
 
-    function deposit(uint256 _amount) external override {
-        // Deposit token on user behalf
-        _dai.transferFrom(msg.sender, address(this), _amount);
-
+    function _supplyCollateral(uint256 _amount) private {
         // Approve transfer
         _dai.approve(address(_cDai), _amount);
 
-        // Supply underlying as collateral
+        // Supply underlying
         uint256 mintError = _cDai.mint(_amount);
         require(mintError == 0, "CErc20.mint Error");
 
+        emit Log("supply successful", _amount);
+    }
+
+    function _borrowAsset() private returns (uint256) {
         // Get account's total liquidity
         (uint256 liquidityError, uint256 liquidity, uint256 shortfall) =
             _comptroller.getAccountLiquidity(address(this));
@@ -65,16 +67,31 @@ contract DAICompoundLeveragePool is IPool {
         }
         require(shortfall == 0, "account underwater");
         require(liquidity > 0, "account has excess collateral");
-        emit Log("Account liquidity", liquidity);
 
-        // Borrow maximum of underlying
+        // Borrow maximum of underlying asset
         uint256 cDaiPrice = _oracle.getUnderlyingPrice(address(_cDai));
-        uint256 maxBorrowUnderlying = liquidity / cDaiPrice;
-        _cDai.borrow(maxBorrowUnderlying * 10**18);
+        uint256 borrow = (liquidity / cDaiPrice) * 10**18;
+        _cDai.borrow(borrow);
 
-        // Get borrowed amount
-        uint256 borrowed = _cDai.borrowBalanceCurrent(address(this));
-        emit Log("DAI borrowed successfully", borrowed);
+        emit Log("borrow successful", borrow);
+
+        return borrow;
+    }
+
+    function deposit(uint256 _amount) external override {
+        // Deposit token on sender's behalf
+        // This must be approved outside of the contract
+        _dai.transferFrom(msg.sender, address(this), _amount);
+
+        // Supply and borrow
+        uint256 collateral = _amount;
+        while (collateral > MIN_COLLATERAL_VALUE * 10**18) {
+            _supplyCollateral(collateral);
+            collateral = _borrowAsset();
+        }
+        _supplyCollateral(collateral);
+
+        // TODO emit deposit event
     }
 
     /// @dev Repay the borrow and convert back

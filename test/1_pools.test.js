@@ -1,5 +1,6 @@
 const MainnetAddresses = require("./mainnet.addresses");
 const daiAbi = require("./abi/dai-abi.json");
+const utils = require("./utils");
 
 const DAICompoundLeveragePool = artifacts.require("DAICompoundLeveragePool");
 const Erc20 = artifacts.require("Erc20");
@@ -46,6 +47,8 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
     // approve contract and deposit dai
     await Dai.approve(instance.address, mantissa);
     await instance.deposit(mantissa);
+    // const result = await instance.deposit(mantissa);
+    // console.log(result.events.Log);
 
     // balances after
     const balanceDaiSenderAfter = await Dai.balanceOf(sender);
@@ -56,7 +59,7 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
 
     // test
     assert.equal(Number(balanceDaiSender), totalDai);
-    assert.isAbove(Number(balanceDaiAfter), 0);
+    assert.equal(Number(balanceDaiAfter), 0);
     assert.equal(Number(balancecDaiSender), 0);
     assert.equal(Number(balanceDai), 0);
     assert.equal(Number(balancecDai), 0);
