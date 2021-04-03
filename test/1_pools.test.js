@@ -64,7 +64,7 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
     assert.equal(Number(balanceDai), 0);
     assert.equal(Number(balancecDai), 0);
     assert.equal(Number(balancecDaiSenderAfter), 0);
-    assert.isAbove(Number(balancecDaiAfter) / 1e18, 0);
+    assert.isAbove(Number(balancecDaiAfter) / 1e8, 0);
   });
 
   it("it should withdraw all DAI from contract", async () => {
@@ -94,7 +94,7 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
 
     // test
     assert.isBelow(Number(balanceDaiSender), Number(balanceDaiSenderAfter));
-    assert.isAbove(Number(balancecDai) / 1e18, 0);
+    assert.isAbove(Number(balancecDai) / 1e8, 0);
     assert.equal(Number(balanceDai), 0);
     assert.equal(Number(balanceDaiAfter), 0);
     assert.equal(Number(balancecDaiAfter), 0);
