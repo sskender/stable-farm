@@ -120,7 +120,17 @@ contract DAICompoundLeveragePool is IPool {
     }
 
     /// @dev Claim COMP token rewards
-    function harvest() external override {}
+    function harvest() external override {
+        address compAddress = _comptroller.getCompAddress();
+        Erc20 _comp = Erc20(compAddress);
+
+        uint256 balanceBefore = _comp.balanceOf(address(this));
+        _comptroller.claimComp(address(this));
+        uint256 balanceAfter = _comp.balanceOf(address(this));
+        uint256 harvested = SafeMath.sub(balanceAfter, balanceBefore);
+
+        emit Harvest(harvested);
+    }
 
     /// @dev Withdraw the given amount of supplied collateral
     function withdraw(uint256 _amount) external override {}

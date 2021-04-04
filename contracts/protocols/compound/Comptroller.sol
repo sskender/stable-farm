@@ -17,4 +17,8 @@ interface Comptroller {
             uint256,
             uint256
         );
+
+    function claimComp(address holder) external;
+
+    function getCompAddress() external view returns (address);
 }
