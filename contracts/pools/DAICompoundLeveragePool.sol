@@ -56,7 +56,7 @@ contract DAICompoundLeveragePool is IPool {
         // Approve transfer
         _dai.approve(address(_cDai), _amount);
 
-        // Supply underlying
+        // Mint cToken
         uint256 mintError = _cDai.mint(_amount);
         require(mintError == 0, "CErc20.mint Error");
 
@@ -86,10 +86,10 @@ contract DAICompoundLeveragePool is IPool {
         return borrow;
     }
 
-    /// @dev Supply the given amount of an asset to protocol
+    /// @dev Supply the given amount of an asset to the protocol
     function deposit(uint256 _amount) external override {
         // Deposit token on sender's behalf
-        // This must be approved outside of the contract
+        // This must be approved before calling the function
         _dai.transferFrom(msg.sender, address(this), _amount);
 
         // Supply and borrow
@@ -104,12 +104,12 @@ contract DAICompoundLeveragePool is IPool {
         emit Deposit(_amount);
     }
 
-    /// @dev Repay the borrow and convert back
+    /// @dev Repay the borrow and convert back to underlying
     function _closePosition(uint256 _amount) private {
         // Approve transfer
         _dai.approve(address(_cDai), _amount);
 
-        // Repay borrow and get COMP reward
+        // Repay borrow
         uint256 repayError = _cDai.repayBorrow(_amount);
         require(repayError == 0, "CErc20.repayBorrow Error");
 
@@ -137,6 +137,8 @@ contract DAICompoundLeveragePool is IPool {
 
     /// @dev Withdraw all supplied collateral amount and rewards
     function withdrawAll() external override {
+        // Get total borrow amount
+        // This must be approved before calling the function
         uint256 borrow = _cDai.borrowBalanceCurrent(address(this));
 
         // Transfer more DAI to repay borrow if necessary
@@ -150,7 +152,12 @@ contract DAICompoundLeveragePool is IPool {
         // Close leverage position
         _closePosition(borrow);
 
-        // Transfer DAI back to user
+        // Claim COMP token
+        this.harvest();
+
+        // TODO exchange COMP for DAI
+
+        // Transfer reclaimed DAI + rewards converted to DAI back to user
         uint256 balance = _dai.balanceOf(address(this));
         _dai.transfer(msg.sender, balance);
 

@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 const MainnetAddresses = require("./mainnet.addresses");
 const daiAbi = require("./abi/dai-abi.json");
-const utils = require("./utils");
+// const utils = require("./utils");
 
 const DAICompoundLeveragePool = artifacts.require("DAICompoundLeveragePool");
 const Erc20 = artifacts.require("Erc20");
@@ -68,6 +68,27 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
     assert.isAbove(Number(balancecDaiAfter) / 1e8, 0);
   });
 
+  it("it should harvest COMP token rewards", async () => {
+    const instance = await DAICompoundLeveragePool.deployed();
+    const sender = accounts[0];
+    const comp = await Erc20.at(MainnetAddresses.COMP_ADDRESS);
+
+    const balanceBefore = await comp.balanceOf(instance.address);
+    const balanceSenderBefore = await comp.balanceOf(sender);
+
+    await instance.harvest();
+    // const result = await instance.harvest();
+    // console.log(result.events.Harvest);
+
+    const balanceAfter = await comp.balanceOf(instance.address);
+    const balanceSenderAfter = await comp.balanceOf(sender);
+
+    // test
+    assert.equal(Number(balanceSenderBefore), 0);
+    assert.equal(Number(balanceSenderAfter), 0);
+    assert.isAbove(Number(balanceAfter), Number(balanceBefore));
+  });
+
   it("it should withdraw all DAI from contract", async () => {
     const instance = await DAICompoundLeveragePool.deployed();
     const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
@@ -101,26 +122,5 @@ contract("DAI Compound Leverage Pool", async (accounts) => {
     assert.equal(Number(balancecDaiAfter), 0);
     assert.equal(Number(balancecDaiSender), 0);
     assert.equal(Number(balancecDaiSenderAfter), 0);
-  });
-
-  it("it should harvest COMP token rewards", async () => {
-    const instance = await DAICompoundLeveragePool.deployed();
-    const sender = accounts[0];
-    const comp = await Erc20.at(MainnetAddresses.COMP_ADDRESS);
-
-    const balanceBefore = await comp.balanceOf(instance.address);
-    const balanceSenderBefore = await comp.balanceOf(sender);
-
-    await instance.harvest();
-    // const result = await instance.harvest();
-    // console.log(result.events.Harvest);
-
-    const balanceAfter = await comp.balanceOf(instance.address);
-    const balanceSenderAfter = await comp.balanceOf(sender);
-
-    // test
-    assert.equal(Number(balanceSenderBefore), 0);
-    assert.equal(Number(balanceSenderAfter), 0);
-    assert.isAbove(Number(balanceAfter), Number(balanceBefore));
   });
 });
