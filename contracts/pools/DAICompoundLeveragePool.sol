@@ -67,14 +67,15 @@ contract DAICompoundLeveragePool is IPool {
         if (liquidityError != 0) {
             revert("Comptroller.getAccountLiquidity Error");
         }
-        require(shortfall == 0, "account underwater");
+        require(shortfall == 0, "account subjected to liquidation");
         require(liquidity > 0, "account has excess collateral");
 
         // Borrow maximum of underlying asset
         uint256 cDaiPrice = _oracle.getUnderlyingPrice(address(_cDai));
         uint256 borrow =
             SafeMath.mul(SafeMath.div(liquidity, cDaiPrice), 10**18);
-        _cDai.borrow(borrow);
+        uint256 borrowError = _cDai.borrow(borrow);
+        require(borrowError == 0, "CErc20.borrow Error");
 
         emit Log("borrow successful", borrow);
 
@@ -87,8 +88,9 @@ contract DAICompoundLeveragePool is IPool {
         _dai.transferFrom(msg.sender, address(this), _amount);
 
         // Supply and borrow
+        uint256 minimumCollateral = SafeMath.mul(MIN_COLLATERAL_VALUE, 10**18);
         uint256 collateral = _amount;
-        while (collateral > SafeMath.mul(MIN_COLLATERAL_VALUE, 10**18)) {
+        while (collateral > minimumCollateral) {
             _supplyCollateral(collateral);
             collateral = _borrowAsset();
         }
@@ -103,12 +105,13 @@ contract DAICompoundLeveragePool is IPool {
         _dai.approve(address(_cDai), _amount);
 
         // Repay borrow and get COMP reward
-        uint256 error = _cDai.repayBorrow(_amount);
-        require(error == 0, "CErc20.repayBorrow Error");
+        uint256 repayError = _cDai.repayBorrow(_amount);
+        require(repayError == 0, "CErc20.repayBorrow Error");
 
         // Redeem cDai for Dai
         uint256 balancecDai = _cDai.balanceOf(address(this));
-        _cDai.redeem(balancecDai);
+        uint256 redeemError = _cDai.redeem(balancecDai);
+        require(redeemError == 0, "CErc20.redeem Error");
     }
 
     function withdraw(uint256 _amount) external override {}
