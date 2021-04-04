@@ -9,6 +9,9 @@ interface IPool {
     /// @dev Event upon withdrawal
     event Withdrawal(uint256);
 
+    /// @dev Event upon harvest
+    event Harvest(uint256);
+
     /// @dev Get the name of the pool
     function getName() external pure returns (string memory);
 
@@ -20,4 +23,7 @@ interface IPool {
 
     /// @dev Withdraw all supplied collateral amount and rewards
     function withdrawAll() external;
+
+    /// @dev Claim COMP token rewards
+    function harvest() external;
 }

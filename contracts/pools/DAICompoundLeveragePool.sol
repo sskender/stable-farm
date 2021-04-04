@@ -19,6 +19,7 @@ contract DAICompoundLeveragePool is IPool {
 
     event Log(string, uint256);
 
+    /// @dev Pool constructor
     constructor(
         address _comptrollerAddress,
         address _cDaiAddress,
@@ -34,7 +35,7 @@ contract DAICompoundLeveragePool is IPool {
         _enterMarkets();
     }
 
-    /// @dev Enter the market to borrow another type of asset
+    /// @dev Enter the Compound market to borrow another type of asset
     function _enterMarkets() private {
         address[] memory cTokens = new address[](1);
         cTokens[0] = address(_cDai);
@@ -45,10 +46,12 @@ contract DAICompoundLeveragePool is IPool {
         }
     }
 
+    /// @dev Get the name of the pool
     function getName() external pure override returns (string memory) {
         return "DAI Compound Leverage Pool";
     }
 
+    /// @dev Supply underlying to Compound protocol
     function _supplyCollateral(uint256 _amount) private {
         // Approve transfer
         _dai.approve(address(_cDai), _amount);
@@ -60,6 +63,7 @@ contract DAICompoundLeveragePool is IPool {
         emit Log("supply successful", _amount);
     }
 
+    /// @dev Borrow asset from Compound protocol
     function _borrowAsset() private returns (uint256) {
         // Get account's total liquidity
         (uint256 liquidityError, uint256 liquidity, uint256 shortfall) =
@@ -82,6 +86,7 @@ contract DAICompoundLeveragePool is IPool {
         return borrow;
     }
 
+    /// @dev Supply the given amount of an asset to protocol
     function deposit(uint256 _amount) external override {
         // Deposit token on sender's behalf
         // This must be approved outside of the contract
@@ -114,8 +119,13 @@ contract DAICompoundLeveragePool is IPool {
         require(redeemError == 0, "CErc20.redeem Error");
     }
 
+    /// @dev Claim COMP token rewards
+    function harvest() external override {}
+
+    /// @dev Withdraw the given amount of supplied collateral
     function withdraw(uint256 _amount) external override {}
 
+    /// @dev Withdraw all supplied collateral amount and rewards
     function withdrawAll() external override {
         uint256 borrow = _cDai.borrowBalanceCurrent(address(this));
 
