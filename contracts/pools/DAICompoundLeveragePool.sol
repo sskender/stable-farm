@@ -135,7 +135,7 @@ contract DAICompoundLeveragePool is IPool {
     /// @dev Withdraw the given amount of supplied collateral
     function withdraw(uint256 _amount) external override {}
 
-    /// @dev Withdraw all supplied collateral amount and rewards
+    /// @dev Withdraw all supplied collateral and rewards
     function withdrawAll() external override {
         // Get total borrow amount
         // This must be approved before calling the function
