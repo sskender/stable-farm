@@ -15,6 +15,7 @@ contract DAICompoundLeveragePool is IPool {
     Comptroller private _comptroller;
     CErc20 private _cDai;
     Erc20 private _dai;
+    Erc20 private _rewardToken;
     PriceFeed private _oracle;
 
     event Log(string, uint256);
@@ -30,6 +31,7 @@ contract DAICompoundLeveragePool is IPool {
         _cDai = CErc20(_cDaiAddress);
         _dai = Erc20(_daiAddress);
         _oracle = PriceFeed(_oracleAddress);
+        _rewardToken = Erc20(_comptroller.getCompAddress());
 
         // Enter cDAI market
         _enterMarkets();
@@ -121,14 +123,11 @@ contract DAICompoundLeveragePool is IPool {
 
     /// @dev Claim COMP token rewards
     function harvest() external override {
-        address compAddress = _comptroller.getCompAddress();
-        Erc20 _comp = Erc20(compAddress);
-
-        uint256 balanceBefore = _comp.balanceOf(address(this));
+        uint256 rewardsBefore = _rewardToken.balanceOf(address(this));
         _comptroller.claimComp(address(this));
-        uint256 balanceAfter = _comp.balanceOf(address(this));
-        uint256 harvested = SafeMath.sub(balanceAfter, balanceBefore);
+        uint256 rewardsAfter = _rewardToken.balanceOf(address(this));
 
+        uint256 harvested = SafeMath.sub(rewardsAfter, rewardsBefore);
         emit Harvest(harvested);
     }
 
