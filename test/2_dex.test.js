@@ -25,7 +25,7 @@ contract("Uniswap DEX", async (accounts) => {
     const balance = await daiContract.methods.balanceOf(receiver).call();
     const daiBalance = balance / 1e18;
 
-    assert.isAtLeast(daiBalance, 1000);
+    assert.isAtLeast(daiBalance, numbDaiToMint);
   });
 
   it("it should mint test COMP tokens", async () => {
@@ -47,13 +47,14 @@ contract("Uniswap DEX", async (accounts) => {
     const balance = await compContract.methods.balanceOf(receiver).call();
     const compBalance = balance / 1e18;
 
-    assert.isAtLeast(compBalance, 10);
+    assert.isAtLeast(compBalance, numbCompToMint);
   });
 
   it("it should transfer COMP tokens to contract", async () => {
     const instance = await Uniswap.deployed();
     const Comp = await Erc20.at(MainnetAddresses.COMP_ADDRESS);
     const sender = accounts[0];
+    const tokensOnSenderAccount = 10;
     const tokensToTransfer = 2;
 
     const valueToTransfer = web3.utils.toWei(
@@ -70,10 +71,13 @@ contract("Uniswap DEX", async (accounts) => {
     const balanceContractAfter = await Comp.balanceOf(instance.address);
 
     // test
-    assert.isAtLeast(Number(balanceUser), 10 * 1e18);
+    assert.isAtLeast(Number(balanceUser), tokensOnSenderAccount * 1e18);
     assert.equal(Number(balanceContract), 0);
-    assert.isAtLeast(Number(balanceUserAfter), 8 * 1e18);
-    assert.equal(Number(balanceContractAfter), 2 * 1e18);
+    assert.isAtLeast(
+      Number(balanceUserAfter),
+      (tokensOnSenderAccount - tokensToTransfer) * 1e18
+    );
+    assert.equal(Number(balanceContractAfter), tokensToTransfer * 1e18);
     assert.isBelow(Number(balanceUserAfter), Number(balanceUser));
     assert.isAbove(Number(balanceContractAfter), Number(balanceContract));
   });
