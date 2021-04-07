@@ -11,37 +11,43 @@ contract("Uniswap DEX", async (accounts) => {
     const daiMcdJoin = MainnetAddresses.DAI_MCD_JOIN;
     const daiAddress = MainnetAddresses.DAI_ADDRESS;
 
-    const daiContract = new web3.eth.Contract(daiAbi, daiAddress);
-    const numbDaiToMint = web3.utils.toWei("1000", "ether");
+    const receiver = accounts[0];
+    const numbDaiToMint = 1000;
 
-    await daiContract.methods.mint(accounts[0], numbDaiToMint).send({
+    const daiContract = new web3.eth.Contract(daiAbi, daiAddress);
+    const mantissa = web3.utils.toWei(numbDaiToMint.toString(), "ether");
+
+    await daiContract.methods.mint(receiver, mantissa).send({
       from: daiMcdJoin,
       gasPrice: web3.utils.toHex(0),
     });
 
-    const balance = await daiContract.methods.balanceOf(accounts[0]).call();
-    const dai = balance / 1e18;
+    const balance = await daiContract.methods.balanceOf(receiver).call();
+    const daiBalance = balance / 1e18;
 
-    assert.isAtLeast(dai, 1000);
+    assert.isAtLeast(daiBalance, 1000);
   });
 
   it("it should mint test COMP tokens", async () => {
     const compAddress = MainnetAddresses.COMP_ADDRESS;
     const cCompAddress = MainnetAddresses.CCOMP_ADDRESS;
 
-    const compContract = new web3.eth.Contract(erc20Abi, compAddress);
-    const numbCompToMint = web3.utils.toWei("10", "ether");
+    const receiver = accounts[0];
+    const numbCompToMint = 10;
 
-    await compContract.methods.transfer(accounts[0], numbCompToMint).send({
+    const compContract = new web3.eth.Contract(erc20Abi, compAddress);
+    const mantissa = web3.utils.toWei(numbCompToMint.toString(), "ether");
+
+    await compContract.methods.transfer(receiver, mantissa).send({
       from: cCompAddress,
       gasPrice: web3.utils.toHex(0),
       gas: 3000000,
     });
 
-    const balance = await compContract.methods.balanceOf(accounts[0]).call();
-    const comp = balance / 1e18;
+    const balance = await compContract.methods.balanceOf(receiver).call();
+    const compBalance = balance / 1e18;
 
-    assert.isAtLeast(comp, 10);
+    assert.isAtLeast(compBalance, 10);
   });
 
   it("it should transfer COMP tokens to contract", async () => {
@@ -74,5 +80,25 @@ contract("Uniswap DEX", async (accounts) => {
 
   it("it should swap COMP tokens for DAI tokens", async () => {
     const instance = await Uniswap.deployed();
+    const sender = accounts[0];
+    const amountOfCompToSwap = 2;
+
+    const amountIn = web3.utils.toWei(amountOfCompToSwap.toString(), "ether");
+
+    await instance.swapTokensAForTokensB(amountIn, { from: sender });
+    // const result = await instance.swapTokenAForTokenB(amountIn);
+    // console.log(result.events.Log);
+  });
+
+  it("it should be DAI tokens available", async () => {
+    const instance = await Uniswap.deployed();
+    const Comp = await Erc20.at(MainnetAddresses.COMP_ADDRESS);
+    const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
+
+    const balanceComp = await Comp.balanceOf(instance.address);
+    const balanceDai = await Dai.balanceOf(instance.address);
+
+    assert.equal(Number(balanceComp), 0);
+    assert.isAbove(Number(balanceDai) / 1e18, 0);
   });
 });
