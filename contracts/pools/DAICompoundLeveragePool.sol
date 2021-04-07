@@ -6,12 +6,14 @@ import "./IPool.sol";
 import "./../protocols/compound/PriceFeed.sol";
 import "./../protocols/compound/Comptroller.sol";
 import "./../protocols/compound/CErc20.sol";
+import "./../protocols/uniswap/Uniswap.sol";
 import "./../ERC20/Erc20.sol";
 import "./../math/SafeMath.sol";
 import "./../math/SignedSafeMath.sol";
 
-contract DAICompoundLeveragePool is IPool {
+contract DAICompoundLeveragePool is IPool, Uniswap {
     uint256 internal constant MIN_COLLATERAL_VALUE = 25;
+    address _uniswapRouterAddress;
     Comptroller private _comptroller;
     CErc20 private _cDai;
     Erc20 private _dai;
@@ -25,13 +27,15 @@ contract DAICompoundLeveragePool is IPool {
         address _comptrollerAddress,
         address _cDaiAddress,
         address _daiAddress,
-        address _oracleAddress
+        address _oracleAddress,
+        address _uniswapAddress
     ) public {
         _comptroller = Comptroller(_comptrollerAddress);
         _cDai = CErc20(_cDaiAddress);
         _dai = Erc20(_daiAddress);
         _oracle = PriceFeed(_oracleAddress);
         _rewardToken = Erc20(_comptroller.getCompAddress());
+        _uniswapRouterAddress = _uniswapAddress;
 
         // Enter cDAI market
         _enterMarkets();
@@ -154,7 +158,17 @@ contract DAICompoundLeveragePool is IPool {
         // Claim COMP token
         this.harvest();
 
-        // TODO exchange COMP for DAI
+        uint256 amountIn = _rewardToken.balanceOf(address(this));
+        emit Log("comp amount:", amountIn);
+
+        uint256 amountDaiBefore = _dai.balanceOf(address(this));
+        emit Log("dai before:", amountDaiBefore);
+
+        // swap COMP for DAI
+        this.swapTokensAForTokensB(address(_rewardToken), address(_dai),_uniswapRouterAddress,amountIn);
+
+        uint256 amountDaiAfter= _dai.balanceOf(address(this));
+        emit Log("dai after:", amountDaiAfter);
 
         // Transfer reclaimed DAI + rewards converted to DAI back to user
         uint256 balance = _dai.balanceOf(address(this));

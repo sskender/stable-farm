@@ -10,6 +10,7 @@ module.exports = async (deployer) => {
     MainnetAddresses.COMPTROLLER_ADDRESS,
     MainnetAddresses.CDAI_ADDRESS,
     MainnetAddresses.DAI_ADDRESS,
-    MainnetAddresses.ORACLE_PRICE_FEED_ADDRESS
+    MainnetAddresses.ORACLE_PRICE_FEED_ADDRESS,
+    MainnetAddresses.UNISWAP_ROUTER_02
   );
 };
