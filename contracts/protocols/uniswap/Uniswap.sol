@@ -7,7 +7,6 @@ import "./IUniswapV2Router02.sol";
 import "./../../math/SafeMath.sol";
 
 contract Uniswap {
-
     /// @dev Swap exact number of tokens A for as many tokens B
     function swapTokensAForTokensB(
         address _tokenA,
