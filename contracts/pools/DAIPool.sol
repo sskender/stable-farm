@@ -11,11 +11,11 @@ import "./../ERC20/Erc20.sol";
 import "./../math/SafeMath.sol";
 import "./../math/SignedSafeMath.sol";
 
-contract DAICompoundLeveragePool is IPool, Uniswap {
+contract DAIPool is IPool, Uniswap {
     uint256 internal constant _MIN_UNDERLYING_VALUE = 25;
     uint256 internal constant _UNDERLYING_DECIMALS = 18;
 
-    address _uniswapRouterAddress;
+    address private _uniswapRouterAddress;
 
     Comptroller private _comptroller;
     CErc20 private _cDai;
@@ -60,7 +60,7 @@ contract DAICompoundLeveragePool is IPool, Uniswap {
 
     /// @dev Get the name of the pool
     function getName() external pure override returns (string memory) {
-        return "DAI Compound Leverage Pool";
+        return "DAI Pool";
     }
 
     /// @dev Supply underlying to Compound protocol
