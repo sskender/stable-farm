@@ -85,8 +85,20 @@ contract("Uniswap DEX", async (accounts) => {
 
     const amountIn = web3.utils.toWei(amountOfCompToSwap.toString(), "ether");
 
-    await instance.swapTokensAForTokensB(amountIn, { from: sender });
-    // const result = await instance.swapTokenAForTokenB(amountIn);
+    await instance.swapTokensAForTokensB(
+      MainnetAddresses.COMP_ADDRESS,
+      MainnetAddresses.DAI_ADDRESS,
+      MainnetAddresses.UNISWAP_ROUTER_02,
+      amountIn,
+      { from: sender }
+    );
+    // const result = await instance.swapTokensAForTokensB(
+    //   MainnetAddresses.COMP_ADDRESS,
+    //   MainnetAddresses.DAI_ADDRESS,
+    //   MainnetAddresses.UNISWAP_ROUTER_02,
+    //   amountIn,
+    //   { from: sender }
+    // );
     // console.log(result.events.Log);
   });
 
