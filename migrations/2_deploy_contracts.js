@@ -1,8 +1,15 @@
+const Uniswap = artifacts.require("Uniswap");
 const DAICompoundLeveragePool = artifacts.require("DAICompoundLeveragePool");
 
 const MainnetAddresses = require("./../test/mainnet.addresses");
 
 module.exports = async (deployer) => {
+  await deployer.deploy(
+    Uniswap,
+    MainnetAddresses.COMP_ADDRESS,
+    MainnetAddresses.DAI_ADDRESS,
+    MainnetAddresses.UNISWAP_ROUTER_02
+  );
   await deployer.deploy(
     DAICompoundLeveragePool,
     MainnetAddresses.COMPTROLLER_ADDRESS,
