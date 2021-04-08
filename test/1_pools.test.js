@@ -76,13 +76,15 @@ contract("DAI Pool", async (accounts) => {
     assert.equal(Number(balancecDaiSenderAfter), 0);
   });
 
-  it("it should be no DAI tokens available in contract", async () => {
+  it("it should be DAI tokens available in contract", async () => {
     const instance = await DAIPool.deployed();
     const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
+    const minUnderlyingValueInDai = 25;
 
     const balanceDai = await Dai.balanceOf(instance.address);
 
-    assert.equal(Number(balanceDai), 0);
+    assert.isAbove(Number(balanceDai), 0);
+    assert.isBelow(Number(balanceDai) / 1e18, minUnderlyingValueInDai);
   });
 
   it("it should be cTokens available in contract", async () => {

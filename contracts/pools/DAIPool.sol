@@ -115,7 +115,7 @@ contract DAIPool is IPool, Uniswap {
             _supplyCollateral(collateral);
             collateral = _borrowAsset();
         }
-        _supplyCollateral(collateral);
+        // _supplyCollateral(collateral);
 
         emit Deposit(_amount);
     }
