@@ -7,6 +7,11 @@ pragma solidity ^0.6.0;
  */
 interface Erc20 {
     /**
+     * @dev Returns the number of decimals used to get its user representation.
+     */
+    function decimals() external view returns (uint256);
+
+    /**
      * @dev Returns the amount of tokens in existence.
      */
     function totalSupply() external view returns (uint256);

@@ -70,6 +70,10 @@ contract CompoundController is IController, Uniswap {
         return address(_underlyingAsset);
     }
 
+    function getUnderlyingDecimals() external view override returns (uint256) {
+        return _underlyingAsset.decimals();
+    }
+
     function deposit(uint256 _amount) external override {
         // Caller must approve contract before calling this function
         _underlyingAsset.transferFrom(msg.sender, address(this), _amount);

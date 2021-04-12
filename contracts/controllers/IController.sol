@@ -18,6 +18,9 @@ interface IController {
     /// @dev Get the address of the underlying asset
     function getUnderlyingAsset() external view returns (address);
 
+    /// @dev Get the number of decimals for the underlying asset
+    function getUnderlyingDecimals() external view returns (uint256);
+
     /// @dev Supply the given amount of an asset to the protocol
     function deposit(uint256 _amount) external;
 

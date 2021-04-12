@@ -55,6 +55,13 @@ contract("Compound Controller - DAI", async (accounts) => {
     assert.equal(underlyingAsset, MainnetAddresses.DAI_ADDRESS);
   });
 
+  it("it should get number of decimals for DAI", async () => {
+    const daiUnderlyingDecimals = 18;
+    const underlyingDecimals = await instance.getUnderlyingDecimals();
+
+    assert.equal(daiUnderlyingDecimals, underlyingDecimals);
+  });
+
   it("it should be no tokens available in contract", async () => {
     const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
     const cDai = await Erc20.at(MainnetAddresses.CDAI_ADDRESS);
@@ -216,6 +223,13 @@ contract("Compound Controller - USDC", async (accounts) => {
     const underlyingAsset = await instance.getUnderlyingAsset();
 
     assert.equal(underlyingAsset, MainnetAddresses.USDC_ADDRESS);
+  });
+
+  it("it should get number of decimals for USDC", async () => {
+    const usdcUnderlyingDecimals = 6;
+    const underlyingDecimals = await instance.getUnderlyingDecimals();
+
+    assert.equal(usdcUnderlyingDecimals, underlyingDecimals);
   });
 
   it("it should be no tokens available in contract", async () => {
