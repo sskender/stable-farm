@@ -2,8 +2,8 @@
 
 pragma solidity ^0.6.0;
 
-import "./../ERC20/Erc20.sol";
-import "./../protocols/uniswap/IUniswapV2Router02.sol";
+import "./../interfaces/erc20/Erc20.sol";
+import "./../interfaces/uniswap/IUniswapV2Router02.sol";
 import "./../math/SafeMath.sol";
 
 contract Uniswap {

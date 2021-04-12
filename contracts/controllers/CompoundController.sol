@@ -2,9 +2,9 @@
 
 pragma solidity ^0.6.0;
 
-import "./../protocols/compound/Comptroller.sol";
-import "./../protocols/compound/CErc20.sol";
-import "./../ERC20/Erc20.sol";
+import "./../interfaces/compound/Comptroller.sol";
+import "./../interfaces/compound/CErc20.sol";
+import "./../interfaces/erc20/Erc20.sol";
 import "./IController.sol";
 import "./Uniswap.sol";
 import "./../math/SafeMath.sol";
