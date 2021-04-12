@@ -12,14 +12,11 @@ interface IController {
     /// @dev Event upon successful harvest
     event Harvest(uint256);
 
-    /// @dev Get the underlying asset name
-    function getName() external pure returns (string memory);
-
     /// @dev Get the current APY
     function getCurrentAPY() external returns (uint256);
 
     /// @dev Get the address of the underlying asset
-    function getUnderlyingAsset() external pure returns (address);
+    function getUnderlyingAsset() external view returns (address);
 
     /// @dev Supply the given amount of an asset to the protocol
     function deposit(uint256 _amount) external;
