@@ -13,7 +13,7 @@ interface IController {
     event Harvest(uint256);
 
     /// @dev Get the current APY
-    function getCurrentAPY() external returns (uint256);
+    function getCurrentAPY() external view returns (uint256);
 
     /// @dev Get the address of the underlying asset
     function getUnderlyingAsset() external view returns (address);

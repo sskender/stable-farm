@@ -9,6 +9,7 @@ import "./IController.sol";
 import "./Uniswap.sol";
 import "./../math/SafeMath.sol";
 import "./../math/SignedSafeMath.sol";
+import "./../math/DSMath.sol";
 
 contract CompoundController is IController, Uniswap {
     Comptroller private _comptroller;
@@ -64,7 +65,31 @@ contract CompoundController is IController, Uniswap {
         emit Log("Redeemed", _amount);
     }
 
-    function getCurrentAPY() external override returns (uint256) {}
+    /**
+     * @dev Get the current APY
+     *
+     * Rate = cToken.supplyRatePerBlock();
+     * ETH Mantissa = 1 * 10 ^ 18 (ETH has 18 decimal places)
+     * Blocks Per Day = 4 * 60 * 24 (based on 4 blocks occurring every minute)
+     * Days Per Year = 365
+     *
+     * APY = ((((Rate / ETH Mantissa * Blocks Per Day + 1) ^ Days Per Year)) - 1) * 100
+     */
+    function getCurrentAPY() external view override returns (uint256) {
+        uint256 supplyRate = _cToken.supplyRatePerBlock();
+        uint256 mantissa = 10**(_underlyingAsset.decimals());
+        uint256 blocksPerDay = 4 * 60 * 24;
+        uint256 daysPerYear = 365;
+
+        uint256 base =
+            DSMath.mul(DSMath.rdiv(supplyRate, mantissa), blocksPerDay);
+        base = DSMath.add(base, 1 * 10**27);
+        uint256 power = DSMath.rpow(base, daysPerYear);
+
+        uint256 apy = DSMath.mul(DSMath.sub(power, 1 * 10**27), 100);
+
+        return apy;
+    }
 
     function getUnderlyingAsset() external view override returns (address) {
         return address(_underlyingAsset);
