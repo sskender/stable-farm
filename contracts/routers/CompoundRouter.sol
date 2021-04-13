@@ -5,13 +5,13 @@ pragma solidity ^0.6.0;
 import "./../interfaces/compound/Comptroller.sol";
 import "./../interfaces/compound/CErc20.sol";
 import "./../interfaces/erc20/Erc20.sol";
-import "./IController.sol";
+import "./IRouter.sol";
 import "./Uniswap.sol";
 import "./../math/SafeMath.sol";
 import "./../math/SignedSafeMath.sol";
 import "./../math/DSMath.sol";
 
-contract CompoundController is IController, Uniswap {
+contract CompoundRouter is IRouter, Uniswap {
     Comptroller private _comptroller;
     Erc20 private _underlyingAsset;
     CErc20 private _cToken;

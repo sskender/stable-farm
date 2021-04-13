@@ -2,7 +2,7 @@
 
 pragma solidity ^0.6.0;
 
-interface IController {
+interface IRouter {
     /// @dev Event upon successful deposit
     event Deposit(uint256);
 

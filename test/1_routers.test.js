@@ -5,25 +5,21 @@ const MainnetAddresses = require("./mainnet.addresses");
 const daiAbi = require("./abi/dai-abi.json");
 const erc20Abi = require("./abi/erc20-abi.json");
 
-const CompoundController = artifacts.require("CompoundController");
+const CompoundRouter = artifacts.require("CompoundRouter");
 const Erc20 = artifacts.require("Erc20");
 
-contract("Compound Controller - DAI", async (accounts) => {
+contract("Compound Router - DAI", async (accounts) => {
   var initialSenderBalance;
   var instance;
 
-  before(async () => {
-    instance = await CompoundController.new(
+  it("it should deploy DAI Compound Router", async () => {
+    instance = await CompoundRouter.new(
       MainnetAddresses.COMPTROLLER_ADDRESS,
       MainnetAddresses.DAI_ADDRESS,
       MainnetAddresses.CDAI_ADDRESS,
       MainnetAddresses.UNISWAP_ROUTER_02
     );
 
-    console.log(instance.address);
-  });
-
-  it("it should deploy DAI Compound Controller", async () => {
     assert.notEqual(instance.address, undefined);
   });
 
@@ -183,22 +179,18 @@ contract("Compound Controller - DAI", async (accounts) => {
   });
 });
 
-contract("Compound Controller - USDC", async (accounts) => {
+contract("Compound Router - USDC", async (accounts) => {
   var initialSenderBalance;
   var instance;
 
-  before(async () => {
-    instance = await CompoundController.new(
+  it("it should deploy USDC Compound Router", async () => {
+    instance = await CompoundRouter.new(
       MainnetAddresses.COMPTROLLER_ADDRESS,
       MainnetAddresses.USDC_ADDRESS,
       MainnetAddresses.CUSDC_ADDRESS,
       MainnetAddresses.UNISWAP_ROUTER_02
     );
 
-    console.log(instance.address);
-  });
-
-  it("it should deploy USDC Compound Controller", async () => {
     assert.notEqual(instance.address, undefined);
   });
 
