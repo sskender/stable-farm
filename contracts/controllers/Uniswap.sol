@@ -7,7 +7,7 @@ import "./../interfaces/uniswap/IUniswapV2Router02.sol";
 import "./../math/SafeMath.sol";
 
 contract Uniswap {
-    uint256 internal constant _MIN_LEFT_AFTER_SLIPPAGE = 98;
+    uint256 internal constant _MAX_SLIPPAGE_PERCENT = 2;
     uint256 internal constant _DEADLINE_IN_SECONDS = 15;
 
     IUniswapV2Router02 private _uniswapRouter;
@@ -40,7 +40,7 @@ contract Uniswap {
             SafeMath.div(
                 SafeMath.mul(
                     amounts[amounts.length - 1],
-                    _MIN_LEFT_AFTER_SLIPPAGE
+                    (100 - _MAX_SLIPPAGE_PERCENT)
                 ),
                 100
             );
