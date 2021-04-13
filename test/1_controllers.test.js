@@ -62,6 +62,15 @@ contract("Compound Controller - DAI", async (accounts) => {
     assert.equal(daiUnderlyingDecimals, underlyingDecimals);
   });
 
+  it("it should get supply APY for DAI", async () => {
+    const rayUnitsExponent = 1e27;
+    const APY = await instance.getCurrentAPY();
+    const scaledAPY = Number(APY) / rayUnitsExponent;
+
+    assert.isAbove(scaledAPY, 0.05);
+    assert.isBelow(scaledAPY, 100);
+  });
+
   it("it should be no tokens available in contract", async () => {
     const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
     const cDai = await Erc20.at(MainnetAddresses.CDAI_ADDRESS);
@@ -230,6 +239,15 @@ contract("Compound Controller - USDC", async (accounts) => {
     const underlyingDecimals = await instance.getUnderlyingDecimals();
 
     assert.equal(usdcUnderlyingDecimals, underlyingDecimals);
+  });
+
+  it("it should get supply APY for USDC", async () => {
+    const rayUnitsExponent = 1e27;
+    const APY = await instance.getCurrentAPY();
+    const scaledAPY = Number(APY) / rayUnitsExponent;
+
+    assert.isAbove(scaledAPY, 0.05);
+    assert.isBelow(scaledAPY, 100);
   });
 
   it("it should be no tokens available in contract", async () => {
