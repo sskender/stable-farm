@@ -77,7 +77,7 @@ contract CompoundController is IController, Uniswap {
      */
     function getCurrentAPY() external view override returns (uint256) {
         uint256 supplyRate = _cToken.supplyRatePerBlock();
-        uint256 mantissa = 10**(_underlyingAsset.decimals());
+        uint256 mantissa = 10**18;
         uint256 blocksPerDay = 4 * 60 * 24;
         uint256 daysPerYear = 365;
 
