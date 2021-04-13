@@ -3,27 +3,42 @@
 pragma solidity ^0.6.0;
 
 interface IPool {
-    /// @dev Event upon successful collateral deposit
+    /// @dev Event upon successful deposit
     event Deposit(uint256);
 
     /// @dev Event upon successful withdrawal
     event Withdrawal(uint256);
 
-    /// @dev Event upon successful harvest
-    event Harvest(uint256);
+    /// @dev Event upon successful rebalance
+    event Rebalanced(uint256);
 
-    /// @dev Get the name of the pool
-    function getName() external pure returns (string memory);
+    /// @dev
+    function addRouter(address _newRouter) external;
 
-    /// @dev Supply the given amount of an asset to the protocol
+    /// @dev
+    function getRouters() external view returns (address[] memory);
+
+    /// @dev
+    function getAssetAddress() external view returns (address);
+
+    /// @dev
+    function getAssetName() external view returns (string memory);
+
+    /// @dev
+    function getAssetSymbol() external view returns (string memory);
+
+    /// @dev
+    function getCurrentAPY() external view returns (uint256);
+
+    /// @dev
+    function getBestAPY() external view returns (uint256);
+
+    /// @dev
     function deposit(uint256 _amount) external;
 
-    /// @dev Withdraw the given amount of supplied collateral
+    /// @dev
     function withdraw(uint256 _amount) external;
 
-    /// @dev Withdraw all supplied collateral and rewards
-    function withdrawAll() external;
-
-    /// @dev Claim COMP token rewards
-    function harvest() external;
+    /// @dev
+    function rebalance() external;
 }
