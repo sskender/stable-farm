@@ -50,9 +50,29 @@ contract StablePool is IPool, Uniswap {
         return _poolAsset.symbol();
     }
 
-    function getAPY() external view override returns (uint256) {}
+    function getAPY() external view override returns (uint256) {
+        if (address(_activeRouter) != address(0)) {
+            return _activeRouter.getCurrentAPY();
+        } else {
+            return 0;
+        }
+    }
 
-    function getBestAPY() external view override returns (address, uint256) {}
+    function getBestAPY() external view override returns (address, uint256) {
+        // (APY percentage) * 10 ^ 27
+        uint256 bestAPY = 0;
+        address bestRouter;
+        for (uint256 i = 0; i < _numberOfRouters; i++) {
+            uint256 routerAPY = IRouter(_routersList[i]).getCurrentAPY();
+            // TODO safemath
+            uint256 scaledAPY = routerAPY / (10**25);
+            if (scaledAPY > bestAPY) {
+                bestAPY = scaledAPY;
+                bestRouter = _routersList[i];
+            }
+        }
+        return (bestRouter, bestAPY);
+    }
 
     function deposit(uint256 _amount) external override {}
 
