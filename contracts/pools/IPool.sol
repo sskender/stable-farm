@@ -39,6 +39,9 @@ interface IPool {
     /// @dev Withdraw underlying asset from the pool protocol
     function withdraw(uint256 _amount) external;
 
+    /// @dev Withdraw underlying asset from the pool protocol
+    function withdrawAll() external;
+
     /// @dev Rebalance to the best available APY
     function rebalance() external;
 }

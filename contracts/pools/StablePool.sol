@@ -74,9 +74,82 @@ contract StablePool is IPool, Uniswap {
         return (bestRouter, bestAPY);
     }
 
-    function deposit(uint256 _amount) external override {}
+    /// @dev Swap asset to router's underlying asset
+    function _swapAssetToRouterAsset(address _asset, address _router) internal {
+        IRouter router = IRouter(_router);
+        address routerAsset = router.getUnderlyingAsset();
+
+        // Swap asset to router asset
+        if (_asset != routerAsset) {
+            uint256 balance = Erc20(_asset).balanceOf(address(this));
+            Uniswap._swapTokensAForTokensB(_asset, routerAsset, balance);
+        }
+    }
+
+    /// @dev Make the deposit to the router
+    function _makeDeposit(address _router) internal {
+        IRouter router = IRouter(_router);
+        address routerAsset = router.getUnderlyingAsset();
+
+        // Deposit
+        uint256 balance = Erc20(routerAsset).balanceOf(address(this));
+        Erc20(routerAsset).approve(address(router), balance);
+        router.deposit(balance);
+
+        // Update active router
+        _activeRouter = router;
+
+        emit Deposit(balance);
+    }
+
+    function deposit(uint256 _amount) external override {
+        // This must be approved before calling the function
+        _poolAsset.transferFrom(msg.sender, address(this), _amount);
+
+        (address routerAddress, uint256 APY) = this.getBestAPY();
+
+        // Withdraw from the old router
+        if (
+            address(_activeRouter) != address(0) &&
+            address(_activeRouter) != routerAddress
+        ) {
+            _activeRouter.withdraw();
+
+            address asset = _activeRouter.getUnderlyingAsset();
+            _swapAssetToRouterAsset(asset, routerAddress);
+        }
+
+        // Deposit to the new router
+        _swapAssetToRouterAsset(address(_poolAsset), routerAddress);
+        _makeDeposit(routerAddress);
+    }
 
     function withdraw(uint256 _amount) external override {}
 
+    function withdrawAll() external override routerIsActive {
+        // Withdraw asset from the old router
+        _activeRouter.withdraw();
+
+        // Swap back to underlying asset if needed
+        address routerAsset = _activeRouter.getUnderlyingAsset();
+        address poolAsset = address(_poolAsset);
+        if (routerAsset != poolAsset) {
+            uint256 balance = Erc20(routerAsset).balanceOf(address(this));
+            Uniswap._swapTokensAForTokensB(routerAsset, poolAsset, balance);
+        }
+
+        // Destroy router
+        _activeRouter = IRouter(address(0));
+
+        // Transfer to sender
+        uint256 poolBalance = _poolAsset.balanceOf(address(this));
+        _poolAsset.transfer(msg.sender, poolBalance);
+    }
+
     function rebalance() external override {}
+
+    modifier routerIsActive {
+        require(address(_activeRouter) != address(0), "No active router");
+        _;
+    }
 }
