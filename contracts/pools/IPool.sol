@@ -28,10 +28,10 @@ interface IPool {
     function getAssetSymbol() external view returns (string memory);
 
     /// @dev Get the current APY for farming asset
-    function getCurrentAPY() external view returns (uint256);
+    function getAPY() external view returns (uint256);
 
     /// @dev Get the best available APY
-    function getBestAPY() external view returns (uint256);
+    function getBestAPY() external view returns (address, uint256);
 
     /// @dev Deposit underlying asset to the pool protocol
     function deposit(uint256 _amount) external;
