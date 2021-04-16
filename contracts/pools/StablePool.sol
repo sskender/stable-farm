@@ -15,7 +15,7 @@ contract StablePool is IPool, Uniswap {
     IRouter private _activeRouter;
 
     /// @dev Logging and debugging event
-    event Log(string, uint256);
+    // event Log(string, uint256);
 
     constructor(address _assetAddress, address _uniswapRouterAddress)
         public
@@ -63,7 +63,7 @@ contract StablePool is IPool, Uniswap {
         // RAY = (APY percentage) * 10 ^ 27
         // scaled APY to Integer = RAY / (10^25)
         uint256 bestAPY = 0;
-        address bestRouter;
+        address bestRouter = address(0);
         for (uint256 i = 0; i < _numberOfRouters; i++) {
             uint256 routerAPY = IRouter(_routersList[i]).getCurrentAPY();
             uint256 scaledAPY = SafeMath.div(routerAPY, 10**25);
@@ -116,17 +116,21 @@ contract StablePool is IPool, Uniswap {
         emit Deposit(_amount);
     }
 
-    /// @dev Withdraw from the current router
+    /// @dev Withdraw from the active router (swap asset if required)
     function _makeWithdrawal() internal routerIsActive returns (uint256) {
         // Withdraw asset from the router
         _activeRouter.withdraw();
 
-        // Swap back to pool asset (if required)
-        address routerAsset = _activeRouter.getUnderlyingAsset();
-        address poolAsset = address(_poolAsset);
-        if (routerAsset != poolAsset) {
-            uint256 amountIn = Erc20(routerAsset).balanceOf(address(this));
-            this.swapTokensAForTokensB(routerAsset, poolAsset, amountIn);
+        // Swap router asset to pool asset
+        address routerAssetAddress = _activeRouter.getUnderlyingAsset();
+        if (routerAssetAddress != address(_poolAsset)) {
+            uint256 routerBalance =
+                Erc20(routerAssetAddress).balanceOf(address(this));
+            this.swapTokensAForTokensB(
+                routerAssetAddress,
+                address(_poolAsset),
+                routerBalance
+            );
         }
 
         // Destroy router
@@ -140,12 +144,14 @@ contract StablePool is IPool, Uniswap {
         uint256 poolBalance = _makeWithdrawal();
 
         if (_amount <= poolBalance) {
+            // Transfer desired amount
             _poolAsset.transfer(msg.sender, _amount);
             emit Withdrawal(_amount);
 
-            uint256 balanceLeft = SafeMath.sub(poolBalance, _amount);
-            // TODO deposit the rest
+            // Deposit back the rest
+            _makeDeposit();
         } else {
+            // Transfer maximum available
             _poolAsset.transfer(msg.sender, poolBalance);
             emit Withdrawal(poolBalance);
         }
