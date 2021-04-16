@@ -36,14 +36,12 @@ contract Uniswap {
             _uniswapRouter.getAmountsOut(_amountIn, path);
 
         // amountOutMin = amountOutMin * 0.98
-        uint256 amountOutMin =
-            SafeMath.div(
-                SafeMath.mul(
-                    amounts[amounts.length - 1],
-                    (100 - _MAX_SLIPPAGE_PERCENT)
-                ),
-                100
-            );
+        //              = amountOutMin * 98 / 100
+        //              = amountOutMin * (100 - allowed slippage) / 100
+        uint256 lastPairAmount = amounts[amounts.length - 1];
+        uint256 product =
+            SafeMath.mul(lastPairAmount, (100 - _MAX_SLIPPAGE_PERCENT));
+        uint256 amountOutMin = SafeMath.div(product, 100);
 
         // time.now() + 15 sec
         uint256 deadline = SafeMath.add(block.timestamp, _DEADLINE_IN_SECONDS);
