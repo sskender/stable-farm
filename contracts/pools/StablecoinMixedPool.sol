@@ -8,7 +8,7 @@ import "./../routers/IRouter.sol";
 import "./../dex/Uniswap.sol";
 import "./../math/SafeMath.sol";
 
-contract StablePool is IPool, Uniswap {
+contract StablecoinMixedPool is IPool, Uniswap {
     Erc20 private _poolAsset;
     uint256 private _numberOfRouters;
     address[] private _routersList;
