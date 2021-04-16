@@ -4,12 +4,11 @@ const { assert, expect } = require("chai");
 const MainnetAddresses = require("./mainnet.addresses");
 const daiAbi = require("./abi/dai-abi.json");
 
-const StablePool = artifacts.require("StablePool");
+const StablecoinMixedPool = artifacts.require("StablecoinMixedPool");
 const CompoundRouter = artifacts.require("CompoundRouter");
 const Erc20 = artifacts.require("Erc20");
 
 contract("Pool - DAI", async (accounts) => {
-  var initialSenderBalance;
   var daiCompoundRouter;
   var usdcCompoundRouter;
   var instance;
@@ -38,7 +37,7 @@ contract("Pool - DAI", async (accounts) => {
   });
 
   it("it should deploy DAI pool", async () => {
-    instance = await StablePool.new(
+    instance = await StablecoinMixedPool.new(
       MainnetAddresses.DAI_ADDRESS,
       MainnetAddresses.UNISWAP_ROUTER_02
     );
@@ -65,7 +64,6 @@ contract("Pool - DAI", async (accounts) => {
 
     const balance = await daiContract.methods.balanceOf(receiver).call();
     const daiBalance = balance / 1e18;
-    initialSenderBalance = Number(balance);
 
     assert.isAtLeast(daiBalance, numbTokensToMint);
   });
@@ -138,11 +136,43 @@ contract("Pool - DAI", async (accounts) => {
     assert.isBelow(APY, 100);
   });
 
+  it("it should fail to withdraw all", async () => {
+    const sender = accounts[0];
+    let failed = false;
+
+    try {
+      await instance.withdrawAll({ from: sender });
+    } catch (error) {
+      failed = true;
+    }
+
+    assert.equal(failed, true);
+  });
+
+  it("it should fail to withdraw any amount", async () => {
+    const amountOfDaiToWithdraw = 100;
+    const mantissa = web3.utils.toWei(
+      amountOfDaiToWithdraw.toString(),
+      "ether"
+    );
+    const sender = accounts[0];
+    let failed = false;
+
+    try {
+      await instance.withdraw(mantissa, { from: sender });
+    } catch (error) {
+      failed = true;
+    }
+
+    assert.equal(failed, true);
+  });
+
   it("it should deposit DAI", async () => {
     const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
     const sender = accounts[0];
     const amountOfDaiToSupply = 100;
     const mantissa = web3.utils.toWei(amountOfDaiToSupply.toString(), "ether");
+    const balanceDaiSenderBefore = await Dai.balanceOf(sender);
 
     // approve contract and deposit dai
     await Dai.approve(instance.address, mantissa, { from: sender });
@@ -150,7 +180,14 @@ contract("Pool - DAI", async (accounts) => {
     // const result = await instance.deposit(mantissa);
     // console.log(result.events.Log);
 
-    // TODO test
+    const balanceDaiSenderAfter = await Dai.balanceOf(sender);
+
+    // assert.equal(Number(balanceDaiSenderBefore), Number(balanceDaiSenderAfter)+Number(mantissa));
+    assert.equal(
+      Math.trunc(Number(balanceDaiSenderBefore) / 1e18),
+      Math.trunc(Number(balanceDaiSenderAfter) / 1e18) +
+        Math.trunc(Number(mantissa) / 1e18)
+    );
   });
 
   it("it should get current APY as the best APY", async () => {
@@ -168,6 +205,7 @@ contract("Pool - DAI", async (accounts) => {
     const sender = accounts[0];
     const amountOfDaiToSupply = 200;
     const mantissa = web3.utils.toWei(amountOfDaiToSupply.toString(), "ether");
+    const balanceDaiSenderBefore = await Dai.balanceOf(sender);
 
     // approve contract and deposit dai
     await Dai.approve(instance.address, mantissa, { from: sender });
@@ -175,22 +213,57 @@ contract("Pool - DAI", async (accounts) => {
     // const result = await instance.deposit(mantissa);
     // console.log(result.events.Log);
 
-    // TODO test
+    const balanceDaiSenderAfter = await Dai.balanceOf(sender);
+
+    // assert.equal(Number(balanceDaiSenderBefore), Number(balanceDaiSenderAfter)+Number(mantissa));
+    assert.equal(
+      Math.trunc(Number(balanceDaiSenderBefore) / 1e18),
+      Math.trunc(Number(balanceDaiSenderAfter) / 1e18) +
+        Math.trunc(Number(mantissa) / 1e18)
+    );
   });
 
-  it("it should withdraw all DAI", async () => {
+  it("it should withdraw some DAI", async () => {
     const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
     const sender = accounts[0];
+    const amountOfDaiSupplied = 100;
+    const mantissa = web3.utils.toWei(amountOfDaiSupplied.toString(), "ether");
+    const daiMinTolerance = 0.95; // 95% of DAI left after slippage
 
-    const balb = await Dai.balanceOf(sender);
+    const balanceDaiSenderBefore = await Dai.balanceOf(sender);
+    const daiBefore = Number(balanceDaiSenderBefore) / 1e18;
 
-    await instance.withdrawAll({ from: sender });
+    await instance.withdraw(mantissa, { from: sender });
 
-    const bala = await Dai.balanceOf(sender);
+    const balanceDaiSenderAfter = await Dai.balanceOf(sender);
+    const daiAfter = Number(balanceDaiSenderAfter) / 1e18;
+    const totalDaiShouldBeAfter =
+      (daiBefore + amountOfDaiSupplied) * daiMinTolerance;
 
-    console.log(Number(balb));
-    console.log(Number(bala));
+    assert.isAbove(daiAfter, totalDaiShouldBeAfter);
+  });
 
-    // TODO test
+  it("it should withdraw the rest of DAI", async () => {
+    const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
+    const sender = accounts[0];
+    const amountOfDaiSupplied = 550;
+    const mantissa = web3.utils.toWei(amountOfDaiSupplied.toString(), "ether");
+    const daiMinTolerance = 0.95; // 95% of DAI left after slippage
+
+    const balanceDaiSenderBefore = await Dai.balanceOf(sender);
+    const daiBefore = Number(balanceDaiSenderBefore) / 1e18;
+
+    await instance.withdraw(mantissa, { from: sender });
+
+    const balanceDaiSenderAfter = await Dai.balanceOf(sender);
+    const daiAfter = Number(balanceDaiSenderAfter) / 1e18;
+    const totalDaiShouldBeAfter =
+      (daiBefore + amountOfDaiSupplied) * daiMinTolerance;
+
+    assert.isAbove(daiAfter, totalDaiShouldBeAfter);
+    assert.isBelow(
+      Number(balanceDaiSenderAfter) - Number(balanceDaiSenderBefore),
+      Number(mantissa)
+    );
   });
 });
