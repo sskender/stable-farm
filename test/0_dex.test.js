@@ -7,6 +7,14 @@ const Erc20 = artifacts.require("Erc20");
 const Uniswap = artifacts.require("Uniswap");
 
 contract("Uniswap DEX", async (accounts) => {
+  var instance;
+
+  it("it should deploy Uniswap", async () => {
+    instance = await Uniswap.new(MainnetAddresses.UNISWAP_ROUTER_02);
+
+    assert.notEqual(instance.address, undefined);
+  });
+
   it("it should mint test DAI tokens to account", async () => {
     const daiMcdJoin = MainnetAddresses.DAI_MCD_JOIN;
     const daiAddress = MainnetAddresses.DAI_ADDRESS;
@@ -51,7 +59,6 @@ contract("Uniswap DEX", async (accounts) => {
   });
 
   it("it should be no tokens in contract", async () => {
-    const instance = await Uniswap.deployed();
     const Comp = await Erc20.at(MainnetAddresses.COMP_ADDRESS);
     const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
 
@@ -63,7 +70,6 @@ contract("Uniswap DEX", async (accounts) => {
   });
 
   it("it should transfer COMP tokens from account to contract", async () => {
-    const instance = await Uniswap.deployed();
     const Comp = await Erc20.at(MainnetAddresses.COMP_ADDRESS);
     const sender = accounts[0];
     const tokensOnSenderAccount = 10;
@@ -93,7 +99,6 @@ contract("Uniswap DEX", async (accounts) => {
   });
 
   it("it should swap COMP tokens for DAI tokens", async () => {
-    const instance = await Uniswap.deployed();
     const sender = accounts[0];
     const amountOfCompToSwap = 2;
 
@@ -102,33 +107,20 @@ contract("Uniswap DEX", async (accounts) => {
     await instance.swapTokensAForTokensB(
       MainnetAddresses.COMP_ADDRESS,
       MainnetAddresses.DAI_ADDRESS,
-      MainnetAddresses.UNISWAP_ROUTER_02,
       amountIn,
       { from: sender }
     );
-    // const result = await instance.swapTokensAForTokensB(
-    //   MainnetAddresses.COMP_ADDRESS,
-    //   MainnetAddresses.DAI_ADDRESS,
-    //   MainnetAddresses.UNISWAP_ROUTER_02,
-    //   amountIn,
-    //   { from: sender }
-    // );
-    // console.log(result.events.Log);
   });
 
   it("it should be DAI tokens available in contract", async () => {
-    const instance = await Uniswap.deployed();
     const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
-
     const balanceDai = await Dai.balanceOf(instance.address);
 
     assert.isAbove(Number(balanceDai) / 1e18, 0);
   });
 
   it("it should be no COMP tokens available in contract", async () => {
-    const instance = await Uniswap.deployed();
     const Comp = await Erc20.at(MainnetAddresses.COMP_ADDRESS);
-
     const balanceComp = await Comp.balanceOf(instance.address);
 
     assert.equal(Number(balanceComp), 0);
