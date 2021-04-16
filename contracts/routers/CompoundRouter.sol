@@ -6,7 +6,7 @@ import "./../interfaces/compound/Comptroller.sol";
 import "./../interfaces/compound/CErc20.sol";
 import "./../interfaces/erc20/Erc20.sol";
 import "./IRouter.sol";
-import "./Uniswap.sol";
+import "./../dex/Uniswap.sol";
 import "./../math/SafeMath.sol";
 import "./../math/SignedSafeMath.sol";
 import "./../math/DSMath.sol";
@@ -18,7 +18,7 @@ contract CompoundRouter is IRouter, Uniswap {
     Erc20 private _compToken;
 
     /// @dev Logging and debugging event
-    event Log(string, uint256);
+    // event Log(string, uint256);
 
     constructor(
         address _comptrollerAddress,
@@ -54,7 +54,7 @@ contract CompoundRouter is IRouter, Uniswap {
         uint256 mintError = _cToken.mint(_amount);
         require(mintError == 0, "CErc20.mint Error");
 
-        emit Log("Supplied", _amount);
+        // emit Log("Supplied", _amount);
     }
 
     /// @dev Redeem cTokens for underlying asset
@@ -62,7 +62,7 @@ contract CompoundRouter is IRouter, Uniswap {
         uint256 redeemError = _cToken.redeem(_amount);
         require(redeemError == 0, "CErc20.redeem Error");
 
-        emit Log("Redeemed", _amount);
+        // emit Log("Redeemed", _amount);
     }
 
     /**
@@ -83,10 +83,10 @@ contract CompoundRouter is IRouter, Uniswap {
 
         uint256 base =
             DSMath.mul(DSMath.rdiv(supplyRate, mantissa), blocksPerDay);
-        base = DSMath.add(base, 1 * 10**27);
+        base = DSMath.add(base, DSMath.RAY);
         uint256 power = DSMath.rpow(base, daysPerYear);
 
-        uint256 apy = DSMath.mul(DSMath.sub(power, 1 * 10**27), 100);
+        uint256 apy = DSMath.mul(DSMath.sub(power, DSMath.RAY), 100);
 
         return apy;
     }
@@ -125,7 +125,7 @@ contract CompoundRouter is IRouter, Uniswap {
         uint256 amountIn = _compToken.balanceOf(address(this));
         require(amountIn > 0, "No COMP tokens to swap");
 
-        Uniswap._swapTokensAForTokensB(
+        this.swapTokensAForTokensB(
             address(_compToken),
             address(_underlyingAsset),
             amountIn

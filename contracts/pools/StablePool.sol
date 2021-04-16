@@ -5,7 +5,7 @@ pragma solidity ^0.6.0;
 import "./IPool.sol";
 import "./../interfaces/erc20/Erc20.sol";
 import "./../routers/IRouter.sol";
-import "./../routers/Uniswap.sol";
+import "./../dex/Uniswap.sol";
 
 contract StablePool is IPool, Uniswap {
     Erc20 private _poolAsset;
@@ -59,7 +59,7 @@ contract StablePool is IPool, Uniswap {
     }
 
     function getBestAPY() external view override returns (address, uint256) {
-        // (APY percentage) * 10 ^ 27
+        // RAY = (APY percentage) * 10 ^ 27
         uint256 bestAPY = 0;
         address bestRouter;
         for (uint256 i = 0; i < _numberOfRouters; i++) {
@@ -82,7 +82,7 @@ contract StablePool is IPool, Uniswap {
         // Swap asset to router asset
         if (_asset != routerAsset) {
             uint256 balance = Erc20(_asset).balanceOf(address(this));
-            Uniswap._swapTokensAForTokensB(_asset, routerAsset, balance);
+            this.swapTokensAForTokensB(_asset, routerAsset, balance);
         }
     }
 
@@ -103,7 +103,7 @@ contract StablePool is IPool, Uniswap {
     }
 
     function deposit(uint256 _amount) external override {
-        // This must be approved before calling the function
+        // Caller must approve contract before calling this function
         _poolAsset.transferFrom(msg.sender, address(this), _amount);
 
         (address routerAddress, uint256 APY) = this.getBestAPY();
@@ -135,7 +135,7 @@ contract StablePool is IPool, Uniswap {
         address poolAsset = address(_poolAsset);
         if (routerAsset != poolAsset) {
             uint256 balance = Erc20(routerAsset).balanceOf(address(this));
-            Uniswap._swapTokensAForTokensB(routerAsset, poolAsset, balance);
+            this.swapTokensAForTokensB(routerAsset, poolAsset, balance);
         }
 
         // Destroy router

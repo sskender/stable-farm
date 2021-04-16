@@ -17,11 +17,11 @@ contract Uniswap {
     }
 
     /// @dev Swap exact number of tokens A for as many tokens B
-    function _swapTokensAForTokensB(
+    function swapTokensAForTokensB(
         address _tokenA,
         address _tokenB,
         uint256 _amountIn
-    ) internal {
+    ) external {
         Erc20 tokenA = Erc20(_tokenA);
         Erc20 tokenB = Erc20(_tokenB);
 
