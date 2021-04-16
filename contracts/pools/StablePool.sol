@@ -125,13 +125,12 @@ contract StablePool is IPool, Uniswap {
         _makeDeposit(routerAddress);
     }
 
-    function withdraw(uint256 _amount) external override {}
-
-    function withdrawAll() external override routerIsActive {
-        // Withdraw asset from the old router
+    /// @dev Withdraw from the current router
+    function _makeWithdrawal() internal routerIsActive returns (uint256) {
+        // Withdraw asset from the router
         _activeRouter.withdraw();
 
-        // Swap back to underlying asset if needed
+        // Swap back to pool asset (if required)
         address routerAsset = _activeRouter.getUnderlyingAsset();
         address poolAsset = address(_poolAsset);
         if (routerAsset != poolAsset) {
@@ -142,8 +141,27 @@ contract StablePool is IPool, Uniswap {
         // Destroy router
         _activeRouter = IRouter(address(0));
 
-        // Transfer to sender
-        uint256 poolBalance = _poolAsset.balanceOf(address(this));
+        // Return available pool balance
+        return _poolAsset.balanceOf(address(this));
+    }
+
+    function withdraw(uint256 _amount) external override routerIsActive {
+        uint256 poolBalance = _makeWithdrawal();
+
+        if (_amount <= poolBalance) {
+            _poolAsset.transfer(msg.sender, _amount);
+            emit Withdrawal(_amount);
+
+            uint256 balanceLeft = SafeMath.sub(poolBalance, _amount);
+            // TODO deposit the rest
+        } else {
+            _poolAsset.transfer(msg.sender, poolBalance);
+            emit Withdrawal(poolBalance);
+        }
+    }
+
+    function withdrawAll() external override routerIsActive {
+        uint256 poolBalance = _makeWithdrawal();
         _poolAsset.transfer(msg.sender, poolBalance);
 
         emit Withdrawal(poolBalance);
