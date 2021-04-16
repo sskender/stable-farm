@@ -6,6 +6,7 @@ import "./IPool.sol";
 import "./../interfaces/erc20/Erc20.sol";
 import "./../routers/IRouter.sol";
 import "./../dex/Uniswap.sol";
+import "./../math/SafeMath.sol";
 
 contract StablePool is IPool, Uniswap {
     Erc20 private _poolAsset;
@@ -60,12 +61,12 @@ contract StablePool is IPool, Uniswap {
 
     function getBestAPY() external view override returns (address, uint256) {
         // RAY = (APY percentage) * 10 ^ 27
+        // scaled APY to Integer = RAY / (10^25)
         uint256 bestAPY = 0;
         address bestRouter;
         for (uint256 i = 0; i < _numberOfRouters; i++) {
             uint256 routerAPY = IRouter(_routersList[i]).getCurrentAPY();
-            // TODO safemath
-            uint256 scaledAPY = routerAPY / (10**25);
+            uint256 scaledAPY = SafeMath.div(routerAPY, 10**25);
             if (scaledAPY > bestAPY) {
                 bestAPY = scaledAPY;
                 bestRouter = _routersList[i];
@@ -134,8 +135,8 @@ contract StablePool is IPool, Uniswap {
         address routerAsset = _activeRouter.getUnderlyingAsset();
         address poolAsset = address(_poolAsset);
         if (routerAsset != poolAsset) {
-            uint256 balance = Erc20(routerAsset).balanceOf(address(this));
-            this.swapTokensAForTokensB(routerAsset, poolAsset, balance);
+            uint256 amountIn = Erc20(routerAsset).balanceOf(address(this));
+            this.swapTokensAForTokensB(routerAsset, poolAsset, amountIn);
         }
 
         // Destroy router
@@ -144,6 +145,8 @@ contract StablePool is IPool, Uniswap {
         // Transfer to sender
         uint256 poolBalance = _poolAsset.balanceOf(address(this));
         _poolAsset.transfer(msg.sender, poolBalance);
+
+        emit Withdrawal(poolBalance);
     }
 
     function rebalance() external override {}
