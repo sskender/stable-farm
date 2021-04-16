@@ -153,6 +153,16 @@ contract("Pool - DAI", async (accounts) => {
     // TODO test
   });
 
+  it("it should get current APY as the best APY", async () => {
+    const currentAPY = await instance.getAPY();
+    const bestAPYRouter = await instance.getBestAPY();
+
+    const currentAPYScaled = Math.trunc(Number(currentAPY) / 1e25);
+    const bestAPY = Number(bestAPYRouter[1]);
+
+    assert.equal(currentAPYScaled, bestAPY);
+  });
+
   it("it should deposit more DAI", async () => {
     const Dai = await Erc20.at(MainnetAddresses.DAI_ADDRESS);
     const sender = accounts[0];
