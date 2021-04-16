@@ -164,10 +164,21 @@ contract StablePool is IPool, Uniswap {
         emit Withdrawal(poolBalance);
     }
 
-    function rebalance() external override {}
+    function rebalance() external override routerIsActive betterRouterExists {
+        uint256 poolBalance = _makeWithdrawal();
+        _makeDeposit();
+
+        emit Rebalanced(poolBalance);
+    }
 
     modifier routerIsActive {
         require(address(_activeRouter) != address(0), "No active router");
+        _;
+    }
+
+    modifier betterRouterExists {
+        (address routerAddress, uint256 APY) = this.getBestAPY();
+        require(routerAddress != address(_activeRouter), "Already rebalanced");
         _;
     }
 }
