@@ -8,7 +8,11 @@ const StablecoinMixedPool = artifacts.require("StablecoinMixedPool");
 const CompoundRouter = artifacts.require("CompoundRouter");
 const Erc20 = artifacts.require("Erc20");
 
-contract("Pool - DAI", async (accounts) => {
+const DAIMixedPool = artifacts.require("DAIMixedPool");
+const USDCMixedPool = artifacts.require("USDCMixedPool");
+const USDTMixedPool = artifacts.require("USDTMixedPool");
+
+contract("Stablecoin Mixed Pool - test DAI", async (accounts) => {
   var initialSenderBalance;
   var daiCompoundRouter;
   var usdcCompoundRouter;
@@ -37,7 +41,7 @@ contract("Pool - DAI", async (accounts) => {
     assert.notEqual(daiCompoundRouter.address, usdcCompoundRouter.address);
   });
 
-  it("it should deploy DAI pool", async () => {
+  it("it should deploy DAI Stablecoin Mixed Pool", async () => {
     instance = await StablecoinMixedPool.new(
       MainnetAddresses.DAI_ADDRESS,
       MainnetAddresses.UNISWAP_ROUTER_02
@@ -279,5 +283,95 @@ contract("Pool - DAI", async (accounts) => {
     const daiAfter = Number(balanceDaiSenderAfter) / 1e18;
 
     assert.isAbove(daiAfter, (initialSenderBalance / 1e18) * daiMinTolerance);
+  });
+});
+
+contract("DAI Mixed Pool", async (accounts) => {
+  var instance;
+
+  it("it should deploy DAI Mixed Pool", async () => {
+    instance = await DAIMixedPool.new();
+
+    assert.notEqual(instance.address, undefined);
+  });
+
+  it("it should get underlying asset address", async () => {
+    const address = await instance.getAssetAddress();
+
+    assert.equal(address, MainnetAddresses.DAI_ADDRESS);
+  });
+
+  it("it should get underlying asset name", async () => {
+    const tokenName = "Dai Stablecoin";
+    const name = await instance.getAssetName();
+
+    assert.equal(name, tokenName);
+  });
+
+  it("it should get underlying asset symbol", async () => {
+    const tokenSymbol = "DAI";
+    const symbol = await instance.getAssetSymbol();
+
+    assert.equal(symbol, tokenSymbol);
+  });
+});
+
+contract("USDC Mixed Pool", async (accounts) => {
+  var instance;
+
+  it("it should deploy USDC Mixed Pool", async () => {
+    instance = await USDCMixedPool.new();
+
+    assert.notEqual(instance.address, undefined);
+  });
+
+  it("it should get underlying asset address", async () => {
+    const address = await instance.getAssetAddress();
+
+    assert.equal(address, MainnetAddresses.USDC_ADDRESS);
+  });
+
+  it("it should get underlying asset name", async () => {
+    const tokenName = "USD Coin";
+    const name = await instance.getAssetName();
+
+    assert.equal(name, tokenName);
+  });
+
+  it("it should get underlying asset symbol", async () => {
+    const tokenSymbol = "USDC";
+    const symbol = await instance.getAssetSymbol();
+
+    assert.equal(symbol, tokenSymbol);
+  });
+});
+
+contract("USDT Mixed Pool", async (accounts) => {
+  var instance;
+
+  it("it should deploy USDT Mixed Pool", async () => {
+    instance = await USDTMixedPool.new();
+
+    assert.notEqual(instance.address, undefined);
+  });
+
+  it("it should get underlying asset address", async () => {
+    const address = await instance.getAssetAddress();
+
+    assert.equal(address, MainnetAddresses.USDT_ADDRESS);
+  });
+
+  it("it should get underlying asset name", async () => {
+    const tokenName = "Tether USD";
+    const name = await instance.getAssetName();
+
+    assert.equal(name, tokenName);
+  });
+
+  it("it should get underlying asset symbol", async () => {
+    const tokenSymbol = "USDT";
+    const symbol = await instance.getAssetSymbol();
+
+    assert.equal(symbol, tokenSymbol);
   });
 });
