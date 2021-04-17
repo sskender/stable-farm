@@ -359,3 +359,184 @@ contract("Compound Router - USDC", async (accounts) => {
     assert.equal(Number(balanceComp), 0);
   });
 });
+
+contract("Compound Router - USDT", async (accounts) => {
+  var initialSenderBalance;
+  var instance;
+
+  it("it should deploy USDT Compound Router", async () => {
+    instance = await CompoundRouter.new(
+      MainnetAddresses.COMPTROLLER_ADDRESS,
+      MainnetAddresses.USDT_ADDRESS,
+      MainnetAddresses.CUSDT_ADDRESS,
+      MainnetAddresses.UNISWAP_ROUTER_02
+    );
+
+    assert.notEqual(instance.address, undefined);
+  });
+
+  it("it should mint USDT test tokens to account", async () => {
+    const cusdtAddress = MainnetAddresses.CUSDT_ADDRESS;
+    const usdtAddress = MainnetAddresses.USDT_ADDRESS;
+    const underlyingDecimals = 6;
+
+    const receiver = accounts[0];
+    const numbTokensToMint = 10000;
+
+    const usdtContract = new web3.eth.Contract(erc20Abi, usdtAddress);
+    const mantissa = (
+      numbTokensToMint * Math.pow(10, underlyingDecimals)
+    ).toString();
+
+    await usdtContract.methods.transfer(receiver, mantissa).send({
+      from: cusdtAddress,
+      gasPrice: web3.utils.toHex(0),
+      gas: 3000000,
+    });
+
+    const balance = await usdtContract.methods.balanceOf(receiver).call();
+    const usdtBalance = balance / Math.pow(10, underlyingDecimals);
+    initialSenderBalance = Number(balance);
+
+    assert.isAtLeast(usdtBalance, numbTokensToMint);
+  });
+
+  it("it should get USDT as underlying asset", async () => {
+    const underlyingAsset = await instance.getUnderlyingAsset();
+
+    assert.equal(underlyingAsset, MainnetAddresses.USDT_ADDRESS);
+  });
+
+  it("it should get number of decimals for USDT", async () => {
+    const _underlyingDecimals = 6;
+    const underlyingDecimals = await instance.getUnderlyingDecimals();
+
+    assert.equal(_underlyingDecimals, underlyingDecimals);
+  });
+
+  it("it should get supply APY for USDT", async () => {
+    const rayUnitsExponent = 1e27;
+    const APY = await instance.getCurrentAPY();
+    const scaledAPY = Number(APY) / rayUnitsExponent;
+
+    assert.isAbove(scaledAPY, 0.05);
+    assert.isBelow(scaledAPY, 100);
+  });
+
+  it("it should be no tokens available in contract", async () => {
+    const Usdt = await Erc20.at(MainnetAddresses.USDT_ADDRESS);
+    const cUsdt = await Erc20.at(MainnetAddresses.CUSDT_ADDRESS);
+    const Comp = await Erc20.at(MainnetAddresses.COMP_ADDRESS);
+
+    const balanceUsdt = await Usdt.balanceOf(instance.address);
+    const balanceCUsdt = await cUsdt.balanceOf(instance.address);
+    const balanceComp = await Comp.balanceOf(instance.address);
+
+    assert.equal(Number(balanceUsdt), 0);
+    assert.equal(Number(balanceCUsdt), 0);
+    assert.equal(Number(balanceComp), 0);
+  });
+
+  it("it should deposit USDT tokens to contract", async () => {
+    const Usdt = await Erc20.at(MainnetAddresses.USDT_ADDRESS);
+    const cUsdt = await Erc20.at(MainnetAddresses.CUSDT_ADDRESS);
+    const sender = accounts[0];
+    const amountToSupply = 1000;
+    const underlyingDecimals = 6;
+    const mantissa = (
+      amountToSupply * Math.pow(10, underlyingDecimals)
+    ).toString();
+
+    const balanceUsdtSender = await Usdt.balanceOf(sender);
+
+    // approve contract and deposit usdt
+    await Usdt.approve(instance.address, mantissa, { from: sender });
+    await instance.deposit(mantissa, { from: sender });
+    // const result = await instance.deposit(mantissa);
+    // console.log(result.events.Log);
+
+    const balanceUsdtSenderAfter = await Usdt.balanceOf(sender);
+    const balancecUsdtSenderAfter = await cUsdt.balanceOf(sender);
+
+    // test
+    assert.equal(balanceUsdtSender, initialSenderBalance);
+    assert.equal(
+      Number(balanceUsdtSender),
+      Number(balanceUsdtSenderAfter) + Number(mantissa)
+    );
+    assert.equal(Number(balancecUsdtSenderAfter), 0);
+  });
+
+  it("it should be no USDT tokens available in contract", async () => {
+    const Usdt = await Erc20.at(MainnetAddresses.USDT_ADDRESS);
+
+    const balance = await Usdt.balanceOf(instance.address);
+
+    assert.equal(Number(balance), 0);
+  });
+
+  it("it should be cTokens available in contract", async () => {
+    const cUsdt = await Erc20.at(MainnetAddresses.CUSDT_ADDRESS);
+
+    const balancecUsdt = await cUsdt.balanceOf(instance.address);
+
+    assert.isAbove(Number(balancecUsdt) / 1e8, 0);
+  });
+
+  it("it should be no COMP tokens available in contract", async () => {
+    const Comp = await Erc20.at(MainnetAddresses.COMP_ADDRESS);
+
+    const balanceComp = await Comp.balanceOf(instance.address);
+
+    assert.equal(Number(balanceComp), 0);
+  });
+
+  it("it should harvest COMP token rewards", async () => {
+    const sender = accounts[0];
+
+    await instance.harvest({ from: sender });
+    // const result = await instance.harvest();
+    // console.log(result.events.Harvest);
+  });
+
+  it("it should be swapped USDT tokens available in contract", async () => {
+    const Usdt = await Erc20.at(MainnetAddresses.USDT_ADDRESS);
+
+    const balance = await Usdt.balanceOf(instance.address);
+
+    assert.isAbove(Number(balance), 0);
+  });
+
+  it("it should withdraw all USDT tokens from contract", async () => {
+    const Usdt = await Erc20.at(MainnetAddresses.USDT_ADDRESS);
+    const sender = accounts[0];
+
+    const balanceUsdtSender = await Usdt.balanceOf(sender);
+
+    await instance.withdraw({ from: sender });
+    // const result = await instance.withdrawAll({ from: sender });
+    // console.log(result.events.Log);
+
+    const balanceUsdtSenderAfter = await Usdt.balanceOf(sender);
+
+    assert.isBelow(Number(balanceUsdtSender), Number(balanceUsdtSenderAfter));
+    assert.isBelow(
+      Number(initialSenderBalance),
+      Number(balanceUsdtSenderAfter)
+    );
+  });
+
+  it("it should be no tokens in contract after withdrawal", async () => {
+    const Usdt = await Erc20.at(MainnetAddresses.USDT_ADDRESS);
+    const cUsdt = await Erc20.at(MainnetAddresses.CUSDT_ADDRESS);
+    const Comp = await Erc20.at(MainnetAddresses.COMP_ADDRESS);
+
+    const balanceUsdt = await Usdt.balanceOf(instance.address);
+    const balanceCUsdt = await cUsdt.balanceOf(instance.address);
+    const balanceComp = await Comp.balanceOf(instance.address);
+
+    assert.equal(Number(balanceUsdt), 0);
+    assert.equal(Number(balanceCUsdt), 0);
+    assert.equal(Number(balanceComp), 0);
+  });
+});
