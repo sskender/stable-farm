@@ -19,6 +19,7 @@
     "ganache": "ganache-cli -f https://mainnet.infura.io/v3/$infuraApiKey -m 'clutch captain shoe salt awake harvest setup primary inmate ugly among become' -i 1 -u 0x9759A6Ac90977b93B58547b4A71c78317f391A28 -u 0x70e36f6bf80a52b3b46b3af8e106cc0ed743e8e4 -u 0x39AA39c021dfbaE8faC545936693aC917d5E7563 -u 0xf650c3d88d12db855b8bf7d11be6c55a4e07dcc9"
   },
   "dependencies": {
+    "@truffle/contract": "^4.3.16",
     "axios": "^0.21.1",
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.9.0",
