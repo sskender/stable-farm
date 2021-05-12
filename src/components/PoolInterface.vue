@@ -15,8 +15,11 @@
       Best APY: <span>{{ this.bestAPY }}</span
       >%
     </div>
-    <button>Deposit</button>
-    <button>Withdraw</button>
+    <input type="number" v-model="tokenInputValue" />Inputed
+    {{ this.tokenInputValue }}
+    <button v-on:click="makeApproval">Approve</button>
+    <button v-on:click="makeDeposit">Deposit</button>
+    <button v-on:click="makeWithdrawalAll">Withdraw</button>
     <button>Rebalance</button>
     <div>
       <span>{{ this.poolAddress }}</span>
@@ -25,10 +28,9 @@
 </template>
 
 <script>
-import Web3 from "web3";
 import contract from "@truffle/contract";
-
-const provider = new Web3.providers.HttpProvider("http://localhost:8545");
+import Erc20Json from "../../build/contracts/Erc20.json";
+import MainnetAddresses from "../../test/mainnet.addresses.js";
 
 export default {
   props: {
@@ -43,12 +45,13 @@ export default {
       assetAddress: null,
       currentAPY: 0.0,
       bestAPY: 0.0,
+      tokenInputValue: 0,
     };
   },
   methods: {
     async loadContract() {
       const poolContract = contract(this.poolJson);
-      poolContract.setProvider(provider);
+      poolContract.setProvider(window.web3._provider);
       const instance = await poolContract.deployed();
 
       this.instance = instance;
@@ -70,10 +73,58 @@ export default {
       const bestAPYScaled = Number(bestAPYArray[1]) / 1e2;
       this.bestAPY = bestAPYScaled;
     },
+    async getMantisa() {
+      // TODO change to underlying decimals
+      const value = Number(this.tokenInputValue);
+      const amount = window.web3.utils.toWei(value.toString(), "ether");
+      return amount;
+    },
+    async makeApproval() {
+      const amount = await this.getMantisa();
+      console.log(`approving for ${amount}`);
+
+      // TODO change dai with underlying asset address
+      const web3 = window.web3;
+      const msgSender = window.account;
+      const daiTokenContract = new web3.eth.Contract(
+        Erc20Json.abi,
+        MainnetAddresses.DAI_ADDRESS
+      );
+
+      // approve
+      const poolAddress = this.instance.address;
+      await daiTokenContract.methods
+        .approve(poolAddress, amount)
+        .send({ from: msgSender });
+    },
+    async makeDeposit() {
+      const amount = await this.getMantisa();
+      console.log(`depositing ${amount}`);
+
+      const msgSender = window.account;
+      console.log({ msgSender });
+
+      const poolAddress = this.instance.address;
+      console.log({ poolAddress });
+
+      // make deposit
+      const poolContract = contract(this.poolJson);
+      poolContract.setProvider(window.web3._provider);
+      const instance = await poolContract.deployed();
+
+      await instance.deposit(amount, { from: msgSender });
+    },
+    async makeWithdrawalAll() {
+      console.log(`withdrawing all`);
+      const poolContract = contract(this.poolJson);
+      poolContract.setProvider(window.web3._provider);
+      const instance = await poolContract.deployed();
+
+      const msgSender = window.account;
+      await instance.withdrawAll({ from: msgSender });
+    },
   },
   async created() {
-    console.log(this.poolABI);
-
     await this.loadContract();
     await this.loadContractData();
   },

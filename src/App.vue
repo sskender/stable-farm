@@ -1,15 +1,18 @@
 <template>
   <div id="app">
+    <ConnectWallet />
     <PoolsList />
   </div>
 </template>
 
 <script>
+import ConnectWallet from "./components/ConnectWallet.vue";
 import PoolsList from "./components/PoolsList.vue";
 
 export default {
   name: "App",
   components: {
+    ConnectWallet,
     PoolsList,
   },
 };
