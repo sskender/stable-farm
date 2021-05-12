@@ -66,11 +66,11 @@ export default {
       // currently farming APY
       const currentAPYRaw = await this.instance.getAPY();
       const currentAPYScaled = Number(currentAPYRaw);
-      this.currentAPY = currentAPYScaled / 1e2;
+      this.currentAPY = (currentAPYScaled / 1e27).toFixed(2);
 
       // best available APY
       const bestAPYArray = await this.instance.getBestAPY();
-      const bestAPYScaled = Number(bestAPYArray[1]) / 1e2;
+      const bestAPYScaled = (Number(bestAPYArray[1]) / 1e2).toFixed(2);
       this.bestAPY = bestAPYScaled;
     },
     async getMantisa() {
