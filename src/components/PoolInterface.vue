@@ -30,7 +30,6 @@
 <script>
 import contract from "@truffle/contract";
 import Erc20Json from "../../build/contracts/Erc20.json";
-import MainnetAddresses from "../../test/mainnet.addresses.js";
 
 export default {
   props: {
@@ -103,14 +102,16 @@ export default {
       // TODO change dai with underlying asset address
       const web3 = window.web3;
       const msgSender = window.account;
-      const daiTokenContract = new web3.eth.Contract(
+
+      const underlyingAddress = await this.instance.getAssetAddress();
+      const poolAddress = this.instance.address;
+      const tokenContract = new web3.eth.Contract(
         Erc20Json.abi,
-        MainnetAddresses.DAI_ADDRESS
+        underlyingAddress
       );
 
       // approve
-      const poolAddress = this.instance.address;
-      await daiTokenContract.methods
+      await tokenContract.methods
         .approve(poolAddress, amount)
         .send({ from: msgSender });
     },
