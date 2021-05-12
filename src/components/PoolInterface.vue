@@ -74,9 +74,26 @@ export default {
       this.bestAPY = bestAPYScaled;
     },
     async getMantisa() {
-      // TODO change to underlying decimals
+      const underlyingAddress = await this.instance.getAssetAddress();
+      console.log({ underlyingAddress });
+
+      const web3 = window.web3;
+      const underlyingToken = new web3.eth.Contract(
+        Erc20Json.abi,
+        underlyingAddress
+      );
+
+      var underlyingDecimals;
+      try {
+        underlyingDecimals = await underlyingToken.methods.decimals().call();
+      } catch (err) {
+        underlyingDecimals = 6;
+      }
+
       const value = Number(this.tokenInputValue);
-      const amount = window.web3.utils.toWei(value.toString(), "ether");
+      const amount = (value * Math.pow(10, underlyingDecimals)).toString();
+
+      console.log(`mantissa amount: ${amount}`);
       return amount;
     },
     async makeApproval() {
