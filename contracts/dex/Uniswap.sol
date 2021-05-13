@@ -7,7 +7,7 @@ import "./../interfaces/uniswap/IUniswapV2Router02.sol";
 import "./../math/SafeMath.sol";
 
 contract Uniswap {
-    uint256 internal constant _MAX_SLIPPAGE_PERCENT = 2;
+    uint256 internal constant _MAX_SLIPPAGE_PERCENT = 5;
     uint256 internal constant _DEADLINE_IN_SECONDS = 15;
 
     IUniswapV2Router02 private _uniswapRouter;

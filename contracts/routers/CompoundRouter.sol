@@ -123,7 +123,6 @@ contract CompoundRouter is IRouter, Uniswap {
         _comptroller.claimComp(address(this));
 
         uint256 amountIn = _compToken.balanceOf(address(this));
-        require(amountIn > 0, "No COMP tokens to swap");
 
         this.swapTokensAForTokensB(
             address(_compToken),
@@ -131,7 +130,6 @@ contract CompoundRouter is IRouter, Uniswap {
             amountIn
         );
 
-        uint256 swapped = _underlyingAsset.balanceOf(address(this));
-        emit Harvest(swapped);
+        emit Harvest(amountIn);
     }
 }
