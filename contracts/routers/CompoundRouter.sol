@@ -78,7 +78,7 @@ contract CompoundRouter is IRouter, Uniswap {
     function getCurrentAPY() external view override returns (uint256) {
         uint256 supplyRate = _cToken.supplyRatePerBlock();
         uint256 mantissa = 10**18;
-        uint256 blocksPerDay = 4 * 60 * 24;
+        uint256 blocksPerDay = 5 * 60 * 24; // Closer to 5 blocks per minute
         uint256 daysPerYear = 365;
 
         uint256 base =
