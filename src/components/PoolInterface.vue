@@ -1,28 +1,31 @@
 <template>
   <div>
     <div>
-      Pool <span>{{ this.assetName }}</span> (<span>{{ this.assetSymbol }}</span
-      >)
+      Pool <span>{{ this.assetName }}</span> (
+      <a v-bind:href="'https://etherscan.io/token/' + this.assetAddress">
+        <span>{{ this.assetSymbol }}</span>
+      </a>
+      )
     </div>
     <div>
-      Address: <span>{{ this.assetAddress }}</span>
-    </div>
-    <div>
-      APY: <span>{{ this.currentAPY }}</span
+      Current APY: <span>{{ this.currentAPY }}</span
+      >% Best available APY: <span>{{ this.bestAPY }}</span
       >%
+      <button>Rebalance</button>
     </div>
     <div>
-      Best APY: <span>{{ this.bestAPY }}</span
-      >%
+      Balance: <span>{{ this.tokenBalance }}</span
+      ><br />
+      <input type="number" v-model="tokenInputValue" />
+      <button>Max</button>
     </div>
-    <input type="number" v-model="tokenInputValue" />Inputed
-    {{ this.tokenInputValue }}
-    <button v-on:click="makeApproval">Approve</button>
-    <button v-on:click="makeDeposit">Deposit</button>
-    <button v-on:click="makeWithdrawalAll">Withdraw</button>
-    <button>Rebalance</button>
     <div>
-      <span>{{ this.poolAddress }}</span>
+      <button v-on:click="makeApproval">Approve</button>
+      <button v-on:click="makeDeposit">Deposit</button>
+      <button v-on:click="makeWithdrawalAll">Withdraw</button>
+    </div>
+    <div>
+      Contract address: <span>{{ this.poolAddress }}</span>
     </div>
   </div>
 </template>
@@ -44,6 +47,7 @@ export default {
       assetAddress: null,
       currentAPY: 0.0,
       bestAPY: 0.0,
+      tokenBalance: 0,
       tokenInputValue: 0,
     };
   },
