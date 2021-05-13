@@ -17,7 +17,7 @@
       Balance: <span>{{ this.tokenBalance }}</span
       ><br />
       <input type="number" v-model="tokenInputValue" />
-      <button>Max</button>
+      <button v-on:click="loadInputMaxBalance">Max</button>
     </div>
     <div>
       <button v-on:click="makeApproval">Approve</button>
@@ -40,7 +40,6 @@ export default {
   },
   data: () => {
     return {
-      instance: null,
       poolAddress: null,
       assetName: null,
       assetSymbol: null,
@@ -52,103 +51,142 @@ export default {
     };
   },
   methods: {
-    async loadContract() {
-      const poolContract = contract(this.poolJson);
-      poolContract.setProvider(window.web3._provider);
-      const instance = await poolContract.deployed();
+    async loadContractInfo() {
+      const instance = await this.getContractInstance();
 
-      this.instance = instance;
+      this.poolAddress = instance.address;
+      this.assetName = await instance.getAssetName();
+      this.assetSymbol = await instance.getAssetSymbol();
+      this.assetAddress = await instance.getAssetAddress();
     },
-    async loadContractData() {
-      // general data
-      this.poolAddress = this.instance.address;
-      this.assetName = await this.instance.getAssetName();
-      this.assetSymbol = await this.instance.getAssetSymbol();
-      this.assetAddress = await this.instance.getAssetAddress();
 
-      // currently farming APY
-      const currentAPYRaw = await this.instance.getAPY();
-      const currentAPYScaled = Number(currentAPYRaw);
-      this.currentAPY = (currentAPYScaled / 1e27).toFixed(2);
+    async loadAPYData() {
+      const instance = await this.getContractInstance();
 
       // best available APY
-      const bestAPYArray = await this.instance.getBestAPY();
-      const bestAPYScaled = (Number(bestAPYArray[1]) / 1e2).toFixed(2);
+      const numberOfDecimalPlacesBestAPY = 1e2;
+      const bestAPYArray = await instance.getBestAPY();
+      const bestAPYScaled = (
+        Number(bestAPYArray[1]) / numberOfDecimalPlacesBestAPY
+      ).toFixed(2);
       this.bestAPY = bestAPYScaled;
-    },
-    async getMantisa() {
-      const underlyingAddress = await this.instance.getAssetAddress();
-      console.log({ underlyingAddress });
 
+      // currently farming APY
+      const numberOfDecimalPlacesCurrentAPY = 1e27;
+      const currentAPYRaw = await instance.getAPY();
+      const currentAPYScaled = Number(currentAPYRaw);
+      this.currentAPY = (
+        currentAPYScaled / numberOfDecimalPlacesCurrentAPY
+      ).toFixed(2);
+    },
+
+    async getContractInstance() {
       const web3 = window.web3;
+      const poolContract = contract(this.poolJson);
+      poolContract.setProvider(web3._provider);
+      const instance = await poolContract.deployed();
+      return instance;
+    },
+
+    async getUnderlyingToken() {
+      const web3 = window.web3;
+      const instance = await this.getContractInstance();
+      const underlyingAddress = await instance.getAssetAddress();
       const underlyingToken = new web3.eth.Contract(
         Erc20Json.abi,
         underlyingAddress
       );
+      return underlyingToken;
+    },
 
+    async getUnderlyingDecimals() {
+      const underlyingToken = await this.getUnderlyingToken();
       var underlyingDecimals;
       try {
         underlyingDecimals = await underlyingToken.methods.decimals().call();
+        underlyingDecimals = Number(underlyingDecimals);
       } catch (err) {
         underlyingDecimals = 6;
       }
+      return underlyingDecimals;
+    },
 
-      const value = Number(this.tokenInputValue);
+    async getAvailableBalance() {
+      const msgSender = window.account;
+      const underlyingToken = await this.getUnderlyingToken();
+      const underlyingDecimals = await this.getUnderlyingDecimals();
+
+      if (!msgSender) {
+        return 0;
+      }
+
+      const balance = await underlyingToken.methods.balanceOf(msgSender).call();
+      const balanceScaled = Number(balance) / Math.pow(10, underlyingDecimals);
+      return balanceScaled;
+    },
+
+    async loadAvailableBalance() {
+      const balance = await this.getAvailableBalance();
+      this.tokenBalance = balance.toFixed(2);
+    },
+
+    async loadInputMaxBalance() {
+      const balance = await this.getAvailableBalance();
+      this.tokenInputValue = balance;
+    },
+
+    async getMantissa(value) {
+      const underlyingDecimals = await this.getUnderlyingDecimals();
       const amount = (value * Math.pow(10, underlyingDecimals)).toString();
-
-      console.log(`mantissa amount: ${amount}`);
       return amount;
     },
-    async makeApproval() {
-      const amount = await this.getMantisa();
-      console.log(`approving for ${amount}`);
 
-      // TODO change dai with underlying asset address
-      const web3 = window.web3;
+    async makeApproval() {
+      const value = Number(this.tokenInputValue);
+      const amount = await this.getMantissa(value);
+
+      const poolAddress = this.poolAddress;
       const msgSender = window.account;
 
-      const underlyingAddress = await this.instance.getAssetAddress();
-      const poolAddress = this.instance.address;
-      const tokenContract = new web3.eth.Contract(
-        Erc20Json.abi,
-        underlyingAddress
-      );
-
-      // approve
-      await tokenContract.methods
+      const underlyingToken = await this.getUnderlyingToken();
+      await underlyingToken.methods
         .approve(poolAddress, amount)
         .send({ from: msgSender });
     },
+
     async makeDeposit() {
-      const amount = await this.getMantisa();
-      console.log(`depositing ${amount}`);
+      const value = Number(this.tokenInputValue);
+      const amount = await this.getMantissa(value);
 
       const msgSender = window.account;
-      console.log({ msgSender });
 
-      const poolAddress = this.instance.address;
-      console.log({ poolAddress });
-
-      // make deposit
-      const poolContract = contract(this.poolJson);
-      poolContract.setProvider(window.web3._provider);
-      const instance = await poolContract.deployed();
-
+      const instance = await this.getContractInstance();
       await instance.deposit(amount, { from: msgSender });
-    },
-    async makeWithdrawalAll() {
-      console.log(`withdrawing all`);
-      const poolContract = contract(this.poolJson);
-      poolContract.setProvider(window.web3._provider);
-      const instance = await poolContract.deployed();
 
+      await this.loadAPYData();
+      await this.loadAvailableBalance();
+      this.tokenInputValue = 0;
+    },
+
+    async makeWithdrawal() {
+      // TODO
+    },
+
+    async makeWithdrawalAll() {
       const msgSender = window.account;
+
+      const instance = await this.getContractInstance();
       await instance.withdrawAll({ from: msgSender });
+
+      await this.loadAPYData();
+      await this.loadAvailableBalance();
+      this.tokenInputValue = 0;
     },
   },
   async created() {
-    await this.loadContract();
-    await this.loadContractData();
+    await this.loadContractInfo();
+    await this.loadAPYData();
+    await this.loadAvailableBalance();
   },
 };
 </script>
