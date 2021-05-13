@@ -6,6 +6,12 @@ const DAIMixedPool = artifacts.require("DAIMixedPool");
 const USDCMixedPool = artifacts.require("USDCMixedPool");
 
 module.exports = async (deployer) => {
+  /**
+   *
+   * DAI POOL
+   *
+   */
+
   // DAI Compund Router
   const daiCompoundRouter = await CompoundRouter.new(
     MainnetAddresses.COMPTROLLER_ADDRESS,
@@ -15,6 +21,16 @@ module.exports = async (deployer) => {
   );
 
   console.log(`Deployed DAI Compound Router: ${daiCompoundRouter.address}`);
+
+  // DAI Pool
+  const DAIPool = await deployer.deploy(DAIMixedPool);
+  await DAIPool.addRouter(daiCompoundRouter.address);
+
+  /**
+   *
+   * USDC POOL
+   *
+   */
 
   // USDC Compound Router
   const usdcCompoundRouter = await CompoundRouter.new(
@@ -26,22 +42,7 @@ module.exports = async (deployer) => {
 
   console.log(`Deployed USDC Compound Router: ${usdcCompoundRouter.address}`);
 
-  // DAI Mixed Pool
-  const DAIPool = await deployer.deploy(DAIMixedPool);
-
-  await DAIPool.addRouter(daiCompoundRouter.address);
-  await DAIPool.addRouter(usdcCompoundRouter.address);
-
-  const daiRouters = await DAIPool.getRouters();
-  console.log(daiRouters);
-
-  // USDC Mixed Pool
+  // USDC Pool
   const USDCPool = await deployer.deploy(USDCMixedPool);
-
-  await USDCPool.addRouter(daiCompoundRouter.address);
   await USDCPool.addRouter(usdcCompoundRouter.address);
-
-  const usdcRouters = await DAIPool.getRouters();
-  console.log(usdcRouters);
 };
-
