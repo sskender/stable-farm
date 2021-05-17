@@ -12,7 +12,7 @@ contract("Compound Router - DAI", async (accounts) => {
   var initialSenderBalance;
   var instance;
 
-  it("it should deploy DAI Compound Router", async () => {
+  it("it should deploy contract", async () => {
     instance = await CompoundRouter.new(
       MainnetAddresses.COMPTROLLER_ADDRESS,
       MainnetAddresses.DAI_ADDRESS,
@@ -183,7 +183,7 @@ contract("Compound Router - USDC", async (accounts) => {
   var initialSenderBalance;
   var instance;
 
-  it("it should deploy USDC Compound Router", async () => {
+  it("it should deploy contract", async () => {
     instance = await CompoundRouter.new(
       MainnetAddresses.COMPTROLLER_ADDRESS,
       MainnetAddresses.USDC_ADDRESS,
@@ -360,11 +360,12 @@ contract("Compound Router - USDC", async (accounts) => {
   });
 });
 
+/*
 contract("Compound Router - USDT", async (accounts) => {
   var initialSenderBalance;
   var instance;
 
-  it("it should deploy USDT Compound Router", async () => {
+  it("it should deploy contract", async () => {
     instance = await CompoundRouter.new(
       MainnetAddresses.COMPTROLLER_ADDRESS,
       MainnetAddresses.USDT_ADDRESS,
@@ -540,3 +541,4 @@ contract("Compound Router - USDT", async (accounts) => {
     assert.equal(Number(balanceComp), 0);
   });
 });
+*/
