@@ -1,9 +1,11 @@
+/* eslint-disable no-undef */
 const MainnetAddresses = require("./../test/mainnet.addresses");
 
 const CompoundRouter = artifacts.require("CompoundRouter");
+const AAVERouter = artifacts.require("AAVERouter");
 
-const DAIMixedPool = artifacts.require("DAIMixedPool");
-const USDCMixedPool = artifacts.require("USDCMixedPool");
+const DAIPool = artifacts.require("DAIPool");
+const USDCPool = artifacts.require("USDCPool");
 
 module.exports = async (deployer) => {
   /**
@@ -22,9 +24,21 @@ module.exports = async (deployer) => {
 
   console.log(`Deployed DAI Compound Router: ${daiCompoundRouter.address}`);
 
+  // DAI AAVE Router
+  const daiAAVERouter = await AAVERouter.new(
+    MainnetAddresses.AAVE_LENDING_POOL_ADDRESS_PROVIDER,
+    MainnetAddresses.DAI_ADDRESS
+  );
+
+  console.log(`Deployed DAI AAVE Router: ${daiAAVERouter.address}`);
+
   // DAI Pool
-  const DAIPool = await deployer.deploy(DAIMixedPool);
-  await DAIPool.addRouter(daiCompoundRouter.address);
+  const DAIPoolInstance = await deployer.deploy(DAIPool);
+  await DAIPoolInstance.addRouter(daiCompoundRouter.address);
+  await DAIPoolInstance.addRouter(daiAAVERouter.address);
+
+  const daiRouters = await DAIPoolInstance.getRouters();
+  console.log(`Available routers for DAI pool: ${daiRouters}`);
 
   /**
    *
@@ -42,7 +56,19 @@ module.exports = async (deployer) => {
 
   console.log(`Deployed USDC Compound Router: ${usdcCompoundRouter.address}`);
 
+  // USDC AAVE Router
+  const usdcAAVERouter = await AAVERouter.new(
+    MainnetAddresses.AAVE_LENDING_POOL_ADDRESS_PROVIDER,
+    MainnetAddresses.USDC_ADDRESS
+  );
+
+  console.log(`Deployed USDC AAVE Router: ${usdcAAVERouter.address}`);
+
   // USDC Pool
-  const USDCPool = await deployer.deploy(USDCMixedPool);
-  await USDCPool.addRouter(usdcCompoundRouter.address);
+  const USDCPoolInstance = await deployer.deploy(USDCPool);
+  await USDCPoolInstance.addRouter(usdcCompoundRouter.address);
+  await USDCPoolInstance.addRouter(usdcAAVERouter.address);
+
+  const usdcRouters = await USDCPoolInstance.getRouters();
+  console.log(`Available routers for USDC pool: ${usdcRouters}`);
 };
