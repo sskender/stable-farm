@@ -65,11 +65,11 @@ contract AAVERouter is IRouter {
 
     function withdraw() external override {
         ILendingPool lendingPool = ILendingPool(_provider.getLendingPool());
-        uint256 max_uint_value = uint256(-1); // overflow results in max uint256
+        uint256 maxUintValue = uint256(-1); // overflow results in max uint256
 
         lendingPool.withdraw(
             address(_underlyingAsset),
-            max_uint_value,
+            maxUintValue,
             address(this)
         );
 

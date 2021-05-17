@@ -101,7 +101,11 @@ contract CompoundRouter is IRouter, Uniswap {
 
     function deposit(uint256 _amount) external override {
         // Caller must approve contract before calling this function
-        _underlyingAsset.transferFrom(msg.sender, address(this), _amount);
+        require(
+            _underlyingAsset.transferFrom(msg.sender, address(this), _amount),
+            "Transfer failed"
+        );
+
         _supplyUnderlying(_amount);
 
         emit Deposit(_amount);
@@ -114,7 +118,10 @@ contract CompoundRouter is IRouter, Uniswap {
         this.harvest();
 
         uint256 balance = _underlyingAsset.balanceOf(address(this));
-        _underlyingAsset.transfer(msg.sender, balance);
+        require(
+            _underlyingAsset.transfer(msg.sender, balance),
+            "Transfer failed"
+        );
 
         emit Withdrawal(balance);
     }
