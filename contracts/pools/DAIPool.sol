@@ -2,9 +2,9 @@
 
 pragma solidity ^0.6.0;
 
-import "./StablecoinMixedPool.sol";
+import "./StablecoinPool.sol";
 
-contract DAIMixedPool is StablecoinMixedPool {
+contract DAIPool is StablecoinPool {
     address internal constant _DAI_ADDRESS =
         0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address internal constant _UNISWAP_ROUTER_ADDRESS =
@@ -12,6 +12,6 @@ contract DAIMixedPool is StablecoinMixedPool {
 
     constructor()
         public
-        StablecoinMixedPool(_DAI_ADDRESS, _UNISWAP_ROUTER_ADDRESS)
+        StablecoinPool(_DAI_ADDRESS, _UNISWAP_ROUTER_ADDRESS)
     {}
 }
