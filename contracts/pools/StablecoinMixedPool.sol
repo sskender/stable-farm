@@ -60,10 +60,11 @@ contract StablecoinMixedPool is IPool, Uniswap {
     }
 
     function getBestAPY() external view override returns (address, uint256) {
-        // RAY = (APY percentage) * 10 ^ 27
-        // scaled APY to Integer = RAY / (10^25)
+        // router's APY in RAY = (APY percentage) * 10 ^ 27
+        // scaled APY to Integer = (router's APY in RAY) / (10^25) ==> rounding to two decimals
         uint256 bestAPY = 0;
         address bestRouter = address(0);
+
         for (uint256 i = 0; i < _numberOfRouters; i++) {
             uint256 routerAPY = IRouter(_routersList[i]).getCurrentAPY();
             uint256 scaledAPY = SafeMath.div(routerAPY, 10**25);
@@ -72,17 +73,18 @@ contract StablecoinMixedPool is IPool, Uniswap {
                 bestRouter = _routersList[i];
             }
         }
+
         return (bestRouter, bestAPY);
     }
 
     /// @dev Make the deposit of pool asset to the router (swap asset if required)
     function _makeDeposit() internal {
         // Find the best available router
-        (address routerAddress, uint256 APY) = this.getBestAPY();
+        (address routerAddress, ) = this.getBestAPY();
         IRouter router = IRouter(routerAddress);
         address routerAssetAddress = router.getUnderlyingAsset();
 
-        // Swap pool asset to router asset
+        // Swap pool asset to router asset (via dex)
         if (routerAssetAddress != address(_poolAsset)) {
             uint256 poolBalance = _poolAsset.balanceOf(address(this));
             this.swapTokensAForTokensB(
@@ -92,7 +94,7 @@ contract StablecoinMixedPool is IPool, Uniswap {
             );
         }
 
-        // Deposit router asset
+        // Deposit router's asset
         Erc20 routerAsset = Erc20(routerAssetAddress);
         uint256 balance = routerAsset.balanceOf(address(this));
         routerAsset.approve(routerAddress, balance);
@@ -104,13 +106,17 @@ contract StablecoinMixedPool is IPool, Uniswap {
 
     function deposit(uint256 _amount) external override {
         // Caller must approve contract before calling this function
-        _poolAsset.transferFrom(msg.sender, address(this), _amount);
+        require(
+            _poolAsset.transferFrom(msg.sender, address(this), _amount),
+            "Transfer failed"
+        );
 
         // Withdraw if any router is currently active
         if (address(_activeRouter) != address(0)) {
             _makeWithdrawal();
         }
 
+        // Deposit all available funds (rebalance)
         _makeDeposit();
 
         emit Deposit(_amount);
@@ -121,7 +127,7 @@ contract StablecoinMixedPool is IPool, Uniswap {
         // Withdraw asset from the router
         _activeRouter.withdraw();
 
-        // Swap router asset to pool asset
+        // Swap router asset to pool asset (via dex)
         address routerAssetAddress = _activeRouter.getUnderlyingAsset();
         if (routerAssetAddress != address(_poolAsset)) {
             uint256 routerBalance =
@@ -144,22 +150,31 @@ contract StablecoinMixedPool is IPool, Uniswap {
         uint256 poolBalance = _makeWithdrawal();
 
         if (_amount <= poolBalance) {
-            // Transfer desired amount
-            _poolAsset.transfer(msg.sender, _amount);
+            // Transfer desired amount to caller
+            require(
+                _poolAsset.transfer(msg.sender, _amount),
+                "Transfer failed"
+            );
             emit Withdrawal(_amount);
 
             // Deposit back the rest
             _makeDeposit();
         } else {
-            // Transfer maximum available
-            _poolAsset.transfer(msg.sender, poolBalance);
+            // Transfer maximum available amount to caller
+            require(
+                _poolAsset.transfer(msg.sender, poolBalance),
+                "Transfer failed"
+            );
             emit Withdrawal(poolBalance);
         }
     }
 
     function withdrawAll() external override routerIsActive {
         uint256 poolBalance = _makeWithdrawal();
-        _poolAsset.transfer(msg.sender, poolBalance);
+        require(
+            _poolAsset.transfer(msg.sender, poolBalance),
+            "Transfer failed"
+        );
 
         emit Withdrawal(poolBalance);
     }
@@ -177,7 +192,7 @@ contract StablecoinMixedPool is IPool, Uniswap {
     }
 
     modifier betterRouterExists {
-        (address routerAddress, uint256 APY) = this.getBestAPY();
+        (address routerAddress, ) = this.getBestAPY();
         require(routerAddress != address(_activeRouter), "Already rebalanced");
         _;
     }
