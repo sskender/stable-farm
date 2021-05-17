@@ -1,20 +1,24 @@
 <template>
   <div>
-    <PoolInterface v-bind:poolJson="this.daiPoolJson" /><br />
-    <PoolInterface v-bind:poolJson="this.usdcPoolJson" /><br />
+    <div class="pool">
+      <PoolInterface v-bind:poolJson="this.daiPoolJson" /><br />
+    </div>
+    <div class="pool">
+      <PoolInterface v-bind:poolJson="this.usdcPoolJson" /><br />
+    </div>
   </div>
 </template>
 
 <script>
-import DAIMixedPoolJson from "../../build/contracts/DAIMixedPool.json";
-import USDCMixedPoolJson from "../../build/contracts/USDCMixedPool.json";
+import DAIPoolJson from "../../build/contracts/DAIPool.json";
+import USDCPoolJson from "../../build/contracts/USDCPool.json";
 
 import PoolInterface from "./PoolInterface.vue";
 
 export default {
   name: "PoolsList",
   data: () => {
-    return { daiPoolJson: DAIMixedPoolJson, usdcPoolJson: USDCMixedPoolJson };
+    return { daiPoolJson: DAIPoolJson, usdcPoolJson: USDCPoolJson };
   },
   components: {
     PoolInterface,
@@ -22,4 +26,11 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+div.pool {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+</style>

@@ -1,9 +1,14 @@
 <template>
-  <div>
+  <div id="wallet">
     <div v-if="!connected">
-      <button v-on:click="connectWallet">Connect</button>
+      <button id="btn-connect" v-on:click="connectWallet">Connect</button>
     </div>
-    <div v-else>Hello, {{ this.account }}</div>
+    <div id="connected-user" v-else>
+      Account
+      <span>
+        {{ this.account }}
+      </span>
+    </div>
   </div>
 </template>
 
@@ -42,3 +47,32 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+div#wallet {
+  margin-top: 10px;
+  margin-right: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+div#connected-user {
+  font-size: 16px;
+  color: #fafafa;
+}
+
+button#btn-connect {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 10px;
+  background-color: #7ff5bc;
+  border-color: #fafafa;
+  border-style: solid;
+  border-width: 2px;
+}
+</style>
+

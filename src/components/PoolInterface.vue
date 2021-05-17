@@ -1,31 +1,54 @@
 <template>
-  <div>
-    <div>
-      Pool <span>{{ this.assetName }}</span> (
-      <a v-bind:href="'https://etherscan.io/token/' + this.assetAddress">
-        <span>{{ this.assetSymbol }}</span>
-      </a>
-      )
+  <div class="pool-wrapper">
+    <div id="info-container">
+      <div id="pool-name">
+        Pool <span>{{ this.assetName }}</span> (
+        <a v-bind:href="'https://etherscan.io/token/' + this.assetAddress">
+          <span>{{ this.assetSymbol }}</span>
+        </a>
+        )
+      </div>
+      <div id="pool-address">
+        Source: <span>{{ this.poolAddress }}</span>
+      </div>
     </div>
-    <div>
-      Current APY: <span>{{ this.currentAPY }}</span
-      >% Best available APY: <span>{{ this.bestAPY }}</span
-      >%
-      <button>Rebalance</button>
+
+    <div id="apy-container">
+      <div class="apy">
+        <div class="apy-value">
+          <span>{{ this.currentAPY }}</span> %
+        </div>
+        <div class="apy-info">(current) APY</div>
+      </div>
+      <div class="apy">
+        <div class="apy-value">
+          <span class="apy">{{ this.bestAPY }}</span> %
+        </div>
+        <div class="apy-info">(best) APY</div>
+      </div>
     </div>
-    <div>
-      Balance: <span>{{ this.tokenBalance }}</span
-      ><br />
-      <input type="number" v-model="tokenInputValue" />
-      <button v-on:click="loadInputMaxBalance">Max</button>
-    </div>
-    <div>
-      <button v-on:click="makeApproval">Approve</button>
-      <button v-on:click="makeDeposit">Deposit</button>
-      <button v-on:click="makeWithdrawalAll">Withdraw</button>
-    </div>
-    <div>
-      Contract address: <span>{{ this.poolAddress }}</span>
+
+    <div id="action-container">
+      <div class="balance-container">
+        Balance: <span>{{ this.tokenBalance }}</span>
+        <span>{{ " " + this.assetSymbol }}</span>
+      </div>
+      <div>
+        <input id="input-box" type="number" v-model="tokenInputValue" />
+        <button
+          class="btn-action"
+          id="btn-max"
+          v-on:click="loadInputMaxBalance"
+        >
+          Max
+        </button>
+        <button class="btn-action" v-on:click="makeApproval">Approve</button>
+        <button class="btn-action" v-on:click="makeDeposit">Deposit</button>
+        <button class="btn-action" v-on:click="makeWithdrawalAll">
+          Withdraw
+        </button>
+        <button class="btn-action" v-on:click="makeRebalance">Rebalance</button>
+      </div>
     </div>
   </div>
 </template>
@@ -76,7 +99,8 @@ export default {
       const currentAPYRaw = await instance.getAPY();
       const currentAPYScaled = Number(currentAPYRaw);
       this.currentAPY = (
-        currentAPYScaled / numberOfDecimalPlacesCurrentAPY
+        (currentAPYScaled / numberOfDecimalPlacesCurrentAPY) *
+        100
       ).toFixed(2);
     },
 
@@ -168,10 +192,6 @@ export default {
       this.tokenInputValue = 0;
     },
 
-    async makeWithdrawal() {
-      // TODO
-    },
-
     async makeWithdrawalAll() {
       const msgSender = window.account;
 
@@ -182,6 +202,10 @@ export default {
       await this.loadAvailableBalance();
       this.tokenInputValue = 0;
     },
+
+    async makeRebalance() {
+      // TODO
+    },
   },
   async created() {
     await this.loadContractInfo();
@@ -191,4 +215,93 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+div.pool-wrapper {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 25px;
+  padding-right: 25px;
+  border-style: solid;
+  border-width: 5px;
+  border-color: #fafafa;
+  border-radius: 20px;
+  width: fit-content;
+}
+
+div#info-container {
+}
+
+div#pool-name {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+div#pool-address {
+  font-size: 12px;
+  color: #abb2c8;
+}
+
+div#apy-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: table;
+  width: 100%;
+  color: #abb2c8;
+}
+
+div.apy {
+  float: left;
+  width: 6rem;
+  text-align: center;
+}
+
+div.apy-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2aff99;
+}
+
+div.apy-info {
+  font-size: 12px;
+}
+
+div#action-container {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+div.balance-container {
+  font-size: 12px;
+}
+
+input#input-box {
+  border-radius: 10px;
+  border-width: 2px;
+  border-color: #fafafa;
+}
+
+button#btn-max {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 20px;
+  width: auto;
+}
+
+button.btn-action {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border-radius: 20px;
+  background-color: #7ff5bc;
+  border-color: #fafafa;
+  border-style: solid;
+  border-width: 2px;
+}
+</style>
