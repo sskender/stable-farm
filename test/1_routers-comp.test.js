@@ -61,7 +61,7 @@ contract("Compound Router - DAI", async (accounts) => {
   it("it should get supply APY for DAI", async () => {
     const rayUnitsExponent = 1e27;
     const APY = await instance.getCurrentAPY();
-    const scaledAPY = Number(APY) / rayUnitsExponent;
+    const scaledAPY = (Number(APY) / rayUnitsExponent) * 100;
 
     assert.isAbove(scaledAPY, 0.05);
     assert.isBelow(scaledAPY, 100);
@@ -236,7 +236,7 @@ contract("Compound Router - USDC", async (accounts) => {
   it("it should get supply APY for USDC", async () => {
     const rayUnitsExponent = 1e27;
     const APY = await instance.getCurrentAPY();
-    const scaledAPY = Number(APY) / rayUnitsExponent;
+    const scaledAPY = (Number(APY) / rayUnitsExponent) * 100;
 
     assert.isAbove(scaledAPY, 0.05);
     assert.isBelow(scaledAPY, 100);
@@ -418,7 +418,7 @@ contract("Compound Router - USDT", async (accounts) => {
   it("it should get supply APY for USDT", async () => {
     const rayUnitsExponent = 1e27;
     const APY = await instance.getCurrentAPY();
-    const scaledAPY = Number(APY) / rayUnitsExponent;
+    const scaledAPY = (Number(APY) / rayUnitsExponent) * 100;
 
     assert.isAbove(scaledAPY, 0.05);
     assert.isBelow(scaledAPY, 100);

@@ -73,12 +73,13 @@ contract CompoundRouter is IRouter, Uniswap {
      * Blocks Per Day = 4 * 60 * 24 (based on 4 blocks occurring every minute)
      * Days Per Year = 365
      *
-     * APY = ((((Rate / ETH Mantissa * Blocks Per Day + 1) ^ Days Per Year)) - 1) * 100
+     * APY in RAY units = ((((Rate / ETH Mantissa * Blocks Per Day + 1) ^ Days Per Year)) - 1)
+     * APY percentage in RAY units = ((((Rate / ETH Mantissa * Blocks Per Day + 1) ^ Days Per Year)) - 1) * 100
      */
     function getCurrentAPY() external view override returns (uint256) {
         uint256 supplyRate = _cToken.supplyRatePerBlock();
         uint256 mantissa = 10**18;
-        uint256 blocksPerDay = 5 * 60 * 24; // Closer to 5 blocks per minute
+        uint256 blocksPerDay = 4 * 60 * 24; // 4 blocks per minute
         uint256 daysPerYear = 365;
 
         uint256 base =
@@ -86,7 +87,7 @@ contract CompoundRouter is IRouter, Uniswap {
         base = DSMath.add(base, DSMath.RAY);
         uint256 power = DSMath.rpow(base, daysPerYear);
 
-        uint256 apy = DSMath.mul(DSMath.sub(power, DSMath.RAY), 100);
+        uint256 apy = DSMath.sub(power, DSMath.RAY);
 
         return apy;
     }

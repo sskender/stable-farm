@@ -59,15 +59,27 @@ contract StablecoinPool is IPool, Uniswap {
         }
     }
 
+    /**
+     * @dev Get the best available APY
+     *
+     * APY in RAY units = (APY) * 10 ^ 27 ==> this is router's response
+     * APY percentage in RAY units = ((APY) * 10 ^ 27) * 100
+     *
+     * Scaled APY in RAY units to four decimal places:
+     * ((APY) * 10 ^ 27) / 10 ^ 23
+     *
+     * Example:
+     * 6.4822397031254315e+25 === 0.064822397031254315e+27
+     * 0.064822397031254315e+27 RAY ==> 6.4822397031254315 % in real world
+     * 0.064822397031254315e+27 / 10 ^ 23 ==> (0)648 in Solidity
+     */
     function getBestAPY() external view override returns (address, uint256) {
-        // router's APY in RAY = (APY percentage) * 10 ^ 27
-        // scaled APY to Integer = (router's APY in RAY) / (10^25) ==> rounding to two decimals
         uint256 bestAPY = 0;
         address bestRouter = address(0);
 
         for (uint256 i = 0; i < _numberOfRouters; i++) {
             uint256 routerAPY = IRouter(_routersList[i]).getCurrentAPY();
-            uint256 scaledAPY = SafeMath.div(routerAPY, 10**25);
+            uint256 scaledAPY = SafeMath.div(routerAPY, 10**23);
             if (scaledAPY > bestAPY) {
                 bestAPY = scaledAPY;
                 bestRouter = _routersList[i];
