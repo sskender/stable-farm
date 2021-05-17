@@ -204,7 +204,16 @@ export default {
     },
 
     async makeRebalance() {
-      // TODO
+      const msgSender = window.account;
+
+      const instance = await this.getContractInstance();
+      try {
+        await instance.rebalance({ from: msgSender });
+      } catch (err) {
+        console.error(err);
+      }
+
+      await this.loadAPYData();
     },
   },
   async created() {
